@@ -1,13 +1,50 @@
-import { DomainException } from '../../shared/exception/domain-exception';
+import { domainErrorMessages } from '../../common/config/domain-error-messages';
+import { DomainException } from '../common/exceptions';
 
 export class NotificationMessageCannotBeEmptyException extends DomainException {
     constructor() {
-        super('Notification message cannot be empty');
+        super(domainErrorMessages.notification.messageCannotBeEmpty);
+    }
+}
+
+export class NotificationIdCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.idCannotBeEmpty);
+    }
+}
+
+export class NotificationEventIdCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.eventIdCannotBeEmpty);
+    }
+}
+
+export class NotificationUserIsRequiredException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.userIsRequired);
+    }
+}
+
+export class NotificationTypeCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.typeCannotBeEmpty);
     }
 }
 
 export class NotificationAlreadySentException extends DomainException {
     constructor() {
-        super('Notification already sent');
+        super(domainErrorMessages.notification.alreadySent);
+    }
+}
+
+export class NotificationUserIdCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.userIdCannotBeEmpty);
+    }
+}
+
+export class NotificationUsernameCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.notification.usernameCannotBeEmpty);
     }
 }

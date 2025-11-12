@@ -1,3 +1,3 @@
-export { Comment } from './aggregate';
-export * from './entities';
+export * from './aggregate';
+export * from './entities/comment-user';
 export * from './exceptions';

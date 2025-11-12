@@ -1,3 +1,3 @@
-export { Notification, NotificationType } from './aggregate';
-export * from './entities';
+export * from './aggregate';
+export * from './entities/notification-user';
 export * from './exceptions';
