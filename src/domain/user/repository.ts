@@ -1,4 +1,4 @@
-import { User } from '@domain/user';
+import { User, UserType } from '@domain/user';
 import { IRepository } from 'src/common/types/repository';
 
 export interface IUserRepository extends IRepository<User> {
@@ -6,3 +6,5 @@ export interface IUserRepository extends IRepository<User> {
     findByUsername(username: string): Promise<User | null>;
     findAll(): Promise<User[]>;
 }
+
+export interface IUserTypeRepository extends IRepository<UserType> {}

@@ -7,11 +7,13 @@ import {
 } from '../exceptions';
 
 export class EventOrganizer {
-    private readonly _id: UUID;
-    private readonly _username: string;
-    private readonly _personalData: string;
+    private constructor(
+        private readonly _id: UUID,
+        private readonly _username: string,
+        private readonly _personalData: string,
+    ) {}
 
-    constructor(id: UUID, username: string, personalData: string) {
+    static create(id: UUID, username: string, personalData: string) {
         if (!id) {
             throw new OrganizerIdCannotBeEmptyException();
         }
@@ -22,9 +24,7 @@ export class EventOrganizer {
             throw new OrganizerPersonalDataCannotBeEmptyException();
         }
 
-        this._id = id;
-        this._username = username.trim();
-        this._personalData = personalData.trim();
+        return new EventOrganizer(id, username.trim(), personalData.trim());
     }
 
     get id(): UUID {

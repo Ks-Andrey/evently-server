@@ -3,17 +3,18 @@ import { UUID } from 'crypto';
 import { CategoryIdCannotBeEmptyException, CategoryNameCannotBeEmptyException } from '../exceptions';
 
 export class EventCategory {
-    private readonly _categoryId: UUID;
-    private _categoryName: string;
+    private constructor(
+        private readonly _categoryId: UUID,
+        private _categoryName: string,
+    ) {}
 
-    constructor(categoryId: UUID, categoryName: string) {
+    static create(categoryId: UUID, categoryName: string) {
         if (!categoryId) {
             throw new CategoryIdCannotBeEmptyException();
         }
         this.ensureValidName(categoryName);
 
-        this._categoryId = categoryId;
-        this._categoryName = categoryName.trim();
+        return new EventCategory(categoryId, categoryName.trim());
     }
 
     get categoryId(): UUID {
@@ -25,11 +26,11 @@ export class EventCategory {
     }
 
     updateName(newName: string): void {
-        this.ensureValidName(newName);
+        EventCategory.ensureValidName(newName);
         this._categoryName = newName.trim();
     }
 
-    private ensureValidName(name: string): void {
+    private static ensureValidName(name: string): void {
         if (!name || name.trim().length === 0) {
             throw new CategoryNameCannotBeEmptyException();
         }

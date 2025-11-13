@@ -1,3 +1,7 @@
+import { hash, compare } from '@common/utils/password-hash';
+
+import { UUID } from 'crypto';
+
 import { UserType } from './entities/user-type';
 import {
     UserAlreadyBlockedException,
@@ -12,76 +16,81 @@ import {
 } from './exceptions';
 
 export class User {
-    private readonly _id: string;
-    private _userType: UserType;
-    private _username: string;
-    private _email: string;
-    private _passwordHash: string;
-    private _personalData?: string;
-    private _isBlocked: boolean;
-    private _subscriptionCount: number;
+    private constructor(
+        private readonly _id: UUID,
+        private _userType: UserType,
+        private _username: string,
+        private _email: string,
+        private _passwordHash: string,
+        private _personalData?: string,
+        private _isBlocked: boolean = false,
+        private _subscriptionCount: number = 0,
+    ) {}
 
-    constructor(
-        id: string,
+    static async create(
+        id: UUID,
         userType: UserType,
         username: string,
         email: string,
-        passwordHash: string,
+        password: string,
         personalData?: string,
         isBlocked: boolean = false,
         subscriptionCount: number = 0,
-    ) {
+    ): Promise<User> {
         if (!id || id.trim().length === 0) {
             throw new UserIdCannotBeEmptyException();
         }
         if (!userType) {
             throw new UserTypeIsRequiredException();
         }
-        this.ensureValidUsername(username);
-        this.ensureValidEmail(email);
-        this.ensureValidPasswordHash(passwordHash);
+        if (!username || username.trim().length === 0) {
+            throw new UsernameCannotBeEmptyException();
+        }
+        if (!email || !email.includes('@')) {
+            throw new InvalidEmailFormatException();
+        }
+        if (!password || password.trim().length === 0) {
+            throw new PasswordHashCannotBeEmptyException();
+        }
         if (subscriptionCount < 0) {
             throw new SubscriptionCountCannotBeNegativeException();
         }
 
-        this._id = id;
-        this._userType = userType;
-        this._username = username.trim();
-        this._email = email.trim();
-        this._passwordHash = passwordHash;
-        this._personalData = personalData;
-        this._isBlocked = isBlocked;
-        this._subscriptionCount = subscriptionCount;
+        const passwordHash = await hash(password);
+
+        return new User(
+            id,
+            userType,
+            username.trim(),
+            email.trim(),
+            passwordHash,
+            personalData?.trim(),
+            isBlocked,
+            subscriptionCount,
+        );
     }
 
-    get id(): string {
+    get id(): UUID {
         return this._id;
     }
-
     get userType(): UserType {
         return this._userType;
     }
-
     get username(): string {
         return this._username;
     }
-
     get email(): string {
         return this._email;
     }
-
     get passwordHash(): string {
         return this._passwordHash;
     }
-
     get personalData(): string | undefined {
         return this._personalData;
     }
-
     get isBlocked(): boolean {
         return this._isBlocked;
     }
-
     get subscriptionCount(): number {
         return this._subscriptionCount;
     }
@@ -108,12 +117,16 @@ export class User {
     }
 
     changeEmail(newEmail: string): void {
-        this.ensureValidEmail(newEmail);
+        if (!newEmail || !newEmail.includes('@')) {
+            throw new InvalidEmailFormatException();
+        }
         this._email = newEmail.trim();
     }
 
     changeUsername(newName: string): void {
-        this.ensureValidUsername(newName);
+        if (!newName || newName.trim().length === 0) {
+            throw new UsernameCannotBeEmptyException();
+        }
         this._username = newName.trim();
     }
 
@@ -121,9 +134,15 @@ export class User {
         this._personalData = newUserData;
     }
 
-    changePassword(newPasswordHash: string): void {
-        this.ensureValidPasswordHash(newPasswordHash);
-        this._passwordHash = newPasswordHash;
+    async changePassword(newPassword: string): Promise<void> {
+        if (!newPassword || newPassword.trim().length === 0) {
+            throw new PasswordHashCannotBeEmptyException();
+        }
+        this._passwordHash = await hash(newPassword);
+    }
+
+    async validPassword(password: string): Promise<boolean> {
+        return await compare(password, this._passwordHash);
     }
 
     isAdmin(): boolean {
@@ -144,19 +163,15 @@ export class User {
     canManageUsers(): boolean {
         return this.isAdmin();
     }
-
     canManageEvents(): boolean {
         return this.isAdmin() || this.isOrganizer();
     }
-
     canManageCategories(): boolean {
         return this.isAdmin();
     }
-
     canManageComments(): boolean {
         return this.isAdmin();
     }
-
     canCreateEvents(): boolean {
         return this.isOrganizer();
     }
@@ -167,23 +182,5 @@ export class User {
 
     canDeleteEvent(eventOrganizerId: string): boolean {
         return this.isAdmin() || (this.isOrganizer() && this._id === eventOrganizerId);
-    }
-
-    private ensureValidEmail(email: string): void {
-        if (!email || !email.includes('@')) {
-            throw new InvalidEmailFormatException();
-        }
-    }
-
-    private ensureValidUsername(username: string): void {
-        if (!username || username.trim().length === 0) {
-            throw new UsernameCannotBeEmptyException();
-        }
-    }
-
-    private ensureValidPasswordHash(passwordHash: string): void {
-        if (!passwordHash || passwordHash.length === 0) {
-            throw new PasswordHashCannotBeEmptyException();
-        }
     }
 }

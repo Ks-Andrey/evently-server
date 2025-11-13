@@ -66,3 +66,15 @@ export class UserTypeNameCannotBeEmptyException extends DomainException {
         super(domainErrorMessages.user.typeNameCannotBeEmpty);
     }
 }
+
+export class UserAlreadyExists extends DomainException {
+    constructor() {
+        super(domainErrorMessages.user.userAlreadyExists);
+    }
+}
+
+export class PasswordNotVerified extends DomainException {
+    constructor() {
+        super(domainErrorMessages.user.passwordNotVerified);
+    }
+}

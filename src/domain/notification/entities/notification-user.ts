@@ -1,10 +1,12 @@
 import { NotificationUserIdCannotBeEmptyException, NotificationUsernameCannotBeEmptyException } from '../exceptions';
 
 export class NotificationUser {
-    private readonly _id: string;
-    private readonly _username: string;
+    private constructor(
+        private readonly _id: string,
+        private readonly _username: string,
+    ) {}
 
-    constructor(id: string, username: string) {
+    static create(id: string, username: string) {
         if (!id || id.trim().length === 0) {
             throw new NotificationUserIdCannotBeEmptyException();
         }
@@ -12,8 +14,7 @@ export class NotificationUser {
             throw new NotificationUsernameCannotBeEmptyException();
         }
 
-        this._id = id;
-        this._username = username.trim();
+        return new NotificationUser(id, username.trim());
     }
 
     get id(): string {

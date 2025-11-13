@@ -11,6 +11,8 @@ export const domainErrorMessages = {
         cannotDecrementSubscriptionBelowZero: 'Нельзя уменьшить количество подписок ниже нуля',
         typeIdCannotBeEmpty: 'Идентификатор типа пользователя не может быть пустым',
         typeNameCannotBeEmpty: 'Название типа пользователя не может быть пустым',
+        userAlreadyExists: 'Пользователь с такой почтой уже создан',
+        passwordNotVerified: 'Неверный пароль',
     },
     comment: {
         textCannotBeEmpty: 'Текст комментария не может быть пустым',
@@ -51,5 +53,8 @@ export const domainErrorMessages = {
         alreadySent: 'Уведомление уже отправлено',
         userIdCannotBeEmpty: 'Идентификатор пользователя уведомления не может быть пустым',
         usernameCannotBeEmpty: 'Имя пользователя уведомления не может быть пустым',
+    },
+    common: {
+        notFound: 'Данные не найдены',
     },
 } as const;

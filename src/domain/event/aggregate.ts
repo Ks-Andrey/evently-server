@@ -18,17 +18,19 @@ import {
 } from './exceptions';
 
 export class Event {
-    private readonly _id: UUID;
-    private readonly _organizer: EventOrganizer;
-    private _category: EventCategory;
-    private _title: string;
-    private _description: string;
-    private _date: Date;
-    private _location: string;
-    private _subscriberCount: number;
-    private _commentCount: number;
+    private constructor(
+        private readonly _id: UUID,
+        private readonly _organizer: EventOrganizer,
+        private _category: EventCategory,
+        private _title: string,
+        private _description: string,
+        private _date: Date,
+        private _location: string,
+        private _subscriberCount: number,
+        private _commentCount: number,
+    ) {}
 
-    constructor(
+    static create(
         id: UUID,
         organizer: EventOrganizer,
         category: EventCategory,
@@ -59,15 +61,17 @@ export class Event {
             throw new CommentCountCannotBeNegativeException();
         }
 
-        this._id = id;
-        this._organizer = organizer;
-        this._category = category;
-        this._title = title.trim();
-        this._description = description.trim();
-        this._date = new Date(date);
-        this._location = location.trim();
-        this._subscriberCount = subscriberCount;
-        this._commentCount = commentCount;
+        return new Event(
+            id,
+            organizer,
+            category,
+            title.trim(),
+            description.trim(),
+            new Date(date),
+            location.trim(),
+            subscriberCount,
+            commentCount,
+        );
     }
 
     get id(): UUID {
@@ -111,10 +115,10 @@ export class Event {
     }
 
     updateDetails(title: string, description: string, date: Date, location: string): void {
-        this.ensureValidTitle(title);
-        this.ensureValidDescription(description);
-        this.ensureValidLocation(location);
-        this.ensureValidEventDate(date);
+        Event.ensureValidTitle(title);
+        Event.ensureValidDescription(description);
+        Event.ensureValidLocation(location);
+        Event.ensureValidEventDate(date);
 
         this._title = title.trim();
         this._description = description.trim();
@@ -168,25 +172,25 @@ export class Event {
         return new Date(this._date) < new Date();
     }
 
-    private ensureValidTitle(title: string): void {
+    private static ensureValidTitle(title: string): void {
         if (!title || title.trim().length === 0) {
             throw new EventTitleCannotBeEmptyException();
         }
     }
 
-    private ensureValidDescription(description: string): void {
+    private static ensureValidDescription(description: string): void {
         if (!description || description.trim().length === 0) {
             throw new EventDescriptionCannotBeEmptyException();
         }
     }
 
-    private ensureValidLocation(location: string): void {
+    private static ensureValidLocation(location: string): void {
         if (!location || location.trim().length === 0) {
             throw new EventLocationCannotBeEmptyException();
         }
     }
 
-    private ensureValidEventDate(date: Date): void {
+    private static ensureValidEventDate(date: Date): void {
         if (!date || date < new Date()) {
             throw new InvalidEventDateException();
         }

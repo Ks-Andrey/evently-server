@@ -31,12 +31,6 @@ export class NotificationTypeCannotBeEmptyException extends DomainException {
     }
 }
 
-export class NotificationAlreadySentException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.notification.alreadySent);
-    }
-}
-
 export class NotificationUserIdCannotBeEmptyException extends DomainException {
     constructor() {
         super(domainErrorMessages.notification.userIdCannotBeEmpty);

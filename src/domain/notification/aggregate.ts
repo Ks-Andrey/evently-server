@@ -2,7 +2,6 @@ import { UUID } from 'crypto';
 
 import { NotificationUser } from './entities/notification-user';
 import {
-    NotificationAlreadySentException,
     NotificationMessageCannotBeEmptyException,
     NotificationIdCannotBeEmptyException,
     NotificationEventIdCannotBeEmptyException,
@@ -17,21 +16,21 @@ export enum NotificationType {
 }
 
 export class Notification {
-    private readonly _id: UUID;
-    private readonly _eventId: UUID;
-    private readonly _user: NotificationUser;
-    private readonly _type: NotificationType;
-    private readonly _createdAt: Date;
-    private _message: string;
-    private _isSent: boolean;
+    private constructor(
+        private readonly _id: UUID,
+        private readonly _eventId: UUID,
+        private readonly _user: NotificationUser,
+        private readonly _type: NotificationType,
+        private readonly _createdAt: Date,
+        private _message: string,
+    ) {}
 
-    constructor(
+    static create(
         id: UUID,
         eventId: UUID,
         user: NotificationUser,
         message: string,
         type: NotificationType,
-        isSent: boolean = false,
         createdAt: Date = new Date(),
     ) {
         if (!id) {
@@ -43,18 +42,14 @@ export class Notification {
         if (!user) {
             throw new NotificationUserIsRequiredException();
         }
-        this.ensureValidMessage(message);
+        if (!message || message.trim().length === 0) {
+            throw new NotificationMessageCannotBeEmptyException();
+        }
         if (!type) {
             throw new NotificationTypeCannotBeEmptyException();
         }
 
-        this._id = id;
-        this._eventId = eventId;
-        this._user = user;
-        this._message = message.trim();
-        this._type = type;
-        this._isSent = isSent;
-        this._createdAt = createdAt;
+        return new Notification(id, eventId, user, type, createdAt, message.trim());
     }
 
     get id(): UUID {
@@ -81,56 +76,7 @@ export class Notification {
         return this._type;
     }
 
-    get isSent(): boolean {
-        return this._isSent;
-    }
-
     get createdAt(): Date {
         return this._createdAt;
-    }
-
-    updateMessage(newMessage: string): void {
-        this.ensureValidMessage(newMessage);
-        this._message = newMessage.trim();
-    }
-
-    markAsSent(): void {
-        if (this._isSent) {
-            throw new NotificationAlreadySentException();
-        }
-        this._isSent = true;
-    }
-
-    static createEventUpdatedNotification(
-        id: UUID,
-        eventId: UUID,
-        user: NotificationUser,
-        eventTitle: string,
-    ): Notification {
-        return new Notification(id, eventId, user, eventTitle, NotificationType.EVENT_UPDATED);
-    }
-
-    static createEventReminderNotification(
-        id: UUID,
-        eventId: UUID,
-        user: NotificationUser,
-        eventTitle: string,
-    ): Notification {
-        return new Notification(id, eventId, user, eventTitle, NotificationType.EVENT_REMINDER);
-    }
-
-    static createEventCancelledNotification(
-        id: UUID,
-        eventId: UUID,
-        user: NotificationUser,
-        eventTitle: string,
-    ): Notification {
-        return new Notification(id, eventId, user, eventTitle, NotificationType.EVENT_CANCELLED);
-    }
-
-    private ensureValidMessage(message: string): void {
-        if (!message || message.trim().length === 0) {
-            throw new NotificationMessageCannotBeEmptyException();
-        }
     }
 }

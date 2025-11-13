@@ -1,10 +1,14 @@
+import { UUID } from 'crypto';
+
 import { UserTypeIdCannotBeEmptyException, UserTypeNameCannotBeEmptyException } from '../exceptions';
 
 export class UserType {
-    private readonly _userTypeId: string;
-    private readonly _typeName: string;
+    private constructor(
+        private readonly _userTypeId: UUID,
+        private readonly _typeName: string,
+    ) {}
 
-    constructor(userTypeId: string, typeName: string) {
+    static create(userTypeId: UUID, typeName: string) {
         if (!userTypeId || userTypeId.trim().length === 0) {
             throw new UserTypeIdCannotBeEmptyException();
         }
@@ -12,11 +16,10 @@ export class UserType {
             throw new UserTypeNameCannotBeEmptyException();
         }
 
-        this._userTypeId = userTypeId;
-        this._typeName = typeName.trim();
+        return new UserType(userTypeId, typeName.trim());
     }
 
-    get userTypeId(): string {
+    get userTypeId(): UUID {
         return this._userTypeId;
     }
 

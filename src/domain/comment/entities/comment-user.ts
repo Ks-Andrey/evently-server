@@ -1,10 +1,14 @@
+import { UUID } from 'crypto';
+
 import { CommentUserIdCannotBeEmptyException, CommentUsernameCannotBeEmptyException } from '../exceptions';
 
 export class CommentUser {
-    private readonly _id: string;
-    private readonly _username: string;
+    private constructor(
+        private readonly _id: UUID,
+        private readonly _username: string,
+    ) {}
 
-    constructor(id: string, username: string) {
+    static create(id: UUID, username: string) {
         if (!id || id.trim().length === 0) {
             throw new CommentUserIdCannotBeEmptyException();
         }
@@ -12,8 +16,7 @@ export class CommentUser {
             throw new CommentUsernameCannotBeEmptyException();
         }
 
-        this._id = id;
-        this._username = username.trim();
+        return new CommentUser(id, username.trim());
     }
 
     get id(): string {

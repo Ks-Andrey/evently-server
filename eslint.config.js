@@ -14,6 +14,7 @@ export default [
                 project: './tsconfig.json',
             },
         },
+        ignores: ['node_modules', 'dist', 'build', 'coverage', '.vscode', '.idea', '*.d.ts'],
         plugins: { '@typescript-eslint': tsPlugin, prettier: prettierPlugin, import: importPlugin },
         rules: {
             'prettier/prettier': 'error',

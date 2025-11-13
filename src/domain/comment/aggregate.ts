@@ -11,14 +11,16 @@ import {
 } from './exceptions';
 
 export class Comment {
-    private readonly _id: UUID;
-    private readonly _eventId: UUID;
-    private readonly _author: CommentUser;
-    private readonly _createdAt: Date;
-    private _text: string;
-    private _isDeleted: boolean;
+    private constructor(
+        private readonly _id: UUID,
+        private readonly _eventId: UUID,
+        private readonly _author: CommentUser,
+        private _text: string,
+        private readonly _createdAt: Date,
+        private _isDeleted: boolean,
+    ) {}
 
-    constructor(id: UUID, eventId: UUID, author: CommentUser, text: string, createdAt: Date = new Date()) {
+    static create(id: UUID, eventId: UUID, author: CommentUser, text: string, createdAt: Date = new Date()) {
         if (!id) {
             throw new CommentIdCannotBeEmptyException();
         }
@@ -30,12 +32,7 @@ export class Comment {
         }
         this.ensureValidText(text);
 
-        this._id = id;
-        this._eventId = eventId;
-        this._author = author;
-        this._text = text.trim();
-        this._createdAt = createdAt;
-        this._isDeleted = false;
+        return new Comment(id, eventId, author, text.trim(), createdAt, false);
     }
 
     get id(): UUID {
@@ -70,7 +67,7 @@ export class Comment {
         if (this._isDeleted) {
             throw new CannotEditDeletedCommentException();
         }
-        this.ensureValidText(newText);
+        Comment.ensureValidText(newText);
         this._text = newText.trim();
     }
 
@@ -81,7 +78,7 @@ export class Comment {
         this._isDeleted = true;
     }
 
-    private ensureValidText(text: string): void {
+    private static ensureValidText(text: string): void {
         if (!text || text.trim().length === 0) {
             throw new CommentTextCannotBeEmptyException();
         }
