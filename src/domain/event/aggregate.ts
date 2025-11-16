@@ -82,10 +82,6 @@ export class Event {
         return this._organizer;
     }
 
-    get organizerId(): EventOrganizer {
-        return this._organizer;
-    }
-
     get category(): EventCategory {
         return this._category;
     }
@@ -166,6 +162,10 @@ export class Event {
             throw new CannotDecrementCommentCountBelowZeroException();
         }
         this._commentCount -= 1;
+    }
+
+    hasStarted(referenceDate: Date = new Date()): boolean {
+        return new Date(this._date) <= referenceDate;
     }
 
     private isPast(): boolean {

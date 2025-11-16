@@ -1,12 +1,13 @@
-import { NotFoundError } from '@domain/common';
-import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/user';
+import { EMAIL_VERIFICATION_TTL_HOURS } from '@application/user/constants';
+import { IEmailVerificationDao, IUserTypeDao, NotFoundError } from '@domain/common';
+import { EmailVerification, EmailVerificationPurpose, IUserRepository, User, UserAlreadyExists } from '@domain/user';
 import { Result } from 'true-myth';
 
 import { v4 } from 'uuid';
 
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { IEmailService, safeAsync } from '../../common';
 
 export class CreateUser {
     constructor(
@@ -20,7 +21,9 @@ export class CreateUser {
 export class CreateUserHandler {
     constructor(
         readonly userRepo: IUserRepository,
-        readonly userTypeRepo: IUserTypeRepository,
+        readonly userTypeDao: IUserTypeDao,
+        private readonly emailVerificationDao: IEmailVerificationDao,
+        private readonly emailService: IEmailService,
     ) {}
 
     execute(command: CreateUser): Promise<Result<UUID, Error>> {
@@ -28,7 +31,7 @@ export class CreateUserHandler {
             const exists = await this.userRepo.findByEmail(command.email);
             if (exists) throw new UserAlreadyExists();
 
-            const userType = await this.userTypeRepo.findById(command.userTypeId);
+            const userType = await this.userTypeDao.findById(command.userTypeId);
             if (!userType) throw new NotFoundError();
 
             const userId = v4() as UUID;
@@ -45,6 +48,22 @@ export class CreateUserHandler {
             );
 
             await this.userRepo.save(user);
+
+            const verification = EmailVerification.create(
+                v4() as UUID,
+                user.id,
+                user.email,
+                EmailVerificationPurpose.REGISTRATION,
+                new Date(Date.now() + EMAIL_VERIFICATION_TTL_HOURS * 60 * 60 * 1000),
+            );
+
+            await this.emailVerificationDao.save(verification);
+
+            await this.emailService.sendEmailVerification({
+                to: verification.email,
+                token: verification.id,
+                purpose: verification.purpose,
+            });
 
             return user.id;
         });

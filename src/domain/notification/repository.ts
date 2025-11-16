@@ -1,6 +1,5 @@
+import { IRepository } from '@common/types/repository';
 import { Notification } from '@domain/notification';
-
-import { IRepository } from 'src/common/types/repository';
 
 import { UUID } from 'crypto';
 

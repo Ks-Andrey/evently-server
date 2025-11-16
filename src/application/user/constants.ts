@@ -1,0 +1,1 @@
+export const EMAIL_VERIFICATION_TTL_HOURS = 24;

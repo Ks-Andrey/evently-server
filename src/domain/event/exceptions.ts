@@ -55,15 +55,15 @@ export class UserNotSubscribedException extends DomainException {
     }
 }
 
-export class CategoryNameCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.event.categoryNameCannotBeEmpty);
-    }
-}
-
 export class CategoryIdCannotBeEmptyException extends DomainException {
     constructor() {
         super(domainErrorMessages.event.categoryIdCannotBeEmpty);
+    }
+}
+
+export class CategoryNameCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.event.categoryNameCannotBeEmpty);
     }
 }
 
@@ -106,5 +106,24 @@ export class OrganizerUsernameCannotBeEmptyException extends DomainException {
 export class OrganizerPersonalDataCannotBeEmptyException extends DomainException {
     constructor() {
         super(domainErrorMessages.event.organizerPersonalDataCannotBeEmpty);
+    }
+}
+
+export class EventAlreadyStartedException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.event.eventAlreadyStarted);
+    }
+}
+
+
+export class EventSubscriberIdCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.event.eventSubscriberIdCannotBeEmpty);
+    }
+}
+
+export class EventSubscriberNameCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.event.eventSubscriberNameCannotBeEmpty);
     }
 }

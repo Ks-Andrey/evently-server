@@ -5,14 +5,16 @@ import { CategoryIdCannotBeEmptyException, CategoryNameCannotBeEmptyException } 
 export class EventCategory {
     private constructor(
         private readonly _categoryId: UUID,
-        private _categoryName: string,
+        private readonly _categoryName: string,
     ) {}
 
-    static create(categoryId: UUID, categoryName: string) {
+    static create(categoryId: UUID, categoryName: string): EventCategory {
         if (!categoryId) {
             throw new CategoryIdCannotBeEmptyException();
         }
-        this.ensureValidName(categoryName);
+        if (!categoryName || categoryName.trim().length === 0) {
+            throw new CategoryNameCannotBeEmptyException();
+        }
 
         return new EventCategory(categoryId, categoryName.trim());
     }
@@ -23,16 +25,5 @@ export class EventCategory {
 
     get categoryName(): string {
         return this._categoryName;
-    }
-
-    updateName(newName: string): void {
-        EventCategory.ensureValidName(newName);
-        this._categoryName = newName.trim();
-    }
-
-    private static ensureValidName(name: string): void {
-        if (!name || name.trim().length === 0) {
-            throw new CategoryNameCannotBeEmptyException();
-        }
     }
 }

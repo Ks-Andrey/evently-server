@@ -1,5 +1,5 @@
-import { NotFoundError } from '@domain/common';
-import { IEventRepository } from '@domain/event';
+import { ISubscriptionDao, NotFoundError } from '@domain/common';
+import { EventAlreadyStartedException, IEventRepository, UserAlreadySubscribedException } from '@domain/event';
 import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
 
@@ -18,6 +18,7 @@ export class SubscribeUserToEventHandler {
     constructor(
         readonly userRepo: IUserRepository,
         readonly eventRepo: IEventRepository,
+        readonly subscriptionDao: ISubscriptionDao,
     ) {}
 
     execute(command: SubscribeUserToEvent): Promise<Result<boolean, Error>> {
@@ -28,8 +29,17 @@ export class SubscribeUserToEventHandler {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundError();
 
+            if (event.hasStarted()) throw new EventAlreadyStartedException();
+
+            const alreadySubscribed = await this.subscriptionDao.hasSubscribed(event.id, user.id);
+            if (alreadySubscribed) throw new UserAlreadySubscribedException();
+
             event.incrementSubscriberCount();
             user.incrementSubscriptionCount();
+
+            await this.subscriptionDao.subscribe(event.id, user.id);
+            await this.eventRepo.save(event);
+            await this.userRepo.save(user);
 
             return true;
         });
