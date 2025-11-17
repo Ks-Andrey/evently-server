@@ -10,10 +10,10 @@ export class EventOrganizer {
     private constructor(
         private readonly _id: UUID,
         private readonly _username: string,
-        private readonly _personalData: string,
+        private readonly _personalData?: string,
     ) {}
 
-    static create(id: UUID, username: string, personalData: string) {
+    static create(id: UUID, username: string, personalData?: string) {
         if (!id) {
             throw new OrganizerIdCannotBeEmptyException();
         }
@@ -35,7 +35,7 @@ export class EventOrganizer {
         return this._username;
     }
 
-    get personalData(): string {
+    get personalData(): string | undefined {
         return this._personalData;
     }
 }

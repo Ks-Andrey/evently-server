@@ -1,4 +1,4 @@
-import { domainErrorMessages } from '../../common/config/domain-error-messages';
+import { domainErrorMessages } from '../../common/config/errors';
 import { DomainException } from '../common/exceptions';
 
 export class InvalidEventDateException extends DomainException {
@@ -114,7 +114,6 @@ export class EventAlreadyStartedException extends DomainException {
         super(domainErrorMessages.event.eventAlreadyStarted);
     }
 }
-
 
 export class EventSubscriberIdCannotBeEmptyException extends DomainException {
     constructor() {

@@ -1,4 +1,4 @@
-import { domainErrorMessages } from '@common/config/domain-error-messages';
+import { domainErrorMessages } from '@common/config/errors';
 
 export abstract class DomainException extends Error {
     constructor(message: string) {
@@ -8,13 +8,19 @@ export abstract class DomainException extends Error {
     }
 }
 
-export class NotFoundError extends DomainException {
+export class NotFoundException extends DomainException {
     constructor() {
         super(domainErrorMessages.common.notFound);
     }
 }
 
-export class UnknownError extends DomainException {
+export class NotRightsException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.common.notRights);
+    }
+}
+
+export class UnknownException extends DomainException {
     constructor(errorText: string) {
         super(errorText);
     }

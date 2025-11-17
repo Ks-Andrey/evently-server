@@ -1,4 +1,4 @@
-import { domainErrorMessages } from '../../common/config/domain-error-messages';
+import { domainErrorMessages } from '../../common/config/errors';
 import { DomainException } from '../common/exceptions';
 
 export class UserAlreadyBlockedException extends DomainException {
@@ -106,48 +106,6 @@ export class PendingEmailMatchesCurrentException extends DomainException {
 export class PendingEmailMismatchException extends DomainException {
     constructor() {
         super(domainErrorMessages.user.pendingEmailMismatch);
-    }
-}
-
-export class EmailVerificationIdCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationIdCannotBeEmpty);
-    }
-}
-
-export class EmailVerificationTokenCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationTokenCannotBeEmpty);
-    }
-}
-
-export class EmailVerificationAlreadyUsedException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationAlreadyUsed);
-    }
-}
-
-export class EmailVerificationExpiredException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationExpired);
-    }
-}
-
-export class EmailVerificationNotFoundException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationNotFound);
-    }
-}
-
-export class EmailVerificationEmailCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.emailVerificationEmailCannotBeEmpty);
-    }
-}
-
-export class InvalidCredentialsException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.invalidCredentials);
     }
 }
 

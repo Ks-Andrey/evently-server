@@ -110,16 +110,16 @@ export class Event {
         return this._commentCount;
     }
 
-    updateDetails(title: string, description: string, date: Date, location: string): void {
-        Event.ensureValidTitle(title);
-        Event.ensureValidDescription(description);
-        Event.ensureValidLocation(location);
-        Event.ensureValidEventDate(date);
+    updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
+        title && Event.ensureValidTitle(title);
+        description && Event.ensureValidDescription(description);
+        location && Event.ensureValidLocation(location);
+        date && Event.ensureValidEventDate(date);
 
-        this._title = title.trim();
-        this._description = description.trim();
-        this._date = new Date(date);
-        this._location = location.trim();
+        title && (this._title = title.trim());
+        description && (this._description = description.trim());
+        date && (this._date = new Date(date));
+        location && (this._location = location.trim());
     }
 
     changeCategory(newCategory: EventCategory): void {

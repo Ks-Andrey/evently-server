@@ -78,6 +78,10 @@ export class Comment {
         this._isDeleted = true;
     }
 
+    isCommentator(userId: UUID): boolean {
+        return this._author.id === userId;
+    }
+
     private static ensureValidText(text: string): void {
         if (!text || text.trim().length === 0) {
             throw new CommentTextCannotBeEmptyException();

@@ -18,6 +18,7 @@ import {
     PendingEmailAlreadyRequestedException,
     PendingEmailNotFoundException,
     PendingEmailMismatchException,
+    PasswordNotVerified,
 } from './exceptions';
 
 export class User {
@@ -208,50 +209,9 @@ export class User {
         this._passwordHash = await hash(newPassword);
     }
 
-    async validPassword(password: string): Promise<boolean> {
-        return compare(password, this._passwordHash);
-    }
-
-    isAdmin(): boolean {
-        const typeName = this._userType.typeName.toLowerCase();
-        return typeName === 'administrator' || typeName === 'admin';
-    }
-
-    isOrganizer(): boolean {
-        const typeName = this._userType.typeName.toLowerCase();
-        return typeName === 'organizer' || typeName === 'организатор';
-    }
-
-    isRegularUser(): boolean {
-        const typeName = this._userType.typeName.toLowerCase();
-        return typeName === 'user' || typeName === 'пользователь';
-    }
-
-    canManageUsers(): boolean {
-        return this.isAdmin();
-    }
-
-    canManageEvents(): boolean {
-        return this.isAdmin() || this.isOrganizer();
-    }
-
-    canManageCategories(): boolean {
-        return this.isAdmin();
-    }
-
-    canManageComments(): boolean {
-        return this.isAdmin();
-    }
-
-    canCreateEvents(): boolean {
-        return this.isOrganizer();
-    }
-
-    canEditEvent(eventOrganizerId: string): boolean {
-        return this.isAdmin() || (this.isOrganizer() && this._id === eventOrganizerId);
-    }
-
-    canDeleteEvent(eventOrganizerId: string): boolean {
-        return this.isAdmin() || (this.isOrganizer() && this._id === eventOrganizerId);
+    async validPassword(password: string): Promise<void> {
+        if (!compare(password, this._passwordHash)) {
+            throw new PasswordNotVerified();
+        }
     }
 }
