@@ -1,6 +1,7 @@
 import { EMAIL_VERIFICATION_TTL_HOURS } from '@application/services/user/constants';
+import { Roles } from '@common/config/roles';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { NotFoundException } from '@domain/common';
+import { NotFoundException, NotRightsException } from '@domain/common';
 import { IUserRepository, PendingEmailAlreadyRequestedException } from '@domain/user';
 import { Result } from 'true-myth';
 
@@ -12,6 +13,7 @@ import { IEmailService, safeAsync } from '../../common';
 
 export class EditUserEmail {
     constructor(
+        readonly role: Roles,
         readonly userId: UUID,
         readonly password: string,
         readonly newEmail: string,
@@ -29,6 +31,9 @@ export class EditUserEmailHandler {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new NotFoundException();
+            if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {
+                throw new NotRightsException();
+            }
 
             const normalizedEmail = command.newEmail.trim();
 

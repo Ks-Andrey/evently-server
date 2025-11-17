@@ -129,7 +129,7 @@ export class Event {
         this._category = newCategory;
     }
 
-    canBeEditedBy(organizerId: UUID): boolean {
+    canEditedBy(organizerId: UUID): boolean {
         return this._organizer.id === organizerId;
     }
 

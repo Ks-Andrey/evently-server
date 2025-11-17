@@ -1,9 +1,10 @@
-import { secret } from '@common/config/secret';
-import { UserJwtPayload } from '@common/types/jwtUserPayload';
+import { verifyToken } from '@application/services/auth/utils/token-service';
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+import { InactiveTokenException, InvalidTokenPayloadException } from '../../domain/auth';
+
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const header = req.headers.authorization;
 
     if (!header || !header.startsWith('Bearer ')) {
@@ -13,17 +14,24 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const token = header.split(' ')[1];
 
     try {
-        const payload = jwt.verify(token, secret) as jwt.JwtPayload;
-
-        const user: UserJwtPayload = {
-            userId: payload.userId,
-            roles: payload.roles,
-        };
-
+        const user = await verifyToken(token, 'access');
         req.user = user;
 
         next();
-    } catch (_) {
-        return res.status(401).json({ message: 'Invalid or expired token' });
+    } catch (error) {
+        if (error instanceof TokenExpiredError) {
+            return res.status(401).json({ message: error.message });
+        }
+
+        if (error instanceof InactiveTokenException) {
+            return res.status(401).json({ message: error.message });
+        }
+
+        if (error instanceof JsonWebTokenError || error instanceof InvalidTokenPayloadException) {
+            return res.status(401).json({ message: error.message });
+        }
+
+        console.error('[AuthMiddleware]', error);
+        return res.status(500).json({ message: 'Authorization server error' });
     }
 };

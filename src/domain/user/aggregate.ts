@@ -202,6 +202,10 @@ export class User {
         this._personalData = newUserData;
     }
 
+    canEditedBy(userId: UUID): boolean {
+        return this._id === userId;
+    }
+
     async changePassword(newPassword: string): Promise<void> {
         if (!newPassword || newPassword.trim().length === 0) {
             throw new PasswordHashCannotBeEmptyException();

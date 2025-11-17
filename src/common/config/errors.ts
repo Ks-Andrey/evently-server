@@ -7,6 +7,8 @@ export const domainErrorMessages = {
         emailVerificationNotFound: 'Токен подтверждения email не найден',
         emailVerificationEmailCannotBeEmpty: 'Email в запросе подтверждения не может быть пустым',
         invalidCredentials: 'Неверные учетные данные',
+        invalidTokenPayload: 'Неверные токены авторизации',
+        inactiveToken: 'Срок действия авторизации истек',
     },
     user: {
         alreadyBlocked: 'Пользователь уже заблокирован',

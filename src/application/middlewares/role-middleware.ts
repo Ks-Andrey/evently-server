@@ -8,7 +8,7 @@ export const roleMiddleware = (allowedRoles: string[]) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const hasRole = allowedRoles.some((role) => user.roles.includes(role));
+        const hasRole = allowedRoles.some((role) => user.role === role);
 
         if (!hasRole) {
             return res.status(403).json({ message: 'Forbidden' });

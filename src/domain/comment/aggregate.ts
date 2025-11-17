@@ -3,8 +3,6 @@ import { UUID } from 'crypto';
 import { CommentUser } from './entities/comment-user';
 import {
     CommentTextCannotBeEmptyException,
-    CannotEditDeletedCommentException,
-    CommentAlreadyDeletedException,
     CommentIdCannotBeEmptyException,
     CommentEventIdCannotBeEmptyException,
     CommentAuthorIsRequiredException,
@@ -17,7 +15,6 @@ export class Comment {
         private readonly _author: CommentUser,
         private _text: string,
         private readonly _createdAt: Date,
-        private _isDeleted: boolean,
     ) {}
 
     static create(id: UUID, eventId: UUID, author: CommentUser, text: string, createdAt: Date = new Date()) {
@@ -32,7 +29,7 @@ export class Comment {
         }
         this.ensureValidText(text);
 
-        return new Comment(id, eventId, author, text.trim(), createdAt, false);
+        return new Comment(id, eventId, author, text.trim(), createdAt);
     }
 
     get id(): UUID {
@@ -59,26 +56,12 @@ export class Comment {
         return this._createdAt;
     }
 
-    get isDeleted(): boolean {
-        return this._isDeleted;
-    }
-
     edit(newText: string): void {
-        if (this._isDeleted) {
-            throw new CannotEditDeletedCommentException();
-        }
         Comment.ensureValidText(newText);
         this._text = newText.trim();
     }
 
-    delete(): void {
-        if (this._isDeleted) {
-            throw new CommentAlreadyDeletedException();
-        }
-        this._isDeleted = true;
-    }
-
-    isCommentator(userId: UUID): boolean {
+    canEditedBy(userId: UUID): boolean {
         return this._author.id === userId;
     }
 

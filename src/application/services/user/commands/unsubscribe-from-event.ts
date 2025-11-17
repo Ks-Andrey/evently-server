@@ -36,6 +36,7 @@ export class UnsubscribeUserFromEventHandler {
             user.decrementSubscriptionCount();
 
             await this.subscriptionDao.unsubscribe(event.id, user.id);
+
             await this.eventRepo.save(event);
             await this.userRepo.save(user);
 

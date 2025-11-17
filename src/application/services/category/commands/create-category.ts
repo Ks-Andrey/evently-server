@@ -8,10 +8,7 @@ import { UUID } from 'crypto';
 import { safeAsync } from '../../common';
 
 export class CreateCategory {
-    constructor(
-        readonly userId: UUID,
-        readonly name: string,
-    ) {}
+    constructor(readonly name: string) {}
 }
 
 export class CreateCategoryHandler {

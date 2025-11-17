@@ -44,6 +44,7 @@
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",
         "node-telegram-bot-api": "^0.66.0",
+        "redis": "^5.9.0",
         "true-myth": "^9.2.0",
         "uuid": "^13.0.0"
     }

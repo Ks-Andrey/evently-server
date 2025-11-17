@@ -1,6 +1,8 @@
 import { UUID } from 'crypto';
 
+import { Roles } from '../config/roles';
+
 export interface UserJwtPayload {
     userId: UUID;
-    roles: string[];
+    role: Roles;
 }

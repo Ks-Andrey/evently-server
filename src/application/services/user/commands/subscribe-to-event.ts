@@ -38,6 +38,7 @@ export class SubscribeUserToEventHandler {
             user.incrementSubscriptionCount();
 
             await this.subscriptionDao.subscribe(event.id, user.id);
+
             await this.eventRepo.save(event);
             await this.userRepo.save(user);
 

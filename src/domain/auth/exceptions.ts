@@ -42,3 +42,15 @@ export class InvalidCredentialsException extends DomainException {
         super(domainErrorMessages.auth.invalidCredentials);
     }
 }
+
+export class InvalidTokenPayloadException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.auth.invalidTokenPayload);
+    }
+}
+
+export class InactiveTokenException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.auth.inactiveToken);
+    }
+}

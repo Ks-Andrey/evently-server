@@ -1,4 +1,5 @@
-import { NotFoundException } from '@domain/common';
+import { Roles } from '@common/config/roles';
+import { NotFoundException, NotRightsException } from '@domain/common';
 import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
 
@@ -8,6 +9,7 @@ import { safeAsync } from '../../common';
 
 export class EditUserPassword {
     constructor(
+        readonly role: Roles,
         readonly userId: UUID,
         readonly oldPassword: string,
         readonly newPassword: string,
@@ -21,6 +23,9 @@ export class EditUserPasswordHandler {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new NotFoundException();
+            if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {
+                throw new NotRightsException();
+            }
 
             user.validPassword(command.oldPassword);
             user.changePassword(command.newPassword);
