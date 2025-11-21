@@ -1,4 +1,4 @@
-import { ISubscriptionDao, NotFoundException } from '@domain/common';
+import { NotFoundException } from '@domain/common';
 import { EventAlreadyStartedException, IEventRepository, UserAlreadySubscribedException } from '@domain/event';
 import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
@@ -6,6 +6,7 @@ import { Result } from 'true-myth';
 import { UUID } from 'crypto';
 
 import { safeAsync } from '../../common';
+import { ISubscriptionManager } from '../interfaces/subscription-manager';
 
 export class SubscribeUserToEvent {
     constructor(
@@ -18,7 +19,7 @@ export class SubscribeUserToEventHandler {
     constructor(
         readonly userRepo: IUserRepository,
         readonly eventRepo: IEventRepository,
-        readonly subscriptionDao: ISubscriptionDao,
+        readonly subscriptionManager: ISubscriptionManager,
     ) {}
 
     execute(command: SubscribeUserToEvent): Promise<Result<boolean, Error>> {
@@ -31,13 +32,13 @@ export class SubscribeUserToEventHandler {
 
             if (event.hasStarted()) throw new EventAlreadyStartedException();
 
-            const alreadySubscribed = await this.subscriptionDao.hasSubscribed(event.id, user.id);
+            const alreadySubscribed = await this.subscriptionManager.hasSubscribed(event.id, user.id);
             if (alreadySubscribed) throw new UserAlreadySubscribedException();
 
             event.incrementSubscriberCount();
             user.incrementSubscriptionCount();
 
-            await this.subscriptionDao.subscribe(event.id, user.id);
+            await this.subscriptionManager.subscribe(event.id, user.id);
 
             await this.eventRepo.save(event);
             await this.userRepo.save(user);

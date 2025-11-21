@@ -1,5 +1,5 @@
 import { Comment, CommentUser, ICommentRepository } from '@domain/comment';
-import { NotFoundException } from '@domain/common';
+import { NotFoundException, NotRightsException } from '@domain/common';
 import { IEventRepository } from '@domain/event';
 import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
@@ -29,6 +29,8 @@ export class CreateCommentHandler {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new NotFoundException();
+
+            if (user.isBlocked) throw new NotRightsException();
 
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundException();

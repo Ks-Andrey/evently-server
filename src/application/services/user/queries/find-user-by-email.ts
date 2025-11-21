@@ -1,20 +1,21 @@
 import { NotFoundException } from '@domain/common';
-import { User, IUserRepository } from '@domain/user';
 
 import { Result } from 'true-myth';
 
 import { safeAsync } from '../../common/utils/safe-async';
+import { UserDTO } from '../dto/user-dto';
+import { IUserReader } from '../interfaces/user-reader';
 
 export class FindUserByEmail {
     constructor(readonly email: string) {}
 }
 
-export class FindUserByIdHandler {
-    constructor(readonly userRepo: IUserRepository) {}
+export class FindUserByEmailHandler {
+    constructor(readonly userReader: IUserReader) {}
 
-    async execute(query: FindUserByEmail): Promise<Result<User, Error>> {
+    async execute(query: FindUserByEmail): Promise<Result<UserDTO, Error>> {
         return safeAsync(async () => {
-            const user = await this.userRepo.findByUsername(query.email);
+            const user = await this.userReader.findByUsername(query.email);
             if (!user) throw new NotFoundException();
             return user;
         });

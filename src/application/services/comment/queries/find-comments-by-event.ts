@@ -1,28 +1,21 @@
-import { ICommentRepository, Comment } from '@domain/comment';
-import { NotFoundException } from '@domain/common';
-import { IEventRepository } from '@domain/event';
 import { Result } from 'true-myth';
 
 import { UUID } from 'crypto';
 
 import { safeAsync } from '../../common';
+import { CommentDTO } from '../dto/comment-dto';
+import { ICommentReader } from '../interfaces/comment-reader';
 
 export class FindCommentsByEvent {
     constructor(readonly eventId: UUID) {}
 }
 
 export class FindCommentsByEventHandler {
-    constructor(
-        private readonly commentsRepo: ICommentRepository,
-        private readonly eventRepo: IEventRepository,
-    ) {}
+    constructor(private readonly commentReader: ICommentReader) {}
 
-    execute(command: FindCommentsByEvent): Promise<Result<Comment[], Error>> {
+    execute(query: FindCommentsByEvent): Promise<Result<CommentDTO[], Error>> {
         return safeAsync(async () => {
-            const event = await this.eventRepo.findById(command.eventId);
-            if (!event) throw new NotFoundException();
-
-            return await this.commentsRepo.findCommentsByEventId(event.id);
+            return await this.commentReader.findCommentsByEventId(query.eventId);
         });
     }
 }

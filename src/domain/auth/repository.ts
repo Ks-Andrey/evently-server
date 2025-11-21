@@ -1,7 +1,7 @@
-import { EmailVerification } from './entities/email-verification';
+import { IRepository } from '@common/types/repository';
 
-export interface IEmailVerificationRepository {
+import { EmailVerification } from './aggregate';
+
+export interface IEmailVerificationRepository extends IRepository<EmailVerification> {
     findByEmail(email: string): Promise<EmailVerification | null>;
-    findById(id: string): Promise<EmailVerification | null>;
-    save(emailVerification: EmailVerification): Promise<void>;
 }

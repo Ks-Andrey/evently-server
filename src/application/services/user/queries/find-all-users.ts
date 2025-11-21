@@ -1,15 +1,16 @@
-import { User, IUserRepository } from '@domain/user';
-
 import { Result } from 'true-myth';
 
 import { safeAsync } from '../../common';
 
-export class FindAllUsersHandler {
-    constructor(readonly userRepo: IUserRepository) {}
+import { UserDTO } from '../dto/user-dto';
+import { IUserReader } from '../interfaces/user-reader';
 
-    async execute(): Promise<Result<User[], Error>> {
+export class FindAllUsersHandler {
+    constructor(readonly userReader: IUserReader) {}
+
+    async execute(): Promise<Result<UserDTO[], Error>> {
         return safeAsync(async () => {
-            return await this.userRepo.findAll();
+            return await this.userReader.findAll();
         });
     }
 }

@@ -5,7 +5,7 @@ import {
     EmailVerificationEmailCannotBeEmptyException,
     EmailVerificationExpiredException,
     EmailVerificationIdCannotBeEmptyException,
-} from '../exceptions';
+} from './exceptions';
 
 export enum EmailVerificationPurpose {
     REGISTRATION = 'REGISTRATION',

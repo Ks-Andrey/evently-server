@@ -1,3 +1,3 @@
-export * from './entities/email-verification';
+export * from './aggregate';
 export * from './exceptions';
 export * from './repository';

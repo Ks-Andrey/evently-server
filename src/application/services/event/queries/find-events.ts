@@ -1,10 +1,10 @@
-import { IEventRepository } from '@domain/event';
-import { Event } from '@domain/event';
 import { Result } from 'true-myth';
 
 import { UUID } from 'crypto';
 
 import { safeAsync } from '../../common';
+import { EventDTO } from '../dto/event-dto';
+import { IEventReader } from '../interfaces/event-reader';
 
 export class FindEvents {
     constructor(
@@ -16,11 +16,11 @@ export class FindEvents {
 }
 
 export class FindEventsHandler {
-    constructor(private readonly eventRepo: IEventRepository) {}
+    constructor(private readonly eventReader: IEventReader) {}
 
-    execute(query: FindEvents): Promise<Result<Event[], Error>> {
+    execute(query: FindEvents): Promise<Result<EventDTO[], Error>> {
         return safeAsync(async () => {
-            let events = await this.eventRepo.findAll();
+            let events = await this.eventReader.findAll();
 
             if (query.categoryId) {
                 events = events.filter((event) => event.category.categoryId === query.categoryId);

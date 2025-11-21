@@ -1,8 +1,7 @@
 import { verifyToken } from '@application/services/auth/utils/token-service';
 import { Request, Response, NextFunction } from 'express';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { InactiveTokenException, InvalidTokenPayloadException } from '../../domain/auth';
+import { DomainException } from '../../domain/common';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const header = req.headers.authorization;
@@ -19,15 +18,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         next();
     } catch (error) {
-        if (error instanceof TokenExpiredError) {
-            return res.status(401).json({ message: error.message });
-        }
-
-        if (error instanceof InactiveTokenException) {
-            return res.status(401).json({ message: error.message });
-        }
-
-        if (error instanceof JsonWebTokenError || error instanceof InvalidTokenPayloadException) {
+        if (error instanceof DomainException) {
             return res.status(401).json({ message: error.message });
         }
 

@@ -1,12 +1,14 @@
+import { UUID } from 'crypto';
+
 import { NotificationUserIdCannotBeEmptyException, NotificationUsernameCannotBeEmptyException } from '../exceptions';
 
 export class NotificationUser {
     private constructor(
-        private readonly _id: string,
+        private readonly _id: UUID,
         private readonly _username: string,
     ) {}
 
-    static create(id: string, username: string) {
+    static create(id: UUID, username: string) {
         if (!id || id.trim().length === 0) {
             throw new NotificationUserIdCannotBeEmptyException();
         }

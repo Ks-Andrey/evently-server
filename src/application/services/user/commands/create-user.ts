@@ -1,7 +1,7 @@
 import { EMAIL_VERIFICATION_TTL_HOURS } from '@application/services/user/constants';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { IUserTypeDao, NotFoundException } from '@domain/common';
-import { IUserRepository, User, UserAlreadyExists } from '@domain/user';
+import { NotFoundException } from '@domain/common';
+import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/user';
 import { Result } from 'true-myth';
 
 import { v4 } from 'uuid';
@@ -22,7 +22,7 @@ export class CreateUser {
 export class CreateUserHandler {
     constructor(
         readonly userRepo: IUserRepository,
-        readonly userTypeDao: IUserTypeDao,
+        readonly userTypeRepo: IUserTypeRepository,
         private readonly emailVerificationRepo: IEmailVerificationRepository,
         private readonly emailService: IEmailService,
     ) {}
@@ -32,7 +32,7 @@ export class CreateUserHandler {
             const exists = await this.userRepo.findByEmail(command.email);
             if (exists) throw new UserAlreadyExists();
 
-            const userType = await this.userTypeDao.findById(command.userTypeId);
+            const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new NotFoundException();
 
             const userId = v4() as UUID;

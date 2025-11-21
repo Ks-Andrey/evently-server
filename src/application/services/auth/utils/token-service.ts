@@ -1,13 +1,11 @@
+import { ensureRedisConnection, redisClient } from '@common/config/redis';
+import { secret } from '@common/config/secret';
+import { accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
+import { UserJwtPayload } from '@common/types/jwtUserPayload';
 import { InactiveTokenException, InvalidTokenPayloadException } from '@domain/auth';
-
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { createHash } from 'crypto';
-
-import { ensureRedisConnection, redisClient } from '../../../../common/config/redis';
-import { secret } from '../../../../common/config/secret';
-import { accessTokenTtlSeconds, refreshTokenTtlSeconds } from '../../../../common/config/token';
-import { UserJwtPayload } from '../../../../common/types/jwtUserPayload';
 
 type TokenType = 'access' | 'refresh';
 

@@ -1,28 +1,21 @@
-import { NotFoundException } from '@domain/common';
-import { INotificationRepository, Notification } from '@domain/notification';
-import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
 
 import { UUID } from 'crypto';
 
 import { safeAsync } from '../../common';
+import { NotificationDTO } from '../dto/notification-dto';
+import { INotificationReader } from '../interfaces/notification-reader';
 
 export class FindUserNotifications {
     constructor(readonly userId: UUID) {}
 }
 
 export class FindUserNotificationsHandler {
-    constructor(
-        private readonly notificationRepo: INotificationRepository,
-        private readonly userRepo: IUserRepository,
-    ) {}
+    constructor(private readonly notificationReader: INotificationReader) {}
 
-    execute(query: FindUserNotifications): Promise<Result<Notification[], Error>> {
+    execute(query: FindUserNotifications): Promise<Result<NotificationDTO[], Error>> {
         return safeAsync(async () => {
-            const user = await this.userRepo.findById(query.userId);
-            if (!user) throw new NotFoundException();
-
-            return this.notificationRepo.findByUserId(user.id);
+            return await this.notificationReader.findByUserId(query.userId);
         });
     }
 }

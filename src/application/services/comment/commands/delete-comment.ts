@@ -29,7 +29,6 @@ export class DeleteCommentHandler {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new NotFoundException();
 
-            // Если есть поле блокировки — это правильное место
             if (requestUser.isBlocked) {
                 throw new NotRightsException();
             }

@@ -1,4 +1,4 @@
-import { ISubscriptionDao, NotFoundException } from '@domain/common';
+import { NotFoundException } from '@domain/common';
 import { IEventRepository, UserNotSubscribedException } from '@domain/event';
 import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
@@ -6,6 +6,7 @@ import { Result } from 'true-myth';
 import { UUID } from 'crypto';
 
 import { safeAsync } from '../../common';
+import { ISubscriptionManager } from '../interfaces/subscription-manager';
 
 export class UnsubscribeUserFromEvent {
     constructor(
@@ -18,7 +19,7 @@ export class UnsubscribeUserFromEventHandler {
     constructor(
         readonly userRepo: IUserRepository,
         readonly eventRepo: IEventRepository,
-        readonly subscriptionDao: ISubscriptionDao,
+        readonly subscriptionManager: ISubscriptionManager,
     ) {}
 
     execute(command: UnsubscribeUserFromEvent): Promise<Result<boolean, Error>> {
@@ -29,13 +30,13 @@ export class UnsubscribeUserFromEventHandler {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundException();
 
-            const isSubscribed = await this.subscriptionDao.hasSubscribed(event.id, user.id);
+            const isSubscribed = await this.subscriptionManager.hasSubscribed(event.id, user.id);
             if (!isSubscribed) throw new UserNotSubscribedException();
 
             event.decrementSubscriberCount();
             user.decrementSubscriptionCount();
 
-            await this.subscriptionDao.unsubscribe(event.id, user.id);
+            await this.subscriptionManager.unsubscribe(event.id, user.id);
 
             await this.eventRepo.save(event);
             await this.userRepo.save(user);
