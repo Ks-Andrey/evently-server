@@ -1,11 +1,12 @@
-import { Roles } from '@common/config/roles';
-import { UserJwtPayload } from '@common/types/jwtUserPayload';
-import { InvalidCredentialsException } from '@domain/auth';
-import { IUserRepository } from '@domain/user';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '../../common';
-import { issueTokens } from '../utils/token-service';
+import { safeAsync } from '@application/services/common';
+import { Roles } from '@common/config/roles';
+import { UserJwtPayload } from '@common/types/auth';
+import { InvalidCredentialsException } from '@domain/auth';
+import { IUserRepository } from '@domain/user';
+
+import { ITokenManager } from '../interfaces/token-manager';
 
 export class AuthenticateUser {
     constructor(
@@ -15,7 +16,10 @@ export class AuthenticateUser {
 }
 
 export class AuthenticateUserHandler {
-    constructor(private readonly userRepo: IUserRepository) {}
+    constructor(
+        private readonly userRepo: IUserRepository,
+        private readonly tokenManager: ITokenManager,
+    ) {}
 
     execute(command: AuthenticateUser): Promise<Result<{ accessToken: string; refreshToken: string }, Error>> {
         return safeAsync(async () => {
@@ -29,7 +33,7 @@ export class AuthenticateUserHandler {
                 role: user.userType.typeName as Roles,
             };
 
-            return issueTokens(payload);
+            return this.tokenManager.issueTokens(payload);
         });
     }
 }

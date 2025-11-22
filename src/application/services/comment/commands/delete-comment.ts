@@ -1,13 +1,12 @@
-import { Roles } from '@common/config/roles';
-import { ICommentRepository } from '@domain/comment';
-import { NotFoundException, NotRightsException } from '@domain/common';
-import { IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+
+import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { Roles } from '@common/config/roles';
+import { ICommentRepository } from '@domain/comment';
+import { IEventRepository } from '@domain/event';
+import { IUserRepository } from '@domain/user';
 
 export class DeleteComment {
     constructor(
@@ -30,7 +29,7 @@ export class DeleteCommentHandler {
             if (!requestUser) throw new NotFoundException();
 
             if (requestUser.isBlocked) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             const comment = await this.commentRepo.findById(command.commentId);
@@ -40,7 +39,7 @@ export class DeleteCommentHandler {
             const isOwner = comment.canEditedBy(requestUser.id);
 
             if (!isAdmin && !isOwner) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             const event = await this.eventRepo.findById(comment.eventId);

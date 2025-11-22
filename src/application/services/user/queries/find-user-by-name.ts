@@ -1,10 +1,7 @@
-import { NotFoundException } from '@domain/common';
-
 import { Result } from 'true-myth';
 
-import { safeAsync } from '../../common';
-import { UserDTO } from '../dto/user-dto';
-import { IUserReader } from '../interfaces/user-reader';
+import { UserDTO, IUserReader } from '@application/queries/user';
+import { safeAsync, NotFoundException } from '@application/services/common';
 
 export class FindUserByName {
     constructor(readonly username: string) {}

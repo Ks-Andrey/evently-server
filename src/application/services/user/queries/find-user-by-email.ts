@@ -1,10 +1,7 @@
-import { NotFoundException } from '@domain/common';
-
 import { Result } from 'true-myth';
 
-import { safeAsync } from '../../common/utils/safe-async';
-import { UserDTO } from '../dto/user-dto';
-import { IUserReader } from '../interfaces/user-reader';
+import { IUserReader, UserDTO } from '@application/queries/user';
+import { safeAsync, NotFoundException } from '@application/services/common';
 
 export class FindUserByEmail {
     constructor(readonly email: string) {}

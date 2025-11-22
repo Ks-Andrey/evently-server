@@ -1,10 +1,9 @@
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
-import { CommentDTO } from '../dto/comment-dto';
-import { ICommentReader } from '../interfaces/comment-reader';
+import { Result } from 'true-myth';
+
+import { CommentDTO, ICommentReader } from '@application/queries/comment';
+import { safeAsync } from '@application/services/common';
 
 export class FindCommentsByEvent {
     constructor(readonly eventId: UUID) {}

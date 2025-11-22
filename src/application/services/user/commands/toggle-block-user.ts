@@ -1,10 +1,9 @@
-import { NotFoundException } from '@domain/common';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+
+import { safeAsync, NotFoundException } from '@application/services/common';
+import { IUserRepository } from '@domain/user';
 
 export class ToggleBlockUser {
     constructor(readonly userId: UUID) {}

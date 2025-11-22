@@ -13,8 +13,3 @@ export * from './queries/find-user-by-email';
 export * from './queries/find-user-by-name';
 
 export * from './interfaces/subscription-manager';
-export * from './interfaces/user-reader';
-
-export * from './dto/user-dto';
-export * from './dto/user-type-dto';
-export * from './dto/user-event-dto';

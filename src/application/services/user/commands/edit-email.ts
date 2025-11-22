@@ -1,15 +1,15 @@
-import { EMAIL_VERIFICATION_TTL_HOURS } from '@application/services/user/constants';
-import { Roles } from '@common/config/roles';
-import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { NotFoundException, NotRightsException } from '@domain/common';
-import { IUserRepository, PendingEmailAlreadyRequestedException } from '@domain/user';
-import { Result } from 'true-myth';
-
-import { v4 } from 'uuid';
-
 import { UUID } from 'crypto';
 
-import { IEmailService, safeAsync } from '../../common';
+import { Result } from 'true-myth';
+import { v4 } from 'uuid';
+
+import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { Roles } from '@common/config/roles';
+import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
+import { IUserRepository, PendingEmailAlreadyRequestedException } from '@domain/user';
+
+import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
+import { IEmailManager } from '../interfaces/email-manager';
 
 export class EditUserEmail {
     constructor(
@@ -24,7 +24,7 @@ export class EditUserEmailHandler {
     constructor(
         private readonly userRepo: IUserRepository,
         private readonly emailVerificationRepo: IEmailVerificationRepository,
-        private readonly emailService: IEmailService,
+        private readonly emailService: IEmailManager,
     ) {}
 
     execute(command: EditUserEmail): Promise<Result<UUID, Error>> {
@@ -32,7 +32,7 @@ export class EditUserEmailHandler {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new NotFoundException();
             if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             const normalizedEmail = command.newEmail.trim();

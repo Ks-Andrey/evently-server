@@ -1,4 +1,5 @@
-import { domainErrorMessages } from '../../common/config/errors';
+import { domainErrorMessages } from '@common/config/errors';
+
 import { DomainException } from '../common/exceptions';
 
 export class CommentTextCannotBeEmptyException extends DomainException {

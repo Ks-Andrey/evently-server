@@ -1,6 +1,6 @@
-import { hash, compare } from '@common/utils/password-hash';
-
 import { UUID } from 'crypto';
+
+import { hash, compare } from '@common/utils/password-hash';
 
 import { UserType } from './entities/user-type';
 import {

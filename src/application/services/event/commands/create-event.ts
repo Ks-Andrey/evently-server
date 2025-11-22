@@ -1,14 +1,12 @@
-import { ICategoryRepository } from '@domain/category';
-import { NotFoundException } from '@domain/common';
-import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
-import { v4 } from 'uuid';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+import { v4 } from 'uuid';
+
+import { ICategoryReader } from '@application/queries/category';
+import { IUserReader } from '@application/queries/user';
+import { safeAsync, NotFoundException } from '@application/services/common';
+import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/event';
 
 export class CreateEvent {
     constructor(
@@ -24,16 +22,16 @@ export class CreateEvent {
 export class CreateEventHandler {
     constructor(
         private readonly eventRepo: IEventRepository,
-        private readonly categoryRepo: ICategoryRepository,
-        private readonly userRepo: IUserRepository,
+        private readonly categoryReader: ICategoryReader,
+        private readonly userReader: IUserReader,
     ) {}
 
     execute(command: CreateEvent): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
-            const actor = await this.userRepo.findById(command.userId);
+            const actor = await this.userReader.findById(command.userId);
             if (!actor) throw new NotFoundException();
 
-            const category = await this.categoryRepo.findById(command.categoryId);
+            const category = await this.categoryReader.findById(command.categoryId);
             if (!category) throw new NotFoundException();
 
             const organizer = EventOrganizer.create(actor.id, actor.username, actor.personalData);

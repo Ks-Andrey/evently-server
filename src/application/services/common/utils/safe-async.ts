@@ -1,5 +1,6 @@
-import { UnknownException } from '@domain/common';
 import { Result } from 'true-myth';
+
+import { UnknownException } from '../exceptions';
 
 export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, Error>> {
     try {

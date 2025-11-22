@@ -1,14 +1,14 @@
-import { EMAIL_VERIFICATION_TTL_HOURS } from '@application/services/user/constants';
-import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { NotFoundException } from '@domain/common';
-import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/user';
-import { Result } from 'true-myth';
-
-import { v4 } from 'uuid';
-
 import { UUID } from 'crypto';
 
-import { IEmailService, safeAsync } from '../../common';
+import { Result } from 'true-myth';
+import { v4 } from 'uuid';
+
+import { safeAsync, NotFoundException } from '@application/services/common';
+import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
+import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/user';
+
+import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
+import { IEmailManager } from '../interfaces/email-manager';
 
 export class CreateUser {
     constructor(
@@ -24,7 +24,7 @@ export class CreateUserHandler {
         readonly userRepo: IUserRepository,
         readonly userTypeRepo: IUserTypeRepository,
         private readonly emailVerificationRepo: IEmailVerificationRepository,
-        private readonly emailService: IEmailService,
+        private readonly emailService: IEmailManager,
     ) {}
 
     execute(command: CreateUser): Promise<Result<UUID, Error>> {

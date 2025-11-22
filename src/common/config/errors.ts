@@ -80,6 +80,6 @@ export const domainErrorMessages = {
     },
     common: {
         notFound: 'Данные не найдены',
-        notRights: 'У вас недостаточно прав для данного действия',
+        accessDenied: 'У вас недостаточно прав для данного действия',
     },
 } as const;

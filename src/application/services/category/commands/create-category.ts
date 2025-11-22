@@ -1,12 +1,10 @@
-import { CategoryAlreadyExistsException, Category, ICategoryRepository } from '@domain/category';
+import { UUID } from 'crypto';
 import { Result } from 'true-myth';
-
 import { v4 } from 'uuid';
 
-import { UUID } from 'crypto';
-
-import { safeAsync } from '../../common';
-import { ICategoryReader } from '../interfaces/category-reader';
+import { ICategoryReader } from '@application/queries/category';
+import { safeAsync } from '@application/services/common';
+import { CategoryAlreadyExistsException, Category, ICategoryRepository } from '@domain/category';
 
 export class CreateCategory {
     constructor(readonly name: string) {}

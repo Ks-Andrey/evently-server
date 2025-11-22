@@ -1,10 +1,9 @@
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
-import { NotificationDTO } from '../dto/notification-dto';
-import { INotificationReader } from '../interfaces/notification-reader';
+import { Result } from 'true-myth';
+
+import { NotificationDTO, INotificationReader } from '@application/queries/notification';
+import { safeAsync } from '@application/services/common';
 
 export class FindUserNotifications {
     constructor(readonly userId: UUID) {}

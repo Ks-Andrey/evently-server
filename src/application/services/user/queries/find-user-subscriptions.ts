@@ -1,10 +1,9 @@
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
-import { UserEventDTO } from '../dto/user-event-dto';
-import { IUserReader } from '../interfaces/user-reader';
+import { Result } from 'true-myth';
+
+import { IUserReader, UserEventDTO } from '@application/queries/user';
+import { safeAsync } from '@application/services/common';
 
 export class FindUserSubscriptions {
     constructor(readonly userId: UUID) {}

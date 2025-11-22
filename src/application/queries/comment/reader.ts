@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { CommentDTO } from '../dto/comment-dto';
+import { CommentDTO } from './dto/comment-dto';
 
 export interface ICommentReader {
     findAll(): Promise<CommentDTO[]>;

@@ -2,7 +2,6 @@ import { UUID } from 'crypto';
 
 import { EventCategory } from './entities/event-category';
 import { EventOrganizer } from './entities/event-organizer';
-
 import {
     InvalidEventDateException,
     EventIdCannotBeEmptyException,

@@ -1,13 +1,11 @@
-import { ISubscriptionDao, NotFoundException } from '@domain/common';
-import { IEventRepository } from '@domain/event';
-import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/notification';
-import { Result } from 'true-myth';
-
-import { v4 } from 'uuid';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+import { v4 } from 'uuid';
+
+import { IEventReader } from '@application/queries/event';
+import { safeAsync, NotFoundException } from '@application/services/common';
+import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/notification';
 
 export class NotifyEventSubscribers {
     constructor(
@@ -18,17 +16,16 @@ export class NotifyEventSubscribers {
 
 export class NotifyEventSubscribersHandler {
     constructor(
-        private readonly eventRepo: IEventRepository,
+        private readonly eventReader: IEventReader,
         private readonly notificationRepo: INotificationRepository,
-        private readonly subscriptionDao: ISubscriptionDao,
     ) {}
 
     execute(command: NotifyEventSubscribers): Promise<Result<boolean, Error>> {
         return safeAsync(async () => {
-            const event = await this.eventRepo.findById(command.eventId);
+            const event = await this.eventReader.findById(command.eventId);
             if (!event) throw new NotFoundException();
 
-            const subscribers = await this.subscriptionDao.findSubscribersByEventId(event.id);
+            const subscribers = await this.eventReader.findEventUsers(event.id);
 
             const notifications = subscribers.map((subscriber) =>
                 Notification.create(

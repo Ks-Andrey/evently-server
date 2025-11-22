@@ -1,14 +1,12 @@
-import { Comment, CommentUser, ICommentRepository } from '@domain/comment';
-import { NotFoundException, NotRightsException } from '@domain/common';
-import { IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
-import { v4 } from 'uuid';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+import { v4 } from 'uuid';
+
+import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { Comment, CommentUser, ICommentRepository } from '@domain/comment';
+import { IEventRepository } from '@domain/event';
+import { IUserRepository } from '@domain/user';
 
 export class CreateComment {
     constructor(
@@ -30,7 +28,7 @@ export class CreateCommentHandler {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new NotFoundException();
 
-            if (user.isBlocked) throw new NotRightsException();
+            if (user.isBlocked) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundException();

@@ -1,12 +1,11 @@
-import { Roles } from '@common/config/roles';
-import { ICommentRepository } from '@domain/comment';
-import { NotFoundException, NotRightsException } from '@domain/common';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+
+import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { Roles } from '@common/config/roles';
+import { ICommentRepository } from '@domain/comment';
+import { IUserRepository } from '@domain/user';
 
 export class EditComment {
     constructor(
@@ -29,7 +28,7 @@ export class EditCommentHandler {
             if (!requestUser) throw new NotFoundException();
 
             if (requestUser.isBlocked) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             const comment = await this.commentRepo.findById(command.commentId);
@@ -39,7 +38,7 @@ export class EditCommentHandler {
             const isOwner = comment.canEditedBy(requestUser.id);
 
             if (!isAdmin && !isOwner) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             comment.edit(command.newText);

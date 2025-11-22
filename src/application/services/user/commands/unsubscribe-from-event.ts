@@ -1,11 +1,11 @@
-import { NotFoundException } from '@domain/common';
-import { IEventRepository, UserNotSubscribedException } from '@domain/event';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+
+import { safeAsync, NotFoundException } from '@application/services/common';
+import { IEventRepository, UserNotSubscribedException } from '@domain/event';
+import { IUserRepository } from '@domain/user';
+
 import { ISubscriptionManager } from '../interfaces/subscription-manager';
 
 export class UnsubscribeUserFromEvent {

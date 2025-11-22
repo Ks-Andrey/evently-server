@@ -1,8 +1,7 @@
 import { Result } from 'true-myth';
 
-import { safeAsync } from '../../common';
-import { CommentDTO } from '../dto/comment-dto';
-import { ICommentReader } from '../interfaces/comment-reader';
+import { CommentDTO, ICommentReader } from '@application/queries/comment';
+import { safeAsync } from '@application/services/common';
 
 export class FindAllCommentsHandler {
     constructor(private readonly commentReader: ICommentReader) {}

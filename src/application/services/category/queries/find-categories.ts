@@ -1,8 +1,7 @@
 import { Result } from 'true-myth';
 
-import { safeAsync } from '../../common';
-import { CategoryDTO } from '../dto/category-dto';
-import { ICategoryReader } from '../interfaces/category-reader';
+import { CategoryDTO, ICategoryReader } from '@application/queries/category';
+import { safeAsync } from '@application/services/common';
 
 export class FindCategories {}
 

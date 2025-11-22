@@ -1,13 +1,12 @@
-import { Roles } from '@common/config/roles';
-import { ICategoryRepository } from '@domain/category';
-import { NotFoundException, NotRightsException } from '@domain/common';
-import { EventCategory, IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
-import { Result } from 'true-myth';
-
 import { UUID } from 'crypto';
 
-import { safeAsync } from '../../common';
+import { Result } from 'true-myth';
+
+import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { Roles } from '@common/config/roles';
+import { ICategoryRepository } from '@domain/category';
+import { EventCategory, IEventRepository } from '@domain/event';
+import { IUserRepository } from '@domain/user';
 
 export class EditEventDetails {
     constructor(
@@ -41,7 +40,7 @@ export class EditEventDetailsHandler {
             const isOwner = event.canEditedBy(requestUser.id);
 
             if (!isAdmin && !isOwner) {
-                throw new NotRightsException();
+                throw new AccessDeniedException();
             }
 
             event.updateDetails(command.title, command.description, command.date, command.location);

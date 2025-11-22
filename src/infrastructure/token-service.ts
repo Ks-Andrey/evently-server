@@ -1,13 +1,12 @@
+import { createHash } from 'crypto';
+
+import jwt, { JwtPayload } from 'jsonwebtoken';
+
 import { ensureRedisConnection, redisClient } from '@common/config/redis';
 import { secret } from '@common/config/secret';
 import { accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
-import { UserJwtPayload } from '@common/types/jwtUserPayload';
+import { TokenType, UserJwtPayload } from '@common/types/auth';
 import { InactiveTokenException, InvalidTokenPayloadException } from '@domain/auth';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-
-import { createHash } from 'crypto';
-
-type TokenType = 'access' | 'refresh';
 
 const composeKey = (token: string, type: TokenType): string => {
     const hashed = createHash('sha256').update(token).digest('hex');

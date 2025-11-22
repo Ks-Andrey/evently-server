@@ -15,7 +15,19 @@ export default [
             },
         },
         ignores: ['node_modules', 'dist', 'build', 'coverage', '.vscode', '.idea', '*.d.ts'],
-        plugins: { '@typescript-eslint': tsPlugin, prettier: prettierPlugin, import: importPlugin },
+        plugins: {
+            '@typescript-eslint': tsPlugin,
+            prettier: prettierPlugin,
+            import: importPlugin,
+        },
+        settings: {
+            'import/resolver': {
+                typescript: {
+                    alwaysTryTypes: true,
+                    project: './tsconfig.json',
+                },
+            },
+        },
         rules: {
             'prettier/prettier': 'error',
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
@@ -23,7 +35,15 @@ export default [
             'import/order': [
                 'error',
                 {
-                    groups: ['external', 'builtin', 'index', 'sibling', 'parent', 'internal', 'type'],
+                    groups: [['builtin', 'external'], 'internal', ['parent', 'sibling', 'index'], 'type'],
+                    pathGroups: [
+                        {
+                            pattern: '@**',
+                            group: 'internal',
+                            position: 'after',
+                        },
+                    ],
+                    pathGroupsExcludedImportTypes: ['builtin', 'external'],
                     alphabetize: { order: 'asc', caseInsensitive: true },
                     'newlines-between': 'always-and-inside-groups',
                 },
