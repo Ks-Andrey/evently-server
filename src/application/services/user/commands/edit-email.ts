@@ -2,13 +2,13 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException, ConflictException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
 import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
+import { UserNotFoundException, EmailVerificationForUserAlreadyRequestedException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';
 
 export class EditUserEmail {
@@ -30,7 +30,7 @@ export class EditUserEmailHandler {
     execute(command: EditUserEmail): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
-            if (!user) throw new NotFoundException();
+            if (!user) throw new UserNotFoundException();
             if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {
                 throw new AccessDeniedException();
             }
@@ -38,7 +38,7 @@ export class EditUserEmailHandler {
             const normalizedEmail = command.newEmail.trim();
 
             const existingVerification = await this.emailVerificationRepo.findByEmail(normalizedEmail);
-            if (existingVerification?.isActive()) throw new ConflictException();
+            if (existingVerification?.isActive()) throw new EmailVerificationForUserAlreadyRequestedException();
 
             await user.ensureValidPassword(command.password);
             user.requestEmailChange(normalizedEmail);

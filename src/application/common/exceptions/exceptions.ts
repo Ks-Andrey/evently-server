@@ -1,4 +1,4 @@
-import { domainErrorMessages } from '@common/config/errors';
+import { errorMessages } from '@common/config/errors';
 
 import { ApplicationErrorCodes } from './error-codes';
 
@@ -14,35 +14,17 @@ export class ApplicationException extends Error {
     }
 }
 
-export class NotFoundException extends ApplicationException {
-    constructor(context?: Record<string, unknown>) {
-        super(domainErrorMessages.common.notFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
+export class UnknownException extends ApplicationException {
+    constructor(errorText?: string, context?: Record<string, unknown>) {
+        const message = errorText
+            ? `${errorMessages.domain.common.unknownError}: ${errorText}`
+            : errorMessages.domain.common.unknownError;
+        super(message, ApplicationErrorCodes.UNKNOWN_ERROR, context);
     }
 }
 
 export class AccessDeniedException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super(domainErrorMessages.common.accessDenied, ApplicationErrorCodes.ACCESS_DENIED, context);
-    }
-}
-
-export class UnknownException extends ApplicationException {
-    constructor(errorText?: string, context?: Record<string, unknown>) {
-        const message = errorText
-            ? `${domainErrorMessages.common.unknownError}: ${errorText}`
-            : domainErrorMessages.common.unknownError;
-        super(message, ApplicationErrorCodes.UNKNOWN_ERROR, context);
-    }
-}
-
-export class ValidationException extends ApplicationException {
-    constructor(message?: string, context?: Record<string, unknown>) {
-        super(message || domainErrorMessages.common.validationError, ApplicationErrorCodes.VALIDATION_ERROR, context);
-    }
-}
-
-export class ConflictException extends ApplicationException {
-    constructor(message?: string, context?: Record<string, unknown>) {
-        super(message || domainErrorMessages.common.conflict, ApplicationErrorCodes.RESOURCE_ALREADY_EXISTS, context);
+        super(errorMessages.domain.common.accessDenied, ApplicationErrorCodes.ACCESS_DENIED, context);
     }
 }

@@ -2,9 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions/exceptions';
 import { IUserReader } from '@application/readers/user';
-import { UserTypeInUseException, IUserTypeRepository } from '@domain/models/user-type';
+import { IUserTypeRepository } from '@domain/models/user-type';
+
+import { UserTypeNotFoundException, UserTypeInUseException } from '../exceptions';
 
 export class DeleteUserType {
     constructor(readonly userTypeId: UUID) {}
@@ -19,7 +20,7 @@ export class DeleteUserTypeHandler {
     execute(command: DeleteUserType): Promise<Result<boolean, Error>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
-            if (!userType) throw new NotFoundException();
+            if (!userType) throw new UserTypeNotFoundException();
 
             const allUsers = await this.userReader.findAll();
             const usersWithThisType = allUsers.filter((user) => user.userType.userTypeId === command.userTypeId);

@@ -9,10 +9,6 @@ export const redisClient: RedisClientType = createClient({
     url: redisUrl,
 });
 
-redisClient.on('error', (error) => {
-    console.error('[Redis] connection error', error);
-});
-
 let connectPromise: Promise<RedisClientType> | null = null;
 
 export const ensureRedisConnection = async (): Promise<void> => {

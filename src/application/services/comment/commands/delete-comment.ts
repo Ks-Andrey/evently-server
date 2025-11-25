@@ -1,12 +1,17 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { ICommentRepository } from '@domain/models/comment';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
+
+import {
+    CommentNotFoundException,
+    UserForCommentNotFoundException,
+    EventForCommentNotFoundException,
+} from '../exceptions';
 
 export class DeleteComment {
     constructor(
@@ -26,12 +31,12 @@ export class DeleteCommentHandler {
     execute(command: DeleteComment): Promise<Result<boolean, Error>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
-            if (!requestUser) throw new NotFoundException();
+            if (!requestUser) throw new UserForCommentNotFoundException();
 
             if (requestUser.isBlocked) throw new AccessDeniedException();
 
             const comment = await this.commentRepo.findById(command.commentId);
-            if (!comment) throw new NotFoundException();
+            if (!comment) throw new CommentNotFoundException();
 
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = comment.canEditedBy(requestUser.id);
@@ -39,7 +44,7 @@ export class DeleteCommentHandler {
             if (!isAdmin && !isOwner) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(comment.eventId);
-            if (!event) throw new NotFoundException();
+            if (!event) throw new EventForCommentNotFoundException();
 
             event.decrementCommentCount();
 

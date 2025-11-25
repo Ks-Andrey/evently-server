@@ -1,3 +1,5 @@
+export * from './exceptions';
+
 export * from './commands/create-user';
 export * from './commands/edit-user';
 export * from './commands/edit-email';

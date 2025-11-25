@@ -2,9 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { ConflictException, NotFoundException } from '@application/common/exceptions/exceptions';
 import { IEventReader } from '@application/readers/event';
 import { ICategoryRepository } from '@domain/models/category';
+
+import { CategoryInUseException, CategoryNotFoundException } from '../exceptions';
 
 export class DeleteCategory {
     constructor(readonly categoryId: UUID) {}
@@ -19,10 +20,10 @@ export class DeleteCategoryHandler {
     execute(command: DeleteCategory): Promise<Result<boolean, Error>> {
         return safeAsync(async () => {
             const category = await this.categoryRepo.findById(command.categoryId);
-            if (!category) throw new NotFoundException();
+            if (!category) throw new CategoryNotFoundException();
 
             const eventsInCategory = await this.eventReader.findByCategory(category.categoryId);
-            if (eventsInCategory.length > 0) throw new ConflictException();
+            if (eventsInCategory.length > 0) throw new CategoryInUseException();
 
             await this.categoryRepo.delete(category.categoryId);
 

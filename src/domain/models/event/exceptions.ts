@@ -1,123 +1,123 @@
-import { domainErrorMessages } from '@common/config/errors';
+import { errorMessages } from '@common/config/errors';
 
 import { DomainException } from '../../common/exceptions';
 
 export class InvalidEventDateException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.invalidDate);
+        super(errorMessages.domain.event.invalidDate);
     }
 }
 
 export class EventIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.idCannotBeEmpty);
+        super(errorMessages.domain.event.idCannotBeEmpty);
     }
 }
 
 export class EventOrganizerIsRequiredException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.organizerIsRequired);
+        super(errorMessages.domain.event.organizerIsRequired);
     }
 }
 
 export class EventCategoryIsRequiredException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.categoryIsRequired);
+        super(errorMessages.domain.event.categoryIsRequired);
     }
 }
 
 export class EventTitleCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.titleCannotBeEmpty);
+        super(errorMessages.domain.event.titleCannotBeEmpty);
     }
 }
 
 export class EventDescriptionCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.descriptionCannotBeEmpty);
+        super(errorMessages.domain.event.descriptionCannotBeEmpty);
     }
 }
 
 export class EventLocationCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.locationCannotBeEmpty);
+        super(errorMessages.domain.event.locationCannotBeEmpty);
     }
 }
 
 export class UserAlreadySubscribedException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.userAlreadySubscribed);
+        super(errorMessages.domain.event.userAlreadySubscribed);
     }
 }
 
 export class CategoryIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.categoryIdCannotBeEmpty);
+        super(errorMessages.domain.event.categoryIdCannotBeEmpty);
     }
 }
 
 export class CategoryNameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.categoryNameCannotBeEmpty);
+        super(errorMessages.domain.event.categoryNameCannotBeEmpty);
     }
 }
 
 export class SubscriberCountCannotBeNegativeException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.subscriberCountCannotBeNegative);
+        super(errorMessages.domain.event.subscriberCountCannotBeNegative);
     }
 }
 
 export class CommentCountCannotBeNegativeException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.commentCountCannotBeNegative);
+        super(errorMessages.domain.event.commentCountCannotBeNegative);
     }
 }
 
 export class CannotDecrementSubscriberCountBelowZeroException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.cannotDecrementSubscriberBelowZero);
+        super(errorMessages.domain.event.cannotDecrementSubscriberBelowZero);
     }
 }
 
 export class CannotDecrementCommentCountBelowZeroException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.cannotDecrementCommentBelowZero);
+        super(errorMessages.domain.event.cannotDecrementCommentBelowZero);
     }
 }
 
 export class OrganizerIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.organizerIdCannotBeEmpty);
+        super(errorMessages.domain.event.organizerIdCannotBeEmpty);
     }
 }
 
 export class OrganizerUsernameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.organizerUsernameCannotBeEmpty);
+        super(errorMessages.domain.event.organizerUsernameCannotBeEmpty);
     }
 }
 
 export class OrganizerPersonalDataCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.organizerPersonalDataCannotBeEmpty);
+        super(errorMessages.domain.event.organizerPersonalDataCannotBeEmpty);
     }
 }
 
 export class EventAlreadyStartedException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.eventAlreadyStarted);
+        super(errorMessages.domain.event.eventAlreadyStarted);
     }
 }
 
 export class EventSubscriberIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.eventSubscriberIdCannotBeEmpty);
+        super(errorMessages.domain.event.eventSubscriberIdCannotBeEmpty);
     }
 }
 
 export class EventSubscriberNameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(domainErrorMessages.event.eventSubscriberNameCannotBeEmpty);
+        super(errorMessages.domain.event.eventSubscriberNameCannotBeEmpty);
     }
 }

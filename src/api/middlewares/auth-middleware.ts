@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
+import { ApplicationException } from '@application/common';
 import { ITokenManager } from '@application/services/auth';
-import { DomainException } from '@domain/common';
 
 export const authMiddleware = (tokenManager: ITokenManager) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -18,12 +18,11 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
             req.user = user;
             next();
         } catch (error) {
-            if (error instanceof DomainException) {
+            if (error instanceof ApplicationException) {
                 return res.status(401).json({ message: error.message });
             }
 
-            console.error('[AuthMiddleware]', error);
-            return res.status(500).json({ message: 'Authorization server error' });
+            return res.status(500);
         }
     };
 };

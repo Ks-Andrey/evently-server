@@ -5,7 +5,9 @@ import { v4 } from 'uuid';
 import { safeAsync } from '@application/common';
 import { IUserTypeReader } from '@application/readers/user-type';
 import { Roles } from '@common/config/roles';
-import { UserType, UserTypeAlreadyExistsException, IUserTypeRepository } from '@domain/models/user-type';
+import { UserType, IUserTypeRepository } from '@domain/models/user-type';
+
+import { UserTypeAlreadyExistsException } from '../exceptions';
 
 export class CreateUserType {
     constructor(

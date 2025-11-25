@@ -2,9 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions/exceptions';
 import { Roles } from '@common/config/roles';
 import { IUserTypeRepository } from '@domain/models/user-type';
+
+import { UserTypeNotFoundException } from '../exceptions';
 
 export class EditUserType {
     constructor(
@@ -20,7 +21,7 @@ export class EditUserTypeHandler {
     execute(command: EditUserType): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
-            if (!userType) throw new NotFoundException();
+            if (!userType) throw new UserTypeNotFoundException();
 
             if (command.typeName !== undefined) {
                 userType.updateName(command.typeName);

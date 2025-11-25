@@ -1,12 +1,17 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { ICategoryRepository } from '@domain/models/category';
 import { EventCategory, IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
+
+import {
+    EventNotFoundException,
+    UserForEventNotFoundException,
+    CategoryForEventNotFoundException,
+} from '../exceptions';
 
 export class EditEventDetails {
     constructor(
@@ -31,10 +36,10 @@ export class EditEventDetailsHandler {
     execute(command: EditEventDetails): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
-            if (!requestUser) throw new NotFoundException();
+            if (!requestUser) throw new UserForEventNotFoundException();
 
             const event = await this.eventRepo.findById(command.eventId);
-            if (!event) throw new NotFoundException();
+            if (!event) throw new EventNotFoundException();
 
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = event.canEditedBy(requestUser.id);
@@ -45,7 +50,7 @@ export class EditEventDetailsHandler {
 
             if (command.categoryId) {
                 const category = await this.categoryRepo.findById(command.categoryId);
-                if (!category) throw new NotFoundException();
+                if (!category) throw new CategoryForEventNotFoundException();
 
                 const categoryEntity = EventCategory.create(category.categoryId, category.categoryName);
                 event.changeCategory(categoryEntity);

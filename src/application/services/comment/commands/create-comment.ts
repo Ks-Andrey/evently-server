@@ -2,11 +2,12 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
-import { AccessDeniedException, NotFoundException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Comment, CommentUser, ICommentRepository } from '@domain/models/comment';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
+
+import { UserForCommentNotFoundException, EventForCommentNotFoundException } from '../exceptions';
 
 export class CreateComment {
     constructor(
@@ -26,12 +27,12 @@ export class CreateCommentHandler {
     execute(command: CreateComment): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
-            if (!user) throw new NotFoundException();
+            if (!user) throw new UserForCommentNotFoundException();
 
             if (user.isBlocked) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(command.eventId);
-            if (!event) throw new NotFoundException();
+            if (!event) throw new EventForCommentNotFoundException();
 
             const commentUser = CommentUser.create(user.id, user.username);
             const comment = Comment.create(v4() as UUID, event.id, commentUser, command.text);

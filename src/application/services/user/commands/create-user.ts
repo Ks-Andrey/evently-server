@@ -3,12 +3,12 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync } from '@application/common';
-import { ConflictException, NotFoundException } from '@application/common/exceptions/exceptions';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { IUserTypeRepository } from '@domain/models/user-type';
 
 import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
+import { UserAlreadyExistsException, UserTypeNotFoundException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';
 
 export class CreateUser {
@@ -31,10 +31,10 @@ export class CreateUserHandler {
     execute(command: CreateUser): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const exists = await this.userRepo.findByEmail(command.email);
-            if (exists) throw new ConflictException();
+            if (exists) throw new UserAlreadyExistsException();
 
             const userType = await this.userTypeRepo.findById(command.userTypeId);
-            if (!userType) throw new NotFoundException();
+            if (!userType) throw new UserTypeNotFoundException();
 
             const userId = v4() as UUID;
 

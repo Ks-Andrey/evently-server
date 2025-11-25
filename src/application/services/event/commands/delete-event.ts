@@ -1,11 +1,12 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
+
+import { EventNotFoundException, UserForEventNotFoundException } from '../exceptions';
 
 export class DeleteEvent {
     constructor(
@@ -24,12 +25,12 @@ export class DeleteEventHandler {
     execute(command: DeleteEvent): Promise<Result<boolean, Error>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
-            if (!requestUser) throw new NotFoundException();
+            if (!requestUser) throw new UserForEventNotFoundException();
 
             if (requestUser.isBlocked) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(command.eventId);
-            if (!event) throw new NotFoundException();
+            if (!event) throw new EventNotFoundException();
 
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = event.canEditedBy(requestUser.id);

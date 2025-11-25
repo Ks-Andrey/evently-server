@@ -1,10 +1,11 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
+import { safeAsync, AccessDeniedException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { IUserRepository } from '@domain/models/user';
+
+import { UserNotFoundException } from '../exceptions';
 
 export class DeleteUser {
     constructor(
@@ -19,7 +20,7 @@ export class DeleteUserHandler {
     execute(command: DeleteUser): Promise<Result<UUID, Error>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
-            if (!user) throw new NotFoundException();
+            if (!user) throw new UserNotFoundException();
             if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {
                 throw new AccessDeniedException();
             }

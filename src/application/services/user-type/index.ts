@@ -1,3 +1,5 @@
+export * from './exceptions';
+
 export * from './commands/create-user-type';
 export * from './commands/edit-user-type';
 export * from './commands/delete-user-type';
