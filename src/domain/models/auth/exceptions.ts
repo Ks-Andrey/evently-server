@@ -1,10 +1,16 @@
 import { domainErrorMessages } from '@common/config/errors';
 
-import { DomainException } from '../common/exceptions';
+import { DomainException } from '../../common/exceptions';
 
 export class EmailVerificationIdCannotBeEmptyException extends DomainException {
     constructor() {
         super(domainErrorMessages.auth.emailVerificationIdCannotBeEmpty);
+    }
+}
+
+export class EmailVerificationUserIdCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(domainErrorMessages.auth.emailVerificationUserIdCannotBeEmpty);
     }
 }
 

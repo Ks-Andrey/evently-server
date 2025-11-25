@@ -1,10 +1,10 @@
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/services/common';
+import { safeAsync } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { UserJwtPayload } from '@common/types/auth';
-import { InvalidCredentialsException } from '@domain/auth';
-import { IUserRepository } from '@domain/user';
+import { InvalidCredentialsException } from '@domain/models/auth';
+import { IUserRepository } from '@domain/models/user';
 
 import { ITokenManager } from '../interfaces/token-manager';
 
@@ -26,7 +26,7 @@ export class AuthenticateUserHandler {
             const user = await this.userRepo.findByEmail(command.email.trim().toLowerCase());
             if (!user) throw new InvalidCredentialsException();
 
-            await user.validPassword(command.password);
+            await user.ensureValidPassword(command.password);
 
             const payload: UserJwtPayload = {
                 userId: user.id,

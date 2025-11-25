@@ -1,7 +1,8 @@
 import { Result } from 'true-myth';
 
-import { UserDTO, IUserReader } from '@application/queries/user';
-import { safeAsync, NotFoundException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { UserDTO, IUserReader } from '@application/readers/user';
 
 export class FindUserByName {
     constructor(readonly username: string) {}

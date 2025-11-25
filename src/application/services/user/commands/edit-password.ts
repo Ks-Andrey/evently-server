@@ -1,10 +1,10 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
 import { Roles } from '@common/config/roles';
-import { IUserRepository } from '@domain/user';
+import { IUserRepository } from '@domain/models/user';
 
 export class EditUserPassword {
     constructor(
@@ -26,7 +26,7 @@ export class EditUserPasswordHandler {
                 throw new AccessDeniedException();
             }
 
-            user.validPassword(command.oldPassword);
+            user.ensureValidPassword(command.oldPassword);
             user.changePassword(command.newPassword);
 
             await this.userRepo.save(user);

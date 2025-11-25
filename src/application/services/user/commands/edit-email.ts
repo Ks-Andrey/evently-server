@@ -1,12 +1,12 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
 import { Roles } from '@common/config/roles';
-import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { IUserRepository, PendingEmailAlreadyRequestedException } from '@domain/user';
+import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
+import { IUserRepository, PendingEmailAlreadyRequestedException } from '@domain/models/user';
 
 import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
 import { IEmailManager } from '../interfaces/email-manager';
@@ -40,7 +40,7 @@ export class EditUserEmailHandler {
             const existingVerification = await this.emailVerificationRepo.findByEmail(normalizedEmail);
             if (existingVerification?.isActive()) throw new PendingEmailAlreadyRequestedException();
 
-            await user.validPassword(command.password);
+            await user.ensureValidPassword(command.password);
             user.requestEmailChange(normalizedEmail);
 
             const verification = EmailVerification.create(

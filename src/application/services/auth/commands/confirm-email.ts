@@ -1,14 +1,14 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
 import {
     EmailVerificationPurpose,
     EmailVerificationTokenCannotBeEmptyException,
     IEmailVerificationRepository,
-} from '@domain/auth';
-import { IUserRepository } from '@domain/user';
+} from '@domain/models/auth';
+import { IUserRepository } from '@domain/models/user';
 
 export class ConfirmUserEmail {
     constructor(readonly token: UUID) {}

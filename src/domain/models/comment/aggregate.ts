@@ -27,7 +27,7 @@ export class Comment {
         if (!author) {
             throw new CommentAuthorIsRequiredException();
         }
-        this.ensureValidText(text);
+        Comment.ensureValidText(text);
 
         return new Comment(id, eventId, author, text.trim(), createdAt);
     }
@@ -41,10 +41,6 @@ export class Comment {
     }
 
     get author(): CommentUser {
-        return this._author;
-    }
-
-    get userId(): CommentUser {
         return this._author;
     }
 

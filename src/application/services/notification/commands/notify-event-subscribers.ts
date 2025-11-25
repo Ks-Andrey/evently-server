@@ -1,11 +1,11 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { IEventReader } from '@application/queries/event';
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/notification';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { IEventReader } from '@application/readers/event';
+import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/models/notification';
 
 export class NotifyEventSubscribers {
     constructor(

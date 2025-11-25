@@ -1,12 +1,12 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
 import { Roles } from '@common/config/roles';
-import { ICategoryRepository } from '@domain/category';
-import { EventCategory, IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
+import { ICategoryRepository } from '@domain/models/category';
+import { EventCategory, IEventRepository } from '@domain/models/event';
+import { IUserRepository } from '@domain/models/user';
 
 export class EditEventDetails {
     constructor(

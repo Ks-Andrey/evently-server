@@ -1,12 +1,12 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
-import { Comment, CommentUser, ICommentRepository } from '@domain/comment';
-import { IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
+import { safeAsync } from '@application/common';
+import { AccessDeniedException, NotFoundException } from '@application/common/exceptions';
+import { Comment, CommentUser, ICommentRepository } from '@domain/models/comment';
+import { IEventRepository } from '@domain/models/event';
+import { IUserRepository } from '@domain/models/user';
 
 export class CreateComment {
     constructor(

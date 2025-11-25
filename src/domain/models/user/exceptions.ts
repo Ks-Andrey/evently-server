@@ -1,6 +1,6 @@
 import { domainErrorMessages } from '@common/config/errors';
 
-import { DomainException } from '../common/exceptions';
+import { DomainException } from '../../common/exceptions';
 
 export class UserAlreadyBlockedException extends DomainException {
     constructor() {

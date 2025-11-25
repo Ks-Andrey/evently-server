@@ -1,10 +1,10 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { IEventReader } from '@application/queries/event';
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { CategoryInUseException, ICategoryRepository } from '@domain/category';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { IEventReader } from '@application/readers/event';
+import { CategoryInUseException, ICategoryRepository } from '@domain/models/category';
 
 export class DeleteCategory {
     constructor(readonly categoryId: UUID) {}

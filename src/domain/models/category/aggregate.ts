@@ -12,7 +12,7 @@ export class Category {
         if (!categoryId) {
             throw new CategoryIdCannotBeEmptyException();
         }
-        this.ensureValidName(categoryName);
+        Category.ensureValidName(categoryName);
 
         return new Category(categoryId, categoryName.trim());
     }

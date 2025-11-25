@@ -49,10 +49,10 @@ export class Event {
         if (!category) {
             throw new EventCategoryIsRequiredException();
         }
-        this.ensureValidTitle(title);
-        this.ensureValidDescription(description);
-        this.ensureValidLocation(location);
-        this.ensureValidEventDate(date);
+        Event.ensureValidTitle(title);
+        Event.ensureValidDescription(description);
+        Event.ensureValidLocation(location);
+        Event.ensureValidEventDate(date);
         if (subscriberCount < 0) {
             throw new SubscriberCountCannotBeNegativeException();
         }
@@ -110,15 +110,25 @@ export class Event {
     }
 
     updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
-        title && Event.ensureValidTitle(title);
-        description && Event.ensureValidDescription(description);
-        location && Event.ensureValidLocation(location);
-        date && Event.ensureValidEventDate(date);
+        if (title !== undefined) {
+            Event.ensureValidTitle(title);
+            this._title = title.trim();
+        }
 
-        title && (this._title = title.trim());
-        description && (this._description = description.trim());
-        date && (this._date = new Date(date));
-        location && (this._location = location.trim());
+        if (description !== undefined) {
+            Event.ensureValidDescription(description);
+            this._description = description.trim();
+        }
+
+        if (location !== undefined) {
+            Event.ensureValidLocation(location);
+            this._location = location.trim();
+        }
+
+        if (date !== undefined) {
+            Event.ensureValidEventDate(date);
+            this._date = date;
+        }
     }
 
     changeCategory(newCategory: EventCategory): void {
@@ -132,13 +142,12 @@ export class Event {
         return this._organizer.id === organizerId;
     }
 
-    shouldSendReminderNotification(): boolean {
-        const now = new Date();
+    shouldSendReminderNotification(referenceDate: Date = new Date()): boolean {
         const eventDate = new Date(this._date);
         const oneDayBefore = new Date(eventDate);
         oneDayBefore.setDate(oneDayBefore.getDate() - 1);
 
-        return now >= oneDayBefore && now < eventDate && !this.isPast();
+        return referenceDate >= oneDayBefore && referenceDate < eventDate && !this.isPast();
     }
 
     incrementSubscriberCount(): void {
@@ -167,8 +176,8 @@ export class Event {
         return new Date(this._date) <= referenceDate;
     }
 
-    private isPast(): boolean {
-        return new Date(this._date) < new Date();
+    private isPast(referenceDate: Date = new Date()): boolean {
+        return new Date(this._date) < referenceDate;
     }
 
     private static ensureValidTitle(title: string): void {
@@ -189,8 +198,8 @@ export class Event {
         }
     }
 
-    private static ensureValidEventDate(date: Date): void {
-        if (!date || date < new Date()) {
+    private static ensureValidEventDate(date: Date, referenceDate: Date = new Date()): void {
+        if (!date || date < referenceDate) {
             throw new InvalidEventDateException();
         }
     }

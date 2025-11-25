@@ -1,11 +1,11 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/auth';
-import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/user';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
+import { IUserRepository, IUserTypeRepository, User, UserAlreadyExists } from '@domain/models/user';
 
 import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
 import { IEmailManager } from '../interfaces/email-manager';

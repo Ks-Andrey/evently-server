@@ -1,12 +1,12 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { ICategoryReader } from '@application/queries/category';
-import { IUserReader } from '@application/queries/user';
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/event';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { ICategoryReader } from '@application/readers/category';
+import { IUserReader } from '@application/readers/user';
+import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/models/event';
 
 export class CreateEvent {
     constructor(

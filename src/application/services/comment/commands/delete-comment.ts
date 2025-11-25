@@ -1,12 +1,12 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException, AccessDeniedException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
 import { Roles } from '@common/config/roles';
-import { ICommentRepository } from '@domain/comment';
-import { IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
+import { ICommentRepository } from '@domain/models/comment';
+import { IEventRepository } from '@domain/models/event';
+import { IUserRepository } from '@domain/models/user';
 
 export class DeleteComment {
     constructor(

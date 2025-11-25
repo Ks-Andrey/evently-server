@@ -6,7 +6,7 @@ import { ensureRedisConnection, redisClient } from '@common/config/redis';
 import { secret } from '@common/config/secret';
 import { accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { TokenType, UserJwtPayload } from '@common/types/auth';
-import { InactiveTokenException, InvalidTokenPayloadException } from '@domain/auth';
+import { InactiveTokenException, InvalidTokenPayloadException } from '@domain/models/auth';
 
 const composeKey = (token: string, type: TokenType): string => {
     const hashed = createHash('sha256').update(token).digest('hex');

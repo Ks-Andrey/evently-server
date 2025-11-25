@@ -46,22 +46,12 @@ export class User {
         subscriptionCount: number = 0,
         emailVerified: boolean = false,
     ): Promise<User> {
-        if (!id || id.trim().length === 0) {
-            throw new UserIdCannotBeEmptyException();
-        }
-        if (!userType) {
-            throw new UserTypeIsRequiredException();
-        }
-        if (!username || username.trim().length === 0) {
-            throw new UsernameCannotBeEmptyException();
-        }
+        User.ensureValidId(id);
+        User.ensureValidUserType(userType);
+        User.ensureValidUsername(username);
         User.ensureValidEmail(email);
-        if (!password || password.trim().length === 0) {
-            throw new PasswordHashCannotBeEmptyException();
-        }
-        if (subscriptionCount < 0) {
-            throw new SubscriptionCountCannotBeNegativeException();
-        }
+        User.ensureValidPassword(password);
+        User.ensureValidSubscriptionCount(subscriptionCount);
 
         const passwordHash = await hash(password);
 
@@ -75,8 +65,25 @@ export class User {
             subscriptionCount,
             personalData?.trim(),
             isBlocked,
-            undefined,
         );
+    }
+
+    private static ensureValidId(id: UUID): void {
+        if (!id || id.trim().length === 0) {
+            throw new UserIdCannotBeEmptyException();
+        }
+    }
+
+    private static ensureValidUserType(userType: UserType): void {
+        if (!userType) {
+            throw new UserTypeIsRequiredException();
+        }
+    }
+
+    private static ensureValidUsername(username: string): void {
+        if (!username || username.trim().length === 0) {
+            throw new UsernameCannotBeEmptyException();
+        }
     }
 
     private static ensureValidEmail(email: string): void {
@@ -85,42 +92,50 @@ export class User {
         }
     }
 
+    private static ensureValidPassword(password: string): void {
+        if (!password || password.trim().length === 0) {
+            throw new PasswordHashCannotBeEmptyException();
+        }
+    }
+
+    private static ensureValidSubscriptionCount(count: number): void {
+        if (count < 0) {
+            throw new SubscriptionCountCannotBeNegativeException();
+        }
+    }
+
+    private ensurePasswordMatches(password: string): Promise<void> {
+        return (async () => {
+            if (!(await compare(password, this._passwordHash))) {
+                throw new PasswordNotVerified();
+            }
+        })();
+    }
+
     get id(): UUID {
         return this._id;
     }
-
     get userType(): UserType {
         return this._userType;
     }
-
     get username(): string {
         return this._username;
     }
-
     get email(): string {
         return this._email;
     }
-
     get isEmailVerified(): boolean {
         return this._emailVerified;
     }
-
-    get passwordHash(): string {
-        return this._passwordHash;
-    }
-
     get personalData(): string | undefined {
         return this._personalData;
     }
-
     get isBlocked(): boolean {
         return this._isBlocked;
     }
-
     get subscriptionCount(): number {
         return this._subscriptionCount;
     }
-
     get pendingEmail(): string | undefined {
         return this._pendingEmail;
     }
@@ -154,9 +169,7 @@ export class User {
     }
 
     markEmailVerified(): void {
-        if (this._emailVerified) {
-            throw new EmailAlreadyVerifiedException();
-        }
+        if (this._emailVerified) throw new EmailAlreadyVerifiedException();
         this._emailVerified = true;
     }
 
@@ -166,7 +179,7 @@ export class User {
         if (normalized.toLowerCase() === this._email.toLowerCase()) {
             throw new PendingEmailMatchesCurrentException();
         }
-        if (this._pendingEmail && this._pendingEmail.toLowerCase() === normalized.toLowerCase()) {
+        if (this._pendingEmail?.toLowerCase() === normalized.toLowerCase()) {
             throw new PendingEmailAlreadyRequestedException();
         }
         this._pendingEmail = normalized;
@@ -174,9 +187,7 @@ export class User {
     }
 
     confirmPendingEmail(expectedEmail: string): void {
-        if (!this._pendingEmail) {
-            throw new PendingEmailNotFoundException();
-        }
+        if (!this._pendingEmail) throw new PendingEmailNotFoundException();
         if (this._pendingEmail.toLowerCase() !== expectedEmail.trim().toLowerCase()) {
             throw new PendingEmailMismatchException();
         }
@@ -184,22 +195,18 @@ export class User {
     }
 
     cancelPendingEmail(): void {
-        if (!this._pendingEmail) {
-            throw new PendingEmailNotFoundException();
-        }
+        if (!this._pendingEmail) throw new PendingEmailNotFoundException();
         this._pendingEmail = undefined;
         this._emailVerified = true;
     }
 
     changeUsername(newName: string): void {
-        if (!newName || newName.trim().length === 0) {
-            throw new UsernameCannotBeEmptyException();
-        }
+        User.ensureValidUsername(newName);
         this._username = newName.trim();
     }
 
     changeUserData(newUserData: string | undefined): void {
-        this._personalData = newUserData;
+        this._personalData = newUserData?.trim();
     }
 
     canEditedBy(userId: UUID): boolean {
@@ -207,14 +214,12 @@ export class User {
     }
 
     async changePassword(newPassword: string): Promise<void> {
-        if (!newPassword || newPassword.trim().length === 0) {
-            throw new PasswordHashCannotBeEmptyException();
-        }
+        User.ensureValidPassword(newPassword);
         this._passwordHash = await hash(newPassword);
     }
 
-    async validPassword(password: string): Promise<void> {
-        if (!compare(password, this._passwordHash)) {
+    async ensureValidPassword(password: string): Promise<void> {
+        if (!(await compare(password, this._passwordHash))) {
             throw new PasswordNotVerified();
         }
     }

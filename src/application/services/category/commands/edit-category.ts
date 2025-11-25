@@ -1,9 +1,9 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { ICategoryRepository } from '@domain/category';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { ICategoryRepository } from '@domain/models/category';
 
 export class EditCategory {
     constructor(

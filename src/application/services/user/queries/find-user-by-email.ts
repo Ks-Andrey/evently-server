@@ -1,7 +1,8 @@
 import { Result } from 'true-myth';
 
-import { IUserReader, UserDTO } from '@application/queries/user';
-import { safeAsync, NotFoundException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { IUserReader, UserDTO } from '@application/readers/user';
 
 export class FindUserByEmail {
     constructor(readonly email: string) {}

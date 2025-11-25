@@ -1,10 +1,10 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, NotFoundException } from '@application/services/common';
-import { EventAlreadyStartedException, IEventRepository, UserAlreadySubscribedException } from '@domain/event';
-import { IUserRepository } from '@domain/user';
+import { safeAsync } from '@application/common';
+import { NotFoundException } from '@application/common/exceptions';
+import { EventAlreadyStartedException, IEventRepository, UserAlreadySubscribedException } from '@domain/models/event';
+import { IUserRepository } from '@domain/models/user';
 
 import { ISubscriptionManager } from '../interfaces/subscription-manager';
 

@@ -1,9 +1,8 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { NotificationDTO, INotificationReader } from '@application/queries/notification';
-import { safeAsync } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotificationDTO, INotificationReader } from '@application/readers/notification';
 
 export class FindUserNotifications {
     constructor(readonly userId: UUID) {}

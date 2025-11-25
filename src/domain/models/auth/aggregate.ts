@@ -4,6 +4,7 @@ import {
     EmailVerificationAlreadyUsedException,
     EmailVerificationEmailCannotBeEmptyException,
     EmailVerificationExpiredException,
+    EmailVerificationUserIdCannotBeEmptyException,
     EmailVerificationIdCannotBeEmptyException,
 } from './exceptions';
 
@@ -31,6 +32,9 @@ export class EmailVerification {
     ): EmailVerification {
         if (!id) {
             throw new EmailVerificationIdCannotBeEmptyException();
+        }
+        if (!userId) {
+            throw new EmailVerificationUserIdCannotBeEmptyException();
         }
         if (!email || email.trim().length === 0) {
             throw new EmailVerificationEmailCannotBeEmptyException();
@@ -63,8 +67,8 @@ export class EmailVerification {
         return this._used;
     }
 
-    isActive(): boolean {
-        return !this._used && !(new Date() > this._expiresAt);
+    isActive(referenceDate: Date = new Date()): boolean {
+        return !this._used && referenceDate <= this._expiresAt;
     }
 
     ensureIsActive(referenceDate: Date = new Date()): void {

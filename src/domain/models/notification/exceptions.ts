@@ -1,5 +1,5 @@
-import { domainErrorMessages } from '../../common/config/errors';
-import { DomainException } from '../common/exceptions';
+import { domainErrorMessages } from '../../../common/config/errors';
+import { DomainException } from '../../common/exceptions';
 
 export class NotificationMessageCannotBeEmptyException extends DomainException {
     constructor() {

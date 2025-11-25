@@ -1,11 +1,11 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException, NotFoundException } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
 import { Roles } from '@common/config/roles';
-import { IEventRepository } from '@domain/event';
-import { IUserRepository } from '@domain/user';
+import { IEventRepository } from '@domain/models/event';
+import { IUserRepository } from '@domain/models/user';
 
 export class DeleteEvent {
     constructor(

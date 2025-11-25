@@ -1,9 +1,8 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { EventDTO, IEventReader } from '@application/queries/event';
-import { safeAsync } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { EventDTO, IEventReader } from '@application/readers/event';
 
 export class FindOrganizerEvents {
     constructor(readonly organizerId: UUID) {}

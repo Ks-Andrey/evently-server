@@ -1,9 +1,8 @@
 import { UUID } from 'crypto';
-
 import { Result } from 'true-myth';
 
-import { CommentDTO, ICommentReader } from '@application/queries/comment';
-import { safeAsync } from '@application/services/common';
+import { safeAsync } from '@application/common';
+import { CommentDTO, ICommentReader } from '@application/readers/comment';
 
 export class FindCommentsByUser {
     constructor(readonly userId: UUID) {}

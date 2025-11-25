@@ -1,6 +1,7 @@
 export const domainErrorMessages = {
     auth: {
         emailVerificationIdCannotBeEmpty: 'Идентификатор подтверждения email не может быть пустым',
+        emailVerificationUserIdCannotBeEmpty: 'Идентификатор пользователя не может быть пустым',
         emailVerificationTokenCannotBeEmpty: 'Токен подтверждения email не может быть пустым',
         emailVerificationAlreadyUsed: 'Токен подтверждения email уже использован',
         emailVerificationExpired: 'Срок действия токена подтверждения email истёк',

@@ -2,9 +2,9 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { ICategoryReader } from '@application/queries/category';
-import { safeAsync } from '@application/services/common';
-import { CategoryAlreadyExistsException, Category, ICategoryRepository } from '@domain/category';
+import { safeAsync } from '@application/common';
+import { ICategoryReader } from '@application/readers/category';
+import { CategoryAlreadyExistsException, Category, ICategoryRepository } from '@domain/models/category';
 
 export class CreateCategory {
     constructor(readonly name: string) {}
