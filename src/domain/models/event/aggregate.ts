@@ -14,6 +14,7 @@ import {
     CommentCountCannotBeNegativeException,
     CannotDecrementSubscriberCountBelowZeroException,
     CannotDecrementCommentCountBelowZeroException,
+    EventAlreadyStartedException,
 } from './exceptions';
 
 export class Event {
@@ -151,6 +152,7 @@ export class Event {
     }
 
     incrementSubscriberCount(): void {
+        if (this.hasStarted()) throw new EventAlreadyStartedException();
         this._subscriberCount += 1;
     }
 
@@ -158,6 +160,7 @@ export class Event {
         if (this._subscriberCount === 0) {
             throw new CannotDecrementSubscriberCountBelowZeroException();
         }
+        if (this.hasStarted()) throw new EventAlreadyStartedException();
         this._subscriberCount -= 1;
     }
 

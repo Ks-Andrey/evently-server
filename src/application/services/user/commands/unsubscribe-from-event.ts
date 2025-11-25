@@ -2,8 +2,8 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
-import { IEventRepository, UserNotSubscribedException } from '@domain/models/event';
+import { ConflictException, NotFoundException } from '@application/common/exceptions/exceptions';
+import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
 
 import { ISubscriptionManager } from '../interfaces/subscription-manager';
@@ -31,7 +31,7 @@ export class UnsubscribeUserFromEventHandler {
             if (!event) throw new NotFoundException();
 
             const isSubscribed = await this.subscriptionManager.hasSubscribed(event.id, user.id);
-            if (!isSubscribed) throw new UserNotSubscribedException();
+            if (!isSubscribed) throw new ConflictException();
 
             event.decrementSubscriberCount();
             user.decrementSubscriptionCount();

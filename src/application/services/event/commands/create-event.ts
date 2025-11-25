@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
+import { NotFoundException } from '@application/common/exceptions/exceptions';
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
 import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/models/event';

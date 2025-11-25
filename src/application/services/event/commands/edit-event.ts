@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
 import { Roles } from '@common/config/roles';
 import { ICategoryRepository } from '@domain/models/category';
 import { EventCategory, IEventRepository } from '@domain/models/event';
@@ -39,9 +39,7 @@ export class EditEventDetailsHandler {
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = event.canEditedBy(requestUser.id);
 
-            if (!isAdmin && !isOwner) {
-                throw new AccessDeniedException();
-            }
+            if (!isAdmin && !isOwner) throw new AccessDeniedException();
 
             event.updateDetails(command.title, command.description, command.date, command.location);
 

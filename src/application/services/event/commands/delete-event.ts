@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
 import { Roles } from '@common/config/roles';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
@@ -26,9 +26,7 @@ export class DeleteEventHandler {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new NotFoundException();
 
-            if (requestUser.isBlocked) {
-                throw new AccessDeniedException();
-            }
+            if (requestUser.isBlocked) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundException();
@@ -36,9 +34,7 @@ export class DeleteEventHandler {
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = event.canEditedBy(requestUser.id);
 
-            if (!isAdmin && !isOwner) {
-                throw new AccessDeniedException();
-            }
+            if (!isAdmin && !isOwner) throw new AccessDeniedException();
 
             await this.eventRepo.delete(event.id);
 

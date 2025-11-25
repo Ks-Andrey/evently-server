@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException, AccessDeniedException } from '@application/common/exceptions';
+import { NotFoundException, AccessDeniedException } from '@application/common/exceptions/exceptions';
 import { Roles } from '@common/config/roles';
 import { ICommentRepository } from '@domain/models/comment';
 import { IEventRepository } from '@domain/models/event';
@@ -28,9 +28,7 @@ export class DeleteCommentHandler {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new NotFoundException();
 
-            if (requestUser.isBlocked) {
-                throw new AccessDeniedException();
-            }
+            if (requestUser.isBlocked) throw new AccessDeniedException();
 
             const comment = await this.commentRepo.findById(command.commentId);
             if (!comment) throw new NotFoundException();
@@ -38,9 +36,7 @@ export class DeleteCommentHandler {
             const isAdmin = command.role === Roles.ADMIN;
             const isOwner = comment.canEditedBy(requestUser.id);
 
-            if (!isAdmin && !isOwner) {
-                throw new AccessDeniedException();
-            }
+            if (!isAdmin && !isOwner) throw new AccessDeniedException();
 
             const event = await this.eventRepo.findById(comment.eventId);
             if (!event) throw new NotFoundException();

@@ -38,12 +38,6 @@ export class EmailVerificationEmailCannotBeEmptyException extends DomainExceptio
     }
 }
 
-export class InvalidCredentialsException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.auth.invalidCredentials);
-    }
-}
-
 export class InvalidTokenPayloadException extends DomainException {
     constructor() {
         super(domainErrorMessages.auth.invalidTokenPayload);

@@ -1,7 +1,7 @@
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
+import { NotFoundException } from '@application/common/exceptions/exceptions';
 import { UserDTO, IUserReader } from '@application/readers/user';
 
 export class FindUserByName {

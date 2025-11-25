@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
+import { NotFoundException } from '@application/common/exceptions/exceptions';
 import { IEventReader } from '@application/readers/event';
 import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/models/notification';
 

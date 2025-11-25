@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync } from '@application/common';
-import { AccessDeniedException, NotFoundException } from '@application/common/exceptions';
+import { AccessDeniedException, NotFoundException } from '@application/common/exceptions/exceptions';
 import { Comment, CommentUser, ICommentRepository } from '@domain/models/comment';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';

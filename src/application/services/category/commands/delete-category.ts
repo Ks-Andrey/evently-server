@@ -2,9 +2,9 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
+import { ConflictException, NotFoundException } from '@application/common/exceptions/exceptions';
 import { IEventReader } from '@application/readers/event';
-import { CategoryInUseException, ICategoryRepository } from '@domain/models/category';
+import { ICategoryRepository } from '@domain/models/category';
 
 export class DeleteCategory {
     constructor(readonly categoryId: UUID) {}
@@ -22,7 +22,7 @@ export class DeleteCategoryHandler {
             if (!category) throw new NotFoundException();
 
             const eventsInCategory = await this.eventReader.findByCategory(category.categoryId);
-            if (eventsInCategory.length > 0) throw new CategoryInUseException();
+            if (eventsInCategory.length > 0) throw new ConflictException();
 
             await this.categoryRepo.delete(category.categoryId);
 

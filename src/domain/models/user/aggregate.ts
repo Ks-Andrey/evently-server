@@ -104,14 +104,6 @@ export class User {
         }
     }
 
-    private ensurePasswordMatches(password: string): Promise<void> {
-        return (async () => {
-            if (!(await compare(password, this._passwordHash))) {
-                throw new PasswordNotVerified();
-            }
-        })();
-    }
-
     get id(): UUID {
         return this._id;
     }

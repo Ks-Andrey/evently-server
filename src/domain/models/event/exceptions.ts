@@ -50,12 +50,6 @@ export class UserAlreadySubscribedException extends DomainException {
     }
 }
 
-export class UserNotSubscribedException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.event.userNotSubscribed);
-    }
-}
-
 export class CategoryIdCannotBeEmptyException extends DomainException {
     constructor() {
         super(domainErrorMessages.event.categoryIdCannotBeEmpty);

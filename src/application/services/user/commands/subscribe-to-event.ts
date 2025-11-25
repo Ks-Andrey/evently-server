@@ -2,8 +2,8 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync } from '@application/common';
-import { NotFoundException } from '@application/common/exceptions';
-import { EventAlreadyStartedException, IEventRepository, UserAlreadySubscribedException } from '@domain/models/event';
+import { ConflictException, NotFoundException } from '@application/common/exceptions/exceptions';
+import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
 
 import { ISubscriptionManager } from '../interfaces/subscription-manager';
@@ -30,10 +30,8 @@ export class SubscribeUserToEventHandler {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new NotFoundException();
 
-            if (event.hasStarted()) throw new EventAlreadyStartedException();
-
             const alreadySubscribed = await this.subscriptionManager.hasSubscribed(event.id, user.id);
-            if (alreadySubscribed) throw new UserAlreadySubscribedException();
+            if (alreadySubscribed) throw new ConflictException();
 
             event.incrementSubscriberCount();
             user.incrementSubscriptionCount();

@@ -13,15 +13,3 @@ export class CategoryIdCannotBeEmptyException extends DomainException {
         super(domainErrorMessages.event.categoryIdCannotBeEmpty);
     }
 }
-
-export class CategoryInUseException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.event.categoryInUse);
-    }
-}
-
-export class CategoryAlreadyExistsException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.event.categoryAlreadyExists);
-    }
-}

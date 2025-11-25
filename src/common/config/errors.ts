@@ -88,5 +88,8 @@ export const domainErrorMessages = {
     common: {
         notFound: 'Данные не найдены',
         accessDenied: 'У вас недостаточно прав для данного действия',
+        validationError: 'Ошибка валидации данных',
+        conflict: 'Конфликт: ресурс уже существует',
+        unknownError: 'Неизвестная ошибка',
     },
 } as const;

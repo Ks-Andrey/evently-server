@@ -68,12 +68,6 @@ export class UserTypeNameCannotBeEmptyException extends DomainException {
     }
 }
 
-export class UserAlreadyExists extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.userAlreadyExists);
-    }
-}
-
 export class PasswordNotVerified extends DomainException {
     constructor() {
         super(domainErrorMessages.user.passwordNotVerified);
@@ -107,23 +101,5 @@ export class PendingEmailMatchesCurrentException extends DomainException {
 export class PendingEmailMismatchException extends DomainException {
     constructor() {
         super(domainErrorMessages.user.pendingEmailMismatch);
-    }
-}
-
-export class UserEventIdCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.userEventIdCannotBeEmpty);
-    }
-}
-
-export class UserEventNameCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.userEventNameCannotBeEmpty);
-    }
-}
-
-export class UserEventSubscriptionsCountCannotBeNegativeException extends DomainException {
-    constructor() {
-        super(domainErrorMessages.user.userEventSubscriptionsCountCannotBeNegative);
     }
 }
