@@ -34,6 +34,12 @@ export const domainErrorMessages = {
         userEventNameCannotBeEmpty: 'Имя подписки не может быть пустым',
         userEventSubscriptionsCountCannotBeNegative: 'Количество подписчиков у подписки не может быть пустым',
     },
+    userType: {
+        idCannotBeEmpty: 'Идентификатор типа пользователя не может быть пустым',
+        nameCannotBeEmpty: 'Название типа пользователя не может быть пустым',
+        alreadyExists: 'Тип пользователя с таким названием уже существует',
+        inUse: 'Нельзя удалить тип пользователя, так как есть пользователи с этим типом',
+    },
     comment: {
         textCannotBeEmpty: 'Текст комментария не может быть пустым',
         idCannotBeEmpty: 'Идентификатор комментария не может быть пустым',

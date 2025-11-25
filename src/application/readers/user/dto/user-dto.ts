@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { UserTypeDTO } from './user-type-dto';
+import { UserTypeDTO } from '@application/readers/user-type';
 
 export class UserDTO {
     constructor(

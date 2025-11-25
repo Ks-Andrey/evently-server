@@ -1,17 +1,14 @@
 import { UUID } from 'crypto';
 
-import { Roles } from '@common/config/roles';
-
 import { UserTypeIdCannotBeEmptyException, UserTypeNameCannotBeEmptyException } from '../exceptions';
 
 export class UserType {
     private constructor(
         private readonly _userTypeId: UUID,
         private readonly _typeName: string,
-        private readonly _role: Roles,
     ) {}
 
-    static create(userTypeId: UUID, typeName: string, role: Roles = Roles.USER) {
+    static create(userTypeId: UUID, typeName: string) {
         if (!userTypeId || userTypeId.trim().length === 0) {
             throw new UserTypeIdCannotBeEmptyException();
         }
@@ -19,7 +16,7 @@ export class UserType {
             throw new UserTypeNameCannotBeEmptyException();
         }
 
-        return new UserType(userTypeId, typeName.trim(), role);
+        return new UserType(userTypeId, typeName.trim());
     }
 
     get userTypeId(): UUID {
@@ -28,9 +25,5 @@ export class UserType {
 
     get typeName(): string {
         return this._typeName;
-    }
-
-    get role(): Roles {
-        return this._role;
     }
 }
