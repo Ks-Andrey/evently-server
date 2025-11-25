@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { IUserTypeRepository } from '@domain/models/user-type';
@@ -28,7 +28,7 @@ export class CreateUserHandler {
         private readonly emailService: IEmailManager,
     ) {}
 
-    execute(command: CreateUser): Promise<Result<UUID, Error>> {
+    execute(command: CreateUser): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const exists = await this.userRepo.findByEmail(command.email);
             if (exists) throw new UserAlreadyExistsException();
@@ -44,7 +44,7 @@ export class CreateUserHandler {
                 command.username,
                 command.email,
                 command.password,
-                '',
+                undefined,
                 false,
                 0,
             );

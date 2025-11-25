@@ -1,6 +1,6 @@
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { UserDTO, IUserReader } from '@application/readers/user';
 
 import { UserNotFoundException } from '../exceptions';
@@ -12,7 +12,7 @@ export class FindUserByName {
 export class FindUserByNameHandler {
     constructor(readonly userReader: IUserReader) {}
 
-    async execute(query: FindUserByName): Promise<Result<UserDTO, Error>> {
+    async execute(query: FindUserByName): Promise<Result<UserDTO, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userReader.findByUsername(query.username);
             if (!user) throw new UserNotFoundException();

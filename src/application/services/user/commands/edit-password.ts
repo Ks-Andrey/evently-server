@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException } from '@application/common';
+import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { IUserRepository } from '@domain/models/user';
 
@@ -19,7 +19,7 @@ export class EditUserPassword {
 export class EditUserPasswordHandler {
     constructor(readonly userRepo: IUserRepository) {}
 
-    execute(command: EditUserPassword): Promise<Result<UUID, Error>> {
+    execute(command: EditUserPassword): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();

@@ -4,7 +4,7 @@ import { errorMessages } from '@common/config/errors';
 
 export class InvalidCredentialsException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super(errorMessages.application.auth.invalidCredentials, ApplicationErrorCodes.VALIDATION_ERROR, context);
+        super(errorMessages.application.auth.invalidCredentials, ApplicationErrorCodes.INVALID_INPUT, context);
     }
 }
 

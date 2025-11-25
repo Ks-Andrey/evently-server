@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { IEventReader } from '@application/readers/event';
 import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/models/notification';
 
@@ -21,7 +21,7 @@ export class NotifyEventSubscribersHandler {
         private readonly notificationRepo: INotificationRepository,
     ) {}
 
-    execute(command: NotifyEventSubscribers): Promise<Result<boolean, Error>> {
+    execute(command: NotifyEventSubscribers): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
             const event = await this.eventReader.findById(command.eventId);
             if (!event) throw new EventForNotificationNotFoundException();

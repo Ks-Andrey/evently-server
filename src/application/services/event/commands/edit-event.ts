@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException } from '@application/common';
+import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { ICategoryRepository } from '@domain/models/category';
 import { EventCategory, IEventRepository } from '@domain/models/event';
@@ -33,7 +33,7 @@ export class EditEventDetailsHandler {
         private readonly categoryRepo: ICategoryRepository,
     ) {}
 
-    execute(command: EditEventDetails): Promise<Result<UUID, Error>> {
+    execute(command: EditEventDetails): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();

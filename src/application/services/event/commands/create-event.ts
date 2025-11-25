@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
 import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/models/event';
@@ -27,7 +27,7 @@ export class CreateEventHandler {
         private readonly userReader: IUserReader,
     ) {}
 
-    execute(command: CreateEvent): Promise<Result<UUID, Error>> {
+    execute(command: CreateEvent): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const actor = await this.userReader.findById(command.userId);
             if (!actor) throw new UserForEventNotFoundException();

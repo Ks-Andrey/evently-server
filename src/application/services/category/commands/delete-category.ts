@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { IEventReader } from '@application/readers/event';
 import { ICategoryRepository } from '@domain/models/category';
 
@@ -17,7 +17,7 @@ export class DeleteCategoryHandler {
         private readonly eventReader: IEventReader,
     ) {}
 
-    execute(command: DeleteCategory): Promise<Result<boolean, Error>> {
+    execute(command: DeleteCategory): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
             const category = await this.categoryRepo.findById(command.categoryId);
             if (!category) throw new CategoryNotFoundException();

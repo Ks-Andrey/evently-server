@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { IUserReader } from '@application/readers/user';
 import { IUserTypeRepository } from '@domain/models/user-type';
 
@@ -17,7 +17,7 @@ export class DeleteUserTypeHandler {
         private readonly userReader: IUserReader,
     ) {}
 
-    execute(command: DeleteUserType): Promise<Result<boolean, Error>> {
+    execute(command: DeleteUserType): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();

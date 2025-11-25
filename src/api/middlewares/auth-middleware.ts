@@ -1,14 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { ApplicationException } from '@application/common';
+import { ApplicationException, ApplicationErrorCodes } from '@application/common';
 import { ITokenManager } from '@application/services/auth';
+import { errorMessages } from '@common/config/errors';
+
+import { createErrorResponse } from '../utils/error-handler';
 
 export const authMiddleware = (tokenManager: ITokenManager) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         const header = req.headers.authorization;
 
         if (!header || !header.startsWith('Bearer ')) {
-            return res.status(401).json({ message: 'Unauthorized' });
+            const errorResponse = createErrorResponse(
+                new ApplicationException(errorMessages.domain.common.accessDenied, ApplicationErrorCodes.ACCESS_DENIED),
+                401,
+            );
+            return res.status(401).json(errorResponse);
         }
 
         const token = header.split(' ')[1];
@@ -19,10 +26,14 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
             next();
         } catch (error) {
             if (error instanceof ApplicationException) {
-                return res.status(401).json({ message: error.message });
+                const errorResponse = createErrorResponse(error, 401);
+                return res.status(401).json(errorResponse);
             }
-
-            return res.status(500);
+            const errorResponse = createErrorResponse(
+                new ApplicationException(errorMessages.domain.common.unknownError, ApplicationErrorCodes.UNKNOWN_ERROR),
+                500,
+            );
+            return res.status(500).json(errorResponse);
         }
     };
 };

@@ -1,8 +1,8 @@
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { Roles } from '@common/config/roles';
-import { UserJwtPayload } from '@common/types/auth';
+import { Tokens, UserJwtPayload } from '@common/types/auth';
 import { IUserRepository } from '@domain/models/user';
 
 import { InvalidCredentialsException } from '../exceptions';
@@ -21,7 +21,7 @@ export class AuthenticateUserHandler {
         private readonly tokenManager: ITokenManager,
     ) {}
 
-    execute(command: AuthenticateUser): Promise<Result<{ accessToken: string; refreshToken: string }, Error>> {
+    execute(command: AuthenticateUser): Promise<Result<Tokens, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findByEmail(command.email.trim().toLowerCase());
             if (!user) throw new InvalidCredentialsException();

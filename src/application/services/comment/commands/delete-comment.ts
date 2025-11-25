@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException } from '@application/common';
+import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { ICommentRepository } from '@domain/models/comment';
 import { IEventRepository } from '@domain/models/event';
@@ -28,7 +28,7 @@ export class DeleteCommentHandler {
         private readonly eventRepo: IEventRepository,
     ) {}
 
-    execute(command: DeleteComment): Promise<Result<boolean, Error>> {
+    execute(command: DeleteComment): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForCommentNotFoundException();

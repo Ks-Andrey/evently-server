@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException } from '@application/common';
+import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { ICommentRepository } from '@domain/models/comment';
 import { IUserRepository } from '@domain/models/user';
@@ -23,7 +23,7 @@ export class EditCommentHandler {
         private readonly commentRepo: ICommentRepository,
     ) {}
 
-    execute(command: EditComment): Promise<Result<UUID, Error>> {
+    execute(command: EditComment): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForCommentNotFoundException();

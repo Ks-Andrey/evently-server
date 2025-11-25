@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
@@ -17,7 +17,7 @@ export class ConfirmUserEmailHandler {
         private readonly emailVerificationRepo: IEmailVerificationRepository,
     ) {}
 
-    execute(command: ConfirmUserEmail): Promise<Result<UUID, Error>> {
+    execute(command: ConfirmUserEmail): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const verification = await this.emailVerificationRepo.findById(command.token);
             if (!verification) throw new EmailVerificationNotFoundException();

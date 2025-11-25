@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryRepository } from '@domain/models/category';
 
 import { CategoryNotFoundException } from '../exceptions';
@@ -16,7 +16,7 @@ export class EditCategory {
 export class EditCategoryHandler {
     constructor(private readonly categoryRepo: ICategoryRepository) {}
 
-    execute(command: EditCategory): Promise<Result<UUID, Error>> {
+    execute(command: EditCategory): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const category = await this.categoryRepo.findById(command.categoryId);
             if (!category) throw new CategoryNotFoundException();

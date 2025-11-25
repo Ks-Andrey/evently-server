@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryReader } from '@application/readers/category';
 import { Category, ICategoryRepository } from '@domain/models/category';
 
@@ -18,7 +18,7 @@ export class CreateCategoryHandler {
         private readonly categoryRepo: ICategoryRepository,
     ) {}
 
-    execute(command: CreateCategory): Promise<Result<UUID, Error>> {
+    execute(command: CreateCategory): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const existing = await this.categoryReader.findByName(command.name.trim());
             if (existing) throw new CategoryAlreadyExistsException();

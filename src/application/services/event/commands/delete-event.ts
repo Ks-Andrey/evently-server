@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException } from '@application/common';
+import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
@@ -22,7 +22,7 @@ export class DeleteEventHandler {
         private readonly eventRepo: IEventRepository,
     ) {}
 
-    execute(command: DeleteEvent): Promise<Result<boolean, Error>> {
+    execute(command: DeleteEvent): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();

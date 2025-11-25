@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { IUserRepository } from '@domain/models/user';
 
 import { UserNotFoundException } from '../exceptions';
@@ -13,7 +13,7 @@ export class ToggleBlockUser {
 export class ToggleBlockUserHandler {
     constructor(readonly userRepo: IUserRepository) {}
 
-    execute(command: ToggleBlockUser): Promise<Result<UUID, Error>> {
+    execute(command: ToggleBlockUser): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();

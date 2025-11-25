@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { IUserTypeReader } from '@application/readers/user-type';
 import { Roles } from '@common/config/roles';
 import { UserType, IUserTypeRepository } from '@domain/models/user-type';
@@ -22,7 +22,7 @@ export class CreateUserTypeHandler {
         private readonly userTypeRepo: IUserTypeRepository,
     ) {}
 
-    execute(command: CreateUserType): Promise<Result<UUID, Error>> {
+    execute(command: CreateUserType): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const existing = await this.userTypeReader.findByName(command.typeName.trim());
             if (existing) throw new UserTypeAlreadyExistsException();

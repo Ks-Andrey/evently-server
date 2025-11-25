@@ -5,7 +5,7 @@ import { DomainException } from '@domain/common';
 import { ApplicationErrorCodes } from '../exceptions/error-codes';
 import { ApplicationException, UnknownException } from '../exceptions/exceptions';
 
-export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, Error>> {
+export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, ApplicationException>> {
     try {
         const value = await fn();
         return Result.ok(value);
@@ -18,8 +18,6 @@ export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, Erro
             return Result.err(new ApplicationException(error.message, ApplicationErrorCodes.BUSINESS_RULE_VIOLATION));
         }
 
-        const message = error instanceof Error ? error.message : undefined;
-
-        return Result.err(new UnknownException(message));
+        return Result.err(new UnknownException(error instanceof Error ? error.message : undefined));
     }
 }

@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { Roles } from '@common/config/roles';
 import { IUserTypeRepository } from '@domain/models/user-type';
 
@@ -18,7 +18,7 @@ export class EditUserType {
 export class EditUserTypeHandler {
     constructor(private readonly userTypeRepo: IUserTypeRepository) {}
 
-    execute(command: EditUserType): Promise<Result<UUID, Error>> {
+    execute(command: EditUserType): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();

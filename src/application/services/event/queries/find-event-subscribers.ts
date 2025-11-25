@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync } from '@application/common';
+import { ApplicationException, safeAsync } from '@application/common';
 import { EventUserDTO, IEventReader } from '@application/readers/event';
 
 export class FindEventSubscribers {
@@ -11,7 +11,7 @@ export class FindEventSubscribers {
 export class FindEventSubscribersHandler {
     constructor(private readonly eventReader: IEventReader) {}
 
-    execute(query: FindEventSubscribers): Promise<Result<EventUserDTO[], Error>> {
+    execute(query: FindEventSubscribers): Promise<Result<EventUserDTO[], ApplicationException>> {
         return safeAsync(async () => {
             return await this.eventReader.findEventUsers(query.eventId);
         });
