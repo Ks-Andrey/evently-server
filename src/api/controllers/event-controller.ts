@@ -16,6 +16,7 @@ import {
     FindEventsHandler,
     FindOrganizerEvents,
     FindOrganizerEventsHandler,
+    AddEventGalleryPhotoHandler,
 } from '@application/services/event';
 import { NotifyEventSubscribers, NotifyEventSubscribersHandler } from '@application/services/notification';
 
@@ -31,6 +32,7 @@ export class EventController {
         private readonly editEventDetailsHandler: EditEventDetailsHandler,
         private readonly deleteEventHandler: DeleteEventHandler,
         private readonly notifyEventSubscribersHandler: NotifyEventSubscribersHandler,
+        private readonly addEventGalleryPhotoHandler: AddEventGalleryPhotoHandler,
     ) {}
 
     async getEvents(req: Request, res: Response): Promise<void> {

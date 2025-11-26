@@ -121,3 +121,21 @@ export class EventSubscriberNameCannotBeEmptyException extends DomainException {
         super(ERROR_MESSAGES.domain.event.eventSubscriberNameCannotBeEmpty);
     }
 }
+
+export class GalleryUrlCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.galleryUrlCannotBeEmpty);
+    }
+}
+
+export class GalleryMaxPhotosExceededException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.galleryMaxPhotosExceeded);
+    }
+}
+
+export class GalleryPhotoNotFoundException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.galleryPhotoNotFoundException);
+    }
+}

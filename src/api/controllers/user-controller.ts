@@ -25,9 +25,12 @@ import {
     UnsubscribeUserFromEventHandler,
     FindUserById,
     FindUserByIdHandler,
+    UploadUserAvatar,
+    UploadUserAvatarHandler,
 } from '@application/services/user';
 
 import { handleResult } from '../common/utils/error-handler';
+import { getFileId } from '../middlewares/file-middleware';
 
 export class UserController {
     constructor(
@@ -43,6 +46,7 @@ export class UserController {
         private readonly toggleBlockUserHandler: ToggleBlockUserHandler,
         private readonly subscribeUserToEventHandler: SubscribeUserToEventHandler,
         private readonly unsubscribeUserFromEventHandler: UnsubscribeUserFromEventHandler,
+        private readonly uploadUserAvatarHandler: UploadUserAvatarHandler,
     ) {}
 
     async getAllUsers(_req: Request, res: Response): Promise<void> {
@@ -129,6 +133,18 @@ export class UserController {
         const { eventId } = req.body;
         const command = new UnsubscribeUserFromEvent(req.user!.userId, eventId as UUID);
         const result = await this.unsubscribeUserFromEventHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async uploadAvatar(req: Request, res: Response): Promise<void> {
+        if (!req.file) {
+            res.status(400).json({ error: 'No file uploaded' });
+            return;
+        }
+
+        const tempFileId = getFileId(req.file);
+        const command = new UploadUserAvatar(req.user!.role, req.user!.userId, tempFileId);
+        const result = await this.uploadUserAvatarHandler.execute(command);
         handleResult(result, res);
     }
 }

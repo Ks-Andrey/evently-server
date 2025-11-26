@@ -3,11 +3,11 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
+import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
 import { Roles } from '@common/constants/roles';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
-import { EMAIL_VERIFICATION_TTL_HOURS } from '../constants';
 import { UserNotFoundException, EmailVerificationForUserAlreadyRequestedException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';
 
@@ -48,7 +48,7 @@ export class EditUserEmailHandler {
                 user.id,
                 normalizedEmail,
                 EmailVerificationPurpose.EMAIL_CHANGE,
-                new Date(Date.now() + EMAIL_VERIFICATION_TTL_HOURS * 60 * 60 * 1000),
+                new Date(Date.now() + EMAIL_VERIFICATION_TTL),
             );
 
             await this.emailVerificationRepo.save(verification);

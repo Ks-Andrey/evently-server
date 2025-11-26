@@ -28,6 +28,7 @@ export const ERROR_MESSAGES = {
             pendingEmailNotFound: 'Нет ожидающего подтверждения email',
             pendingEmailMatchesCurrent: 'Новый email совпадает с текущим',
             pendingEmailMismatch: 'Подтверждаемый email не совпадает с ожидаемым',
+            avatarUrlCannotBeEmpty: 'URL аватара не может быть пустым',
         },
         userType: {
             idCannotBeEmpty: 'Идентификатор типа пользователя не может быть пустым',
@@ -66,6 +67,9 @@ export const ERROR_MESSAGES = {
             eventAlreadyStarted: 'Нельзя подписаться на событие, которое уже началось',
             eventSubscriberIdCannotBeEmpty: 'Идентификатор подписчика не может быть пустым',
             eventSubscriberNameCannotBeEmpty: 'Имя подписчика не может быть пустым',
+            galleryUrlCannotBeEmpty: 'URL фотографии галереи не может быть пустым',
+            galleryMaxPhotosExceeded: 'Максимальное количество фотографий в галерее превышено',
+            galleryPhotoNotFoundException: 'Фотография в галерее не найдена',
         },
         notification: {
             messageCannotBeEmpty: 'Сообщение уведомления не может быть пустым',
@@ -130,6 +134,15 @@ export const ERROR_MESSAGES = {
         notification: {
             notFound: 'Уведомление не найдено',
             eventForNotificationNotFound: 'Событие для уведомления не найдено',
+        },
+        file: {
+            invalidFileType: 'Недопустимый тип файла',
+            invalidFileExtension: 'Недопустимое расширение файла',
+            fileSizeExceeded: 'Размер файла превышает максимально допустимый',
+            imageWidthExceeded: 'Ширина изображения превышает максимально допустимую',
+            imageHeightExceeded: 'Высота изображения превышает максимально допустимую',
+            noFileUploaded: 'Файл не был загружен',
+            fileProcessingError: 'Ошибка при обработке файла',
         },
     },
 } as const;

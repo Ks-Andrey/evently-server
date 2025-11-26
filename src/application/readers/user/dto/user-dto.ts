@@ -14,5 +14,6 @@ export class UserDTO {
         readonly personalData?: string,
         readonly isBlocked: boolean = false,
         readonly pendingEmail?: string,
+        readonly avatarUrl?: string,
     ) {}
 }

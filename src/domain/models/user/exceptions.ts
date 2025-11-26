@@ -103,3 +103,9 @@ export class PendingEmailMismatchException extends DomainException {
         super(ERROR_MESSAGES.domain.user.pendingEmailMismatch);
     }
 }
+
+export class AvatarUrlCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.user.avatarUrlCannotBeEmpty);
+    }
+}
