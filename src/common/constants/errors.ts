@@ -28,10 +28,6 @@ export const ERROR_MESSAGES = {
             pendingEmailNotFound: 'Нет ожидающего подтверждения email',
             pendingEmailMatchesCurrent: 'Новый email совпадает с текущим',
             pendingEmailMismatch: 'Подтверждаемый email не совпадает с ожидаемым',
-            avatarUrlCannotBeEmpty: 'URL аватара не может быть пустым',
-            invalidAvatarFileSize: 'Размер файла аватара превышает допустимый',
-            invalidAvatarFileType: 'Недопустимый тип файла аватара',
-            invalidAvatarDimensions: 'Размеры изображения аватара превышают допустимые',
         },
         userType: {
             idCannotBeEmpty: 'Идентификатор типа пользователя не может быть пустым',
@@ -70,12 +66,6 @@ export const ERROR_MESSAGES = {
             eventAlreadyStarted: 'Нельзя подписаться на событие, которое уже началось',
             eventSubscriberIdCannotBeEmpty: 'Идентификатор подписчика не может быть пустым',
             eventSubscriberNameCannotBeEmpty: 'Имя подписчика не может быть пустым',
-            galleryUrlCannotBeEmpty: 'URL фото галереи не может быть пустым',
-            galleryMaxPhotosExceeded: 'Превышено максимальное количество фото в галерее',
-            invalidGalleryFileSize: 'Размер файла фото галереи превышает допустимый',
-            invalidGalleryFileType: 'Недопустимый тип файла фото галереи',
-            invalidGalleryDimensions: 'Размеры изображения фото галереи превышают допустимые',
-            galleryPhotoNotFound: 'Фото в галерее не найдено',
         },
         notification: {
             messageCannotBeEmpty: 'Сообщение уведомления не может быть пустым',

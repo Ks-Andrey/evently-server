@@ -4,12 +4,6 @@ declare global {
     namespace Express {
         interface Request {
             user?: UserJwtPayload;
-            fileData?: {
-                buffer: Buffer;
-                mimeType: string;
-                fileName: string;
-                dimensions: { width: number; height: number };
-            };
         }
     }
 }

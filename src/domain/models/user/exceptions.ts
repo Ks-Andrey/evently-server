@@ -103,27 +103,3 @@ export class PendingEmailMismatchException extends DomainException {
         super(ERROR_MESSAGES.domain.user.pendingEmailMismatch);
     }
 }
-
-export class AvatarUrlCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.user.avatarUrlCannotBeEmpty);
-    }
-}
-
-export class InvalidAvatarFileSizeException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.user.invalidAvatarFileSize);
-    }
-}
-
-export class InvalidAvatarFileTypeException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.user.invalidAvatarFileType);
-    }
-}
-
-export class InvalidAvatarDimensionsException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.user.invalidAvatarDimensions);
-    }
-}

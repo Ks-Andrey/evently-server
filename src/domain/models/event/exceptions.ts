@@ -121,39 +121,3 @@ export class EventSubscriberNameCannotBeEmptyException extends DomainException {
         super(ERROR_MESSAGES.domain.event.eventSubscriberNameCannotBeEmpty);
     }
 }
-
-export class GalleryUrlCannotBeEmptyException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.galleryUrlCannotBeEmpty);
-    }
-}
-
-export class GalleryMaxPhotosExceededException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.galleryMaxPhotosExceeded);
-    }
-}
-
-export class InvalidGalleryFileSizeException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.invalidGalleryFileSize);
-    }
-}
-
-export class InvalidGalleryFileTypeException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.invalidGalleryFileType);
-    }
-}
-
-export class InvalidGalleryDimensionsException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.invalidGalleryDimensions);
-    }
-}
-
-export class GalleryPhotoNotFoundException extends DomainException {
-    constructor() {
-        super(ERROR_MESSAGES.domain.event.galleryPhotoNotFound);
-    }
-}
