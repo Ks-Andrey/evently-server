@@ -6,6 +6,8 @@ import {
     CreateEventHandler,
     DeleteEvent,
     DeleteEventHandler,
+    DeleteGalleryPhoto,
+    DeleteGalleryPhotoHandler,
     EditEventDetails,
     EditEventDetailsHandler,
     FindEventSubscribers,
@@ -14,10 +16,13 @@ import {
     FindEventsHandler,
     FindOrganizerEvents,
     FindOrganizerEventsHandler,
+    UploadGalleryPhoto,
+    UploadGalleryPhotoHandler,
 } from '@application/services/event';
+import { GalleryPhotoFile } from '@domain/models/event/entities/gallery-photo-file';
 import { NotifyEventSubscribers, NotifyEventSubscribersHandler } from '@application/services/notification';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class EventController {
     constructor(
@@ -28,6 +33,8 @@ export class EventController {
         private readonly editEventDetailsHandler: EditEventDetailsHandler,
         private readonly deleteEventHandler: DeleteEventHandler,
         private readonly notifyEventSubscribersHandler: NotifyEventSubscribersHandler,
+        private readonly uploadGalleryPhotoHandler: UploadGalleryPhotoHandler,
+        private readonly deleteGalleryPhotoHandler: DeleteGalleryPhotoHandler,
     ) {}
 
     async getEvents(req: Request, res: Response): Promise<void> {
@@ -93,6 +100,28 @@ export class EventController {
         const { message } = req.body;
         const command = new NotifyEventSubscribers(id as UUID, message);
         const result = await this.notifyEventSubscribersHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async uploadGalleryPhoto(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const fileData = req.fileData!;
+        const galleryPhotoFile = GalleryPhotoFile.create(
+            fileData.buffer,
+            fileData.mimeType,
+            fileData.fileName,
+            fileData.dimensions,
+        );
+        const command = new UploadGalleryPhoto(id as UUID, req.user!.userId, galleryPhotoFile);
+        const result = await this.uploadGalleryPhotoHandler.execute(command);
+        handleResult(result, res, 201);
+    }
+
+    async deleteGalleryPhoto(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const { photoUrl } = req.body;
+        const command = new DeleteGalleryPhoto(id as UUID, req.user!.userId, photoUrl);
+        const result = await this.deleteGalleryPhotoHandler.execute(command);
         handleResult(result, res);
     }
 }

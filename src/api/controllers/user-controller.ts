@@ -5,6 +5,8 @@ import {
     CreateUserHandler,
     DeleteUser,
     DeleteUserHandler,
+    DeleteAvatar,
+    DeleteAvatarHandler,
     EditUser,
     EditUserHandler,
     EditUserEmail,
@@ -24,9 +26,12 @@ import {
     ToggleBlockUserHandler,
     UnsubscribeUserFromEvent,
     UnsubscribeUserFromEventHandler,
+    UploadAvatar,
+    UploadAvatarHandler,
 } from '@application/services/user';
+import { AvatarFile } from '@domain/models/user/entities/avatar-file';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class UserController {
     constructor(
@@ -42,6 +47,8 @@ export class UserController {
         private readonly toggleBlockUserHandler: ToggleBlockUserHandler,
         private readonly subscribeUserToEventHandler: SubscribeUserToEventHandler,
         private readonly unsubscribeUserFromEventHandler: UnsubscribeUserFromEventHandler,
+        private readonly uploadAvatarHandler: UploadAvatarHandler,
+        private readonly deleteAvatarHandler: DeleteAvatarHandler,
     ) {}
 
     async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -119,6 +126,25 @@ export class UserController {
         const { eventId } = req.body;
         const command = new UnsubscribeUserFromEvent(req.user!.userId, eventId as UUID);
         const result = await this.unsubscribeUserFromEventHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async uploadAvatar(req: Request, res: Response): Promise<void> {
+        const fileData = req.fileData!;
+        const avatarFile = AvatarFile.create(
+            fileData.buffer,
+            fileData.mimeType,
+            fileData.fileName,
+            fileData.dimensions,
+        );
+        const command = new UploadAvatar(req.user!.userId, avatarFile);
+        const result = await this.uploadAvatarHandler.execute(command);
+        handleResult(result, res, 201);
+    }
+
+    async deleteAvatar(req: Request, res: Response): Promise<void> {
+        const command = new DeleteAvatar(req.user!.userId);
+        const result = await this.deleteAvatarHandler.execute(command);
         handleResult(result, res);
     }
 }

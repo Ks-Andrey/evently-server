@@ -15,6 +15,9 @@ import {
     CannotDecrementSubscriberCountBelowZeroException,
     CannotDecrementCommentCountBelowZeroException,
     EventAlreadyStartedException,
+    GalleryUrlCannotBeEmptyException,
+    GalleryMaxPhotosExceededException,
+    GalleryPhotoNotFoundException,
 } from './exceptions';
 
 export class Event {
@@ -28,6 +31,7 @@ export class Event {
         private _location: string,
         private _subscriberCount: number,
         private _commentCount: number,
+        private _galleryUrls: string[],
     ) {}
 
     static create(
@@ -71,6 +75,7 @@ export class Event {
             location.trim(),
             subscriberCount,
             commentCount,
+            [],
         );
     }
 
@@ -108,6 +113,10 @@ export class Event {
 
     get commentCount(): number {
         return this._commentCount;
+    }
+
+    get galleryUrls(): readonly string[] {
+        return [...this._galleryUrls];
     }
 
     updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
@@ -205,5 +214,23 @@ export class Event {
         if (!date || date < referenceDate) {
             throw new InvalidEventDateException();
         }
+    }
+
+    addGalleryPhoto(photoUrl: string, maxPhotos: number): void {
+        if (!photoUrl || photoUrl.trim().length === 0) {
+            throw new GalleryUrlCannotBeEmptyException();
+        }
+        if (this._galleryUrls.length >= maxPhotos) {
+            throw new GalleryMaxPhotosExceededException();
+        }
+        this._galleryUrls.push(photoUrl.trim());
+    }
+
+    removeGalleryPhoto(photoUrl: string): void {
+        const index = this._galleryUrls.findIndex((url) => url === photoUrl);
+        if (index === -1) {
+            throw new GalleryPhotoNotFoundException();
+        }
+        this._galleryUrls.splice(index, 1);
     }
 }

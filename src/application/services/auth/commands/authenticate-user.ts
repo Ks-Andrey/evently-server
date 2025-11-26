@@ -1,7 +1,7 @@
 import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 import { Tokens, UserJwtPayload } from '@common/types/auth';
 import { IUserRepository } from '@domain/models/user';
 

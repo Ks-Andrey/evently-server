@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 

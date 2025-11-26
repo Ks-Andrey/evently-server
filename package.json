@@ -39,13 +39,16 @@
     },
     "dependencies": {
         "@types/express": "^5.0.5",
+        "@types/multer": "^2.0.0",
         "@types/node": "^24.10.0",
         "bcrypt": "^6.0.0",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",
+        "multer": "^2.0.2",
         "node-telegram-bot-api": "^0.66.0",
         "redis": "^5.9.0",
+        "sharp": "^0.34.5",
         "true-myth": "^9.2.0",
         "uuid": "^13.0.0"
     }

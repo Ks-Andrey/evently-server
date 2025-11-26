@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 
 import { UserTypeIdCannotBeEmptyException, UserTypeNameCannotBeEmptyException } from './exceptions';
 

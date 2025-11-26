@@ -1,6 +1,5 @@
+import { hash, compare } from 'bcrypt';
 import { UUID } from 'crypto';
-
-import { hash, compare } from '@common/utils/password-hash';
 
 import { UserType } from './entities/user-type';
 import {
@@ -19,6 +18,7 @@ import {
     PendingEmailNotFoundException,
     PendingEmailMismatchException,
     PasswordNotVerified,
+    AvatarUrlCannotBeEmptyException,
 } from './exceptions';
 
 export class User {
@@ -33,6 +33,7 @@ export class User {
         private _personalData?: string,
         private _isBlocked: boolean = false,
         private _pendingEmail?: string,
+        private _avatarUrl?: string,
     ) {}
 
     static async create(
@@ -53,7 +54,7 @@ export class User {
         User.ensureValidPassword(password);
         User.ensureValidSubscriptionCount(subscriptionCount);
 
-        const passwordHash = await hash(password);
+        const passwordHash = await hash(password, 10);
 
         return new User(
             id,
@@ -65,6 +66,8 @@ export class User {
             subscriptionCount,
             personalData?.trim(),
             isBlocked,
+            undefined,
+            undefined,
         );
     }
 
@@ -130,6 +133,10 @@ export class User {
     }
     get pendingEmail(): string | undefined {
         return this._pendingEmail;
+    }
+
+    get avatarUrl(): string | undefined {
+        return this._avatarUrl;
     }
 
     incrementSubscriptionCount(): void {
@@ -207,12 +214,19 @@ export class User {
 
     async changePassword(newPassword: string): Promise<void> {
         User.ensureValidPassword(newPassword);
-        this._passwordHash = await hash(newPassword);
+        this._passwordHash = await hash(newPassword, 10);
     }
 
     async ensureValidPassword(password: string): Promise<void> {
         if (!(await compare(password, this._passwordHash))) {
             throw new PasswordNotVerified();
         }
+    }
+
+    changeAvatar(avatarUrl: string | undefined): void {
+        if (avatarUrl !== undefined && (!avatarUrl || avatarUrl.trim().length === 0)) {
+            throw new AvatarUrlCannotBeEmptyException();
+        }
+        this._avatarUrl = avatarUrl?.trim();
     }
 }

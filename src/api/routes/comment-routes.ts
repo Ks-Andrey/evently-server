@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { ITokenManager } from '@application/services/auth';
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 
 import { CommentController } from '../controllers/comment-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';

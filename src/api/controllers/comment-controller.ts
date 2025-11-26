@@ -15,7 +15,7 @@ import {
     FindCommentsByUserHandler,
 } from '@application/services/comment';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class CommentController {
     constructor(

@@ -1,5 +1,11 @@
 import { EmailVerificationPurpose } from '@domain/models/auth';
 
+export interface SendEmailVerificationParams {
+    to: string;
+    token: string;
+    purpose: EmailVerificationPurpose;
+}
+
 export interface IEmailManager {
-    sendEmailVerification(params: { to: string; token: string; purpose: EmailVerificationPurpose }): Promise<void>;
+    sendEmailVerification(params: SendEmailVerificationParams): Promise<void>;
 }

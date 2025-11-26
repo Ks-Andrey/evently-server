@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 import { ICategoryRepository } from '@domain/models/category';
 import { EventCategory, IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';

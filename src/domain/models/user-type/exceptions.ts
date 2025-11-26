@@ -1,27 +1,27 @@
-import { errorMessages } from '@common/config/errors';
+import { ERROR_MESSAGES } from '@common/constants/errors';
 
 import { DomainException } from '../../common/exceptions';
 
 export class UserTypeIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.userType.idCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.userType.idCannotBeEmpty);
     }
 }
 
 export class UserTypeNameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.userType.nameCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.userType.nameCannotBeEmpty);
     }
 }
 
 export class UserTypeAlreadyExistsException extends DomainException {
     constructor() {
-        super(errorMessages.domain.userType.alreadyExists);
+        super(ERROR_MESSAGES.domain.userType.alreadyExists);
     }
 }
 
 export class UserTypeInUseException extends DomainException {
     constructor() {
-        super(errorMessages.domain.userType.inUse);
+        super(ERROR_MESSAGES.domain.userType.inUse);
     }
 }

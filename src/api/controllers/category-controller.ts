@@ -11,7 +11,7 @@ import {
     FindCategoriesHandler,
 } from '@application/services/category';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class CategoryController {
     constructor(

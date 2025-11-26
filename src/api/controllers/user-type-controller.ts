@@ -12,9 +12,9 @@ import {
     FindUserTypeByIdHandler,
     FindUserTypesHandler,
 } from '@application/services/user-type';
-import { Roles } from '@common/config/roles';
+import { Roles } from '@common/constants/roles';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class UserTypeController {
     constructor(

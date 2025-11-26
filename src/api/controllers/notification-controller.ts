@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import { FindUserNotifications, FindUserNotificationsHandler } from '@application/services/notification';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class NotificationController {
     constructor(private readonly findUserNotificationsHandler: FindUserNotificationsHandler) {}

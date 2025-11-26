@@ -1,51 +1,51 @@
-import { errorMessages } from '@common/config/errors';
+import { ERROR_MESSAGES } from '@common/constants/errors';
 
 import { DomainException } from '../../common/exceptions';
 
 export class CommentTextCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.textCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.comment.textCannotBeEmpty);
     }
 }
 
 export class CommentIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.idCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.comment.idCannotBeEmpty);
     }
 }
 
 export class CommentEventIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.eventIdCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.comment.eventIdCannotBeEmpty);
     }
 }
 
 export class CommentAuthorIsRequiredException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.authorIsRequired);
+        super(ERROR_MESSAGES.domain.comment.authorIsRequired);
     }
 }
 
 export class CannotEditDeletedCommentException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.cannotEditDeleted);
+        super(ERROR_MESSAGES.domain.comment.cannotEditDeleted);
     }
 }
 
 export class CommentAlreadyDeletedException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.alreadyDeleted);
+        super(ERROR_MESSAGES.domain.comment.alreadyDeleted);
     }
 }
 
 export class CommentUserIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.userIdCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.comment.userIdCannotBeEmpty);
     }
 }
 
 export class CommentUsernameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.comment.usernameCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.comment.usernameCannotBeEmpty);
     }
 }

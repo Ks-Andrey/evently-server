@@ -1,9 +1,9 @@
+import { secret } from '@common/config/secret';
 import { createHash } from 'crypto';
 
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { ensureRedisConnection, redisClient } from '@common/config/redis';
-import { secret } from '@common/config/secret';
 import { accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { TokenType, UserJwtPayload } from '@common/types/auth';
 import { InactiveTokenException, InvalidTokenPayloadException } from '@domain/models/auth';

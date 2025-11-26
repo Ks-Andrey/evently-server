@@ -1,44 +1,44 @@
-import { errorMessages } from '../../../common/config/errors';
+import { ERROR_MESSAGES } from '../../../common/constants/errors';
 import { DomainException } from '../../common/exceptions';
 
 export class NotificationMessageCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.messageCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.messageCannotBeEmpty);
     }
 }
 
 export class NotificationIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.idCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.idCannotBeEmpty);
     }
 }
 
 export class NotificationEventIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.eventIdCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.eventIdCannotBeEmpty);
     }
 }
 
 export class NotificationUserIsRequiredException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.userIsRequired);
+        super(ERROR_MESSAGES.domain.notification.userIsRequired);
     }
 }
 
 export class NotificationTypeCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.typeCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.typeCannotBeEmpty);
     }
 }
 
 export class NotificationUserIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.userIdCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.userIdCannotBeEmpty);
     }
 }
 
 export class NotificationUsernameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.notification.usernameCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.notification.usernameCannotBeEmpty);
     }
 }

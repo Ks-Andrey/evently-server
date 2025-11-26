@@ -1,15 +1,15 @@
-import { errorMessages } from '@common/config/errors';
+import { ERROR_MESSAGES } from '@common/constants/errors';
 
 import { DomainException } from '../../common/exceptions';
 
 export class CategoryNameCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.event.categoryNameCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.event.categoryNameCannotBeEmpty);
     }
 }
 
 export class CategoryIdCannotBeEmptyException extends DomainException {
     constructor() {
-        super(errorMessages.domain.event.categoryIdCannotBeEmpty);
+        super(ERROR_MESSAGES.domain.event.categoryIdCannotBeEmpty);
     }
 }

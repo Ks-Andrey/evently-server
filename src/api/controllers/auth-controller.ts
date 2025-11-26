@@ -8,7 +8,7 @@ import {
 } from '@application/services/auth';
 import { CreateUser, CreateUserHandler } from '@application/services/user';
 
-import { handleResult } from '../utils/error-handler';
+import { handleResult } from '../common/utils/error-handler';
 
 export class AuthController {
     constructor(

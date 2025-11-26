@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import { Result } from 'true-myth';
 
+import { ErrorResponse } from '@api/common/types/error';
 import { ApplicationErrorCodes, ApplicationException } from '@application/common';
-import { ErrorResponse } from '@common/types/error';
 
 export function getHttpStatusFromErrorCode(errorCode: string): number {
     switch (errorCode) {

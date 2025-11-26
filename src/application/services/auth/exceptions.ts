@@ -1,17 +1,17 @@
 import { ApplicationErrorCodes } from '@application/common/exceptions/error-codes';
 import { ApplicationException } from '@application/common/exceptions/exceptions';
-import { errorMessages } from '@common/config/errors';
+import { ERROR_MESSAGES } from '@common/constants/errors';
 
 export class InvalidCredentialsException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super(errorMessages.application.auth.invalidCredentials, ApplicationErrorCodes.INVALID_INPUT, context);
+        super(ERROR_MESSAGES.application.auth.invalidCredentials, ApplicationErrorCodes.INVALID_INPUT, context);
     }
 }
 
 export class EmailVerificationNotFoundException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.auth.emailVerificationNotFound,
+            ERROR_MESSAGES.application.auth.emailVerificationNotFound,
             ApplicationErrorCodes.RESOURCE_NOT_FOUND,
             context,
         );
@@ -21,7 +21,7 @@ export class EmailVerificationNotFoundException extends ApplicationException {
 export class EmailVerificationExpiredException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.auth.emailVerificationExpired,
+            ERROR_MESSAGES.application.auth.emailVerificationExpired,
             ApplicationErrorCodes.BUSINESS_RULE_VIOLATION,
             context,
         );
@@ -31,7 +31,7 @@ export class EmailVerificationExpiredException extends ApplicationException {
 export class EmailVerificationAlreadyUsedException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.auth.emailVerificationAlreadyUsed,
+            ERROR_MESSAGES.application.auth.emailVerificationAlreadyUsed,
             ApplicationErrorCodes.RESOURCE_ALREADY_EXISTS,
             context,
         );
@@ -41,7 +41,7 @@ export class EmailVerificationAlreadyUsedException extends ApplicationException 
 export class EmailVerificationAlreadyRequestedException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.auth.emailVerificationAlreadyRequested,
+            ERROR_MESSAGES.application.auth.emailVerificationAlreadyRequested,
             ApplicationErrorCodes.RESOURCE_ALREADY_EXISTS,
             context,
         );
@@ -50,6 +50,6 @@ export class EmailVerificationAlreadyRequestedException extends ApplicationExcep
 
 export class UserForAuthNotFoundException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super(errorMessages.application.auth.userForAuthNotFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
+        super(ERROR_MESSAGES.application.auth.userForAuthNotFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
     }
 }

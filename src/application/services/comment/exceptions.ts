@@ -1,17 +1,17 @@
 import { ApplicationErrorCodes } from '@application/common/exceptions/error-codes';
 import { ApplicationException } from '@application/common/exceptions/exceptions';
-import { errorMessages } from '@common/config/errors';
+import { ERROR_MESSAGES } from '@common/constants/errors';
 
 export class CommentNotFoundException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super(errorMessages.application.comment.notFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
+        super(ERROR_MESSAGES.application.comment.notFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
     }
 }
 
 export class CommentCannotEditDeletedException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.comment.cannotEditDeleted,
+            ERROR_MESSAGES.application.comment.cannotEditDeleted,
             ApplicationErrorCodes.BUSINESS_RULE_VIOLATION,
             context,
         );
@@ -21,7 +21,7 @@ export class CommentCannotEditDeletedException extends ApplicationException {
 export class UserForCommentNotFoundException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.comment.userForCommentNotFound,
+            ERROR_MESSAGES.application.comment.userForCommentNotFound,
             ApplicationErrorCodes.RESOURCE_NOT_FOUND,
             context,
         );
@@ -31,7 +31,7 @@ export class UserForCommentNotFoundException extends ApplicationException {
 export class EventForCommentNotFoundException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
         super(
-            errorMessages.application.comment.eventForCommentNotFound,
+            ERROR_MESSAGES.application.comment.eventForCommentNotFound,
             ApplicationErrorCodes.RESOURCE_NOT_FOUND,
             context,
         );
