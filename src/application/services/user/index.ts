@@ -9,6 +9,7 @@ export * from './commands/toggle-block-user';
 export * from './commands/subscribe-to-event';
 export * from './commands/unsubscribe-from-event';
 export * from './commands/upload-avatar';
+export * from './commands/delete-avatar';
 
 export * from './queries/find-all-users';
 export * from './queries/find-user-subscriptions';

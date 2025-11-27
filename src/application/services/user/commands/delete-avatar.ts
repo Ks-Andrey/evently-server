@@ -7,21 +7,20 @@ import { IUserRepository } from '@domain/models/user';
 
 import { UserNotFoundException } from '../exceptions';
 
-export class UploadUserAvatar {
+export class DeleteUserAvatar {
     constructor(
         readonly role: Roles,
         readonly userId: UUID,
-        readonly fileName: string,
     ) {}
 }
 
-export class UploadUserAvatarHandler {
+export class DeleteUserAvatarHandler {
     constructor(
         private readonly userRepo: IUserRepository,
         private readonly fileStorageManager: IFileStorageManager,
     ) {}
 
-    execute(command: UploadUserAvatar): Promise<Result<UUID, ApplicationException>> {
+    execute(command: DeleteUserAvatar): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -30,22 +29,20 @@ export class UploadUserAvatarHandler {
                 throw new AccessDeniedException();
             }
 
-            const oldImageName = user.imageName;
+            const avatarUrl = user.imageName;
+            if (!avatarUrl) {
+                return user.id;
+            }
 
-            user.changeAvatar(command.fileName);
+            user.changeAvatar(undefined);
+
             await this.userRepo.save(user);
 
             try {
-                await this.fileStorageManager.moveToPermanentStorage(command.fileName, 'avatars');
-                if (oldImageName) {
-                    await this.fileStorageManager.deleteFromPermanentStorage(oldImageName);
-                }
-
+                await this.fileStorageManager.deleteFromPermanentStorage(avatarUrl);
                 return user.id;
             } catch (error) {
-                await this.fileStorageManager.deleteFromTempStorage(command.fileName);
-
-                user.changeAvatar(oldImageName);
+                user.changeAvatar(avatarUrl);
                 await this.userRepo.save(user);
 
                 throw error;

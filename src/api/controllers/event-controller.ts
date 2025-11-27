@@ -16,7 +16,10 @@ import {
     FindEventsHandler,
     FindOrganizerEvents,
     FindOrganizerEventsHandler,
-    AddEventGalleryPhotoHandler,
+    AddEventGalleryPhotos,
+    AddEventGalleryPhotosHandler,
+    DeleteEventGalleryPhoto,
+    DeleteEventGalleryPhotoHandler,
 } from '@application/services/event';
 import { NotifyEventSubscribers, NotifyEventSubscribersHandler } from '@application/services/notification';
 
@@ -32,7 +35,8 @@ export class EventController {
         private readonly editEventDetailsHandler: EditEventDetailsHandler,
         private readonly deleteEventHandler: DeleteEventHandler,
         private readonly notifyEventSubscribersHandler: NotifyEventSubscribersHandler,
-        private readonly addEventGalleryPhotoHandler: AddEventGalleryPhotoHandler,
+        private readonly addEventGalleryPhotosHandler: AddEventGalleryPhotosHandler,
+        private readonly deleteEventGalleryPhotoHandler: DeleteEventGalleryPhotoHandler,
     ) {}
 
     async getEvents(req: Request, res: Response): Promise<void> {
@@ -103,6 +107,21 @@ export class EventController {
         const { message } = req.body;
         const command = new NotifyEventSubscribers(id as UUID, message);
         const result = await this.notifyEventSubscribersHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async addGalleryPhotos(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const command = new AddEventGalleryPhotos(req.user!.role, req.user!.userId, id as UUID, req.fileNames!);
+        const result = await this.addEventGalleryPhotosHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async deleteGalleryPhoto(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+        const { photoUrl } = req.body;
+        const command = new DeleteEventGalleryPhoto(req.user!.role, req.user!.userId, id as UUID, photoUrl);
+        const result = await this.deleteEventGalleryPhotoHandler.execute(command);
         handleResult(result, res);
     }
 }

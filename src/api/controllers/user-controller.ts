@@ -27,10 +27,11 @@ import {
     FindUserByIdHandler,
     UploadUserAvatar,
     UploadUserAvatarHandler,
+    DeleteUserAvatar,
+    DeleteUserAvatarHandler,
 } from '@application/services/user';
 
 import { handleResult } from '../common/utils/error-handler';
-import { getFileId } from '../middlewares/file-middleware';
 
 export class UserController {
     constructor(
@@ -47,6 +48,7 @@ export class UserController {
         private readonly subscribeUserToEventHandler: SubscribeUserToEventHandler,
         private readonly unsubscribeUserFromEventHandler: UnsubscribeUserFromEventHandler,
         private readonly uploadUserAvatarHandler: UploadUserAvatarHandler,
+        private readonly deleteUserAvatarHandler: DeleteUserAvatarHandler,
     ) {}
 
     async getAllUsers(_req: Request, res: Response): Promise<void> {
@@ -137,14 +139,14 @@ export class UserController {
     }
 
     async uploadAvatar(req: Request, res: Response): Promise<void> {
-        if (!req.file) {
-            res.status(400).json({ error: 'No file uploaded' });
-            return;
-        }
-
-        const tempFileId = getFileId(req.file);
-        const command = new UploadUserAvatar(req.user!.role, req.user!.userId, tempFileId);
+        const command = new UploadUserAvatar(req.user!.role, req.user!.userId, req.fileName!);
         const result = await this.uploadUserAvatarHandler.execute(command);
+        handleResult(result, res);
+    }
+
+    async deleteAvatar(req: Request, res: Response): Promise<void> {
+        const command = new DeleteUserAvatar(req.user!.role, req.user!.userId);
+        const result = await this.deleteUserAvatarHandler.execute(command);
         handleResult(result, res);
     }
 }

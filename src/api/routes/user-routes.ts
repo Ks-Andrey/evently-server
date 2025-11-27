@@ -1,11 +1,11 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 
 import { ITokenManager } from '@application/services/auth';
 import { Roles } from '@common/constants/roles';
 
 import { UserController } from '../controllers/user-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
-import { handleMulterError, uploadAvatar, validateImageDimensions } from '../middlewares/file-middleware';
+import { uploadAvatar } from '../middlewares/file-upload-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 
 export function createUserRoutes(userController: UserController, tokenManager: ITokenManager): Router {
@@ -25,16 +25,11 @@ export function createUserRoutes(userController: UserController, tokenManager: I
     router.put('/me', auth, (req, res) => userController.editUser(req, res));
     router.put('/me/email', auth, (req, res) => userController.editEmail(req, res));
     router.put('/me/password', auth, (req, res) => userController.editPassword(req, res));
+    router.post('/me/avatar', auth, uploadAvatar, (req, res) => userController.uploadAvatar(req, res));
+    router.delete('/me/avatar', auth, (req, res) => userController.deleteAvatar(req, res));
     router.post('/subscribe', auth, (req, res) => userController.subscribeToEvent(req, res));
     router.post('/unsubscribe', auth, (req, res) => userController.unsubscribeFromEvent(req, res));
-    router.post(
-        '/me/avatar',
-        auth,
-        uploadAvatar.single('avatar'),
-        validateImageDimensions,
-        (req: Request, res: Response) => userController.uploadAvatar(req, res),
-        handleMulterError,
-    );
+
     // Админские маршруты
     router.delete('/:id', auth, adminOnly, (req, res) => userController.deleteUser(req, res));
     router.post('/:id/toggle-block', auth, adminOnly, (req, res) => userController.toggleBlockUser(req, res));

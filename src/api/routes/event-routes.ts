@@ -5,6 +5,7 @@ import { Roles } from '@common/constants/roles';
 
 import { EventController } from '../controllers/event-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
+import { uploadGalleryImages } from '../middlewares/file-upload-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 
 export function createEventRoutes(eventController: EventController, tokenManager: ITokenManager): Router {
@@ -24,5 +25,10 @@ export function createEventRoutes(eventController: EventController, tokenManager
     router.put('/:id', auth, organizerOrAdmin, (req, res) => eventController.editEvent(req, res));
     router.delete('/:id', auth, organizerOrAdmin, (req, res) => eventController.deleteEvent(req, res));
     router.post('/:id/notify', auth, organizerOnly, (req, res) => eventController.notifySubscribers(req, res));
+    router.post('/:id/gallery', auth, organizerOrAdmin, uploadGalleryImages, (req, res) =>
+        eventController.addGalleryPhotos(req, res),
+    );
+    router.delete('/:id/gallery', auth, organizerOrAdmin, (req, res) => eventController.deleteGalleryPhoto(req, res));
+
     return router;
 }

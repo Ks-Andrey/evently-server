@@ -10,14 +10,14 @@ export const roleMiddleware = (allowedRoles: string[]) => {
 
         if (!user) {
             const errorResponse = createErrorResponse(new AccessDeniedException(), 401);
-            return res.status(401).json(errorResponse);
+            return res.status(errorResponse.status).json(errorResponse);
         }
 
         const hasRole = allowedRoles.some((role) => user.role === role);
 
         if (!hasRole) {
             const errorResponse = createErrorResponse(new AccessDeniedException(), 403);
-            return res.status(403).json(errorResponse);
+            return res.status(errorResponse.status).json(errorResponse);
         }
 
         next();

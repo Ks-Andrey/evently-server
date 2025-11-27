@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { GALLERY_MAX_PHOTOS } from '@common/constants/file-upload';
+
 import { EventCategory } from './entities/event-category';
 import { EventOrganizer } from './entities/event-organizer';
 import {
@@ -31,7 +33,7 @@ export class Event {
         private _location: string,
         private _subscriberCount: number,
         private _commentCount: number,
-        private _galleryUrls: string[],
+        private _imageNames: string[],
     ) {}
 
     static create(
@@ -115,8 +117,8 @@ export class Event {
         return this._commentCount;
     }
 
-    get galleryUrls(): readonly string[] {
-        return [...this._galleryUrls];
+    get imageNames(): readonly string[] {
+        return [...this._imageNames];
     }
 
     updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
@@ -216,21 +218,39 @@ export class Event {
         }
     }
 
-    addGalleryPhoto(photoUrl: string, maxPhotos: number): void {
-        if (!photoUrl || photoUrl.trim().length === 0) {
+    addPhotos(imageNames: string[]): void {
+        if (!Array.isArray(imageNames) || imageNames.length === 0) {
             throw new GalleryUrlCannotBeEmptyException();
         }
-        if (this._galleryUrls.length >= maxPhotos) {
+
+        const trimmedUrls = imageNames.map((name) => name.trim()).filter((name) => name.length > 0);
+
+        if (trimmedUrls.length === 0) {
+            throw new GalleryUrlCannotBeEmptyException();
+        }
+
+        if (this._imageNames.length + trimmedUrls.length > GALLERY_MAX_PHOTOS) {
             throw new GalleryMaxPhotosExceededException();
         }
-        this._galleryUrls.push(photoUrl.trim());
+
+        this._imageNames.push(...trimmedUrls);
     }
 
-    removeGalleryPhoto(photoUrl: string): void {
-        const index = this._galleryUrls.findIndex((url) => url === photoUrl);
+    addPhoto(imageName: string): void {
+        if (!imageName || imageName.trim().length === 0) {
+            throw new GalleryUrlCannotBeEmptyException();
+        }
+        if (this._imageNames.length >= GALLERY_MAX_PHOTOS) {
+            throw new GalleryMaxPhotosExceededException();
+        }
+        this._imageNames.push(imageName.trim());
+    }
+
+    removePhoto(imageName: string): void {
+        const index = this._imageNames.findIndex((name) => name === imageName);
         if (index === -1) {
             throw new GalleryPhotoNotFoundException();
         }
-        this._galleryUrls.splice(index, 1);
+        this._imageNames.splice(index, 1);
     }
 }

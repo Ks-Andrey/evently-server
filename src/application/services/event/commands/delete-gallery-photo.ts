@@ -7,22 +7,22 @@ import { IEventRepository } from '@domain/models/event';
 
 import { EventNotFoundException } from '../exceptions';
 
-export class AddEventGalleryPhotos {
+export class DeleteEventGalleryPhoto {
     constructor(
         readonly role: Roles,
         readonly userId: UUID,
         readonly eventId: UUID,
-        readonly fileNames: string[],
+        readonly photoUrl: string,
     ) {}
 }
 
-export class AddEventGalleryPhotosHandler {
+export class DeleteEventGalleryPhotoHandler {
     constructor(
         private readonly eventRepo: IEventRepository,
         private readonly fileStorageManager: IFileStorageManager,
     ) {}
 
-    execute(command: AddEventGalleryPhotos): Promise<Result<UUID, ApplicationException>> {
+    execute(command: DeleteEventGalleryPhoto): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventNotFoundException();
@@ -31,22 +31,14 @@ export class AddEventGalleryPhotosHandler {
                 throw new AccessDeniedException();
             }
 
-            event.addPhotos(command.fileNames);
+            event.removePhoto(command.photoUrl);
             await this.eventRepo.save(event);
 
             try {
-                for (const fileName of command.fileNames) {
-                    await this.fileStorageManager.moveToPermanentStorage(fileName, 'events');
-                }
-
+                await this.fileStorageManager.deleteFromPermanentStorage(command.photoUrl);
                 return event.id;
             } catch (error) {
-                for (const fileName of command.fileNames) {
-                    await this.fileStorageManager.deleteFromTempStorage(fileName);
-                }
-                for (const path of command.fileNames) {
-                    event.removePhoto(path);
-                }
+                event.addPhoto(command.photoUrl);
                 await this.eventRepo.save(event);
 
                 throw error;

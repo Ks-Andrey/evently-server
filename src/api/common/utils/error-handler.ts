@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { Result } from 'true-myth';
 
 import { ErrorResponse } from '@api/common/types/error';
-import { ApplicationErrorCodes, ApplicationException } from '@application/common';
+import { ApplicationErrorCodes, ApplicationException, UnknownException } from '@application/common';
 
 export function getHttpStatusFromErrorCode(errorCode: string): number {
     switch (errorCode) {
@@ -43,15 +43,17 @@ export function getErrorTitle(errorCode: string): string {
     }
 }
 
-export function createErrorResponse(error: ApplicationException, status?: number): ErrorResponse {
-    const httpStatus = status ?? getHttpStatusFromErrorCode(error.errorCode);
+export function createErrorResponse(error: unknown, status?: number): ErrorResponse {
+    const knownError = error instanceof ApplicationException ? error : new UnknownException();
+
+    const httpStatus = status ?? getHttpStatusFromErrorCode(knownError.errorCode);
     return {
-        type: `https://api.example.com/errors/${error.errorCode}`,
-        title: getErrorTitle(error.errorCode),
+        type: `https://api.example.com/errors/${knownError.errorCode}`,
+        title: getErrorTitle(knownError.errorCode),
         status: httpStatus,
-        detail: error.message,
-        errorCode: error.errorCode,
-        context: error.context,
+        detail: knownError.message,
+        errorCode: knownError.errorCode,
+        context: knownError.context,
     };
 }
 

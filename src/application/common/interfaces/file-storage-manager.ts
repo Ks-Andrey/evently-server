@@ -1,5 +1,5 @@
 export interface IFileStorageManager {
-    moveToPermanentStorage(fileId: string, subdirectory: string): Promise<string>;
-    deleteFromTempStorage(fileId: string): Promise<void>;
-    deleteFromPermanentStorage(filePath: string): Promise<void>;
+    moveToPermanentStorage(fileName: string, subdirectory: string): Promise<void>;
+    deleteFromTempStorage(fileName: string): Promise<void>;
+    deleteFromPermanentStorage(fileName: string): Promise<void>;
 }
