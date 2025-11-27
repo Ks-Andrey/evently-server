@@ -14,7 +14,6 @@ export function createCategoryRoutes(categoryController: CategoryController, tok
 
     // Публичные маршруты
     router.get('/', (req, res) => categoryController.getCategories(req, res));
-    router.get('/:id', (req, res) => categoryController.getCategoryById(req, res));
 
     // Админские маршруты
     router.post('/', auth, adminOnly, (req, res) => categoryController.createCategory(req, res));

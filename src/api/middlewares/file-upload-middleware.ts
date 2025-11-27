@@ -45,7 +45,7 @@ async function validateImageDimensions(
     cb: FileFilterCallback,
 ) {
     try {
-        const metadata = await sharp(file.buffer).metadata();
+        const metadata = await sharp(file.path).metadata();
         const { width, height } = metadata;
 
         if (width && width > maxWidth) {
@@ -56,7 +56,7 @@ async function validateImageDimensions(
         }
 
         cb(null, true);
-    } catch (_) {
+    } catch {
         cb(new FileProcessingException({ fileName: file.originalname }));
     }
 }

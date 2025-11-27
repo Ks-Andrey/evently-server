@@ -90,22 +90,22 @@ export class UserController {
     }
 
     async editUser(req: Request, res: Response): Promise<void> {
-        const { username, personalData } = req.body;
-        const command = new EditUser(req.user!.role, req.user!.userId, username, personalData);
+        const { username, personalData, userId } = req.body;
+        const command = new EditUser(req.user!.role, userId ?? req.user!.userId, username, personalData);
         const result = await this.editUserHandler.execute(command);
         handleResult(result, res);
     }
 
     async editEmail(req: Request, res: Response): Promise<void> {
-        const { password, newEmail } = req.body;
-        const command = new EditUserEmail(req.user!.role, req.user!.userId, password, newEmail);
+        const { password, newEmail, userId } = req.body;
+        const command = new EditUserEmail(req.user!.role, userId ?? req.user!.userId, password, newEmail);
         const result = await this.editUserEmailHandler.execute(command);
         handleResult(result, res);
     }
 
     async editPassword(req: Request, res: Response): Promise<void> {
-        const { oldPassword, newPassword } = req.body;
-        const command = new EditUserPassword(req.user!.role, req.user!.userId, oldPassword, newPassword);
+        const { oldPassword, newPassword, userId } = req.body;
+        const command = new EditUserPassword(req.user!.role, userId ?? req.user!.userId, oldPassword, newPassword);
         const result = await this.editUserPasswordHandler.execute(command);
         handleResult(result, res);
     }
@@ -139,13 +139,15 @@ export class UserController {
     }
 
     async uploadAvatar(req: Request, res: Response): Promise<void> {
-        const command = new UploadUserAvatar(req.user!.role, req.user!.userId, req.fileName!);
+        const { userId } = req.body;
+        const command = new UploadUserAvatar(req.user!.role, userId ?? req.user!.userId, req.fileName!);
         const result = await this.uploadUserAvatarHandler.execute(command);
         handleResult(result, res);
     }
 
     async deleteAvatar(req: Request, res: Response): Promise<void> {
-        const command = new DeleteUserAvatar(req.user!.role, req.user!.userId);
+        const { userId } = req.body;
+        const command = new DeleteUserAvatar(req.user!.role, userId ?? req.user!.userId);
         const result = await this.deleteUserAvatarHandler.execute(command);
         handleResult(result, res);
     }

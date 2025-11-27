@@ -10,13 +10,12 @@ import { roleMiddleware } from '../middlewares/role-middleware';
 export function createCommentRoutes(commentController: CommentController, tokenManager: ITokenManager): Router {
     const router = Router();
     const auth = authMiddleware(tokenManager);
-    const adminOrUser = roleMiddleware([Roles.ADMIN, Roles.USER, Roles.ORGANIZER]);
+    const adminOrUser = roleMiddleware([Roles.ADMIN, Roles.USER]);
 
     // Публичные маршруты
     router.get('/', (req, res) => commentController.getAllComments(req, res));
     router.get('/event/:eventId', (req, res) => commentController.getCommentsByEvent(req, res));
     router.get('/user/:userId', (req, res) => commentController.getCommentsByUser(req, res));
-    router.get('/:id', (req, res) => commentController.getCommentById(req, res));
 
     // Защищенные маршруты
     router.post('/', auth, (req, res) => commentController.createComment(req, res));
