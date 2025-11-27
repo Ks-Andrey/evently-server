@@ -3,6 +3,7 @@ import { Result } from 'true-myth';
 
 import { ErrorResponse } from '@api/common/types/error';
 import { ApplicationErrorCodes, ApplicationException, UnknownException } from '@application/common';
+import { log } from '@common/utils/logger';
 
 export function getHttpStatusFromErrorCode(errorCode: string): number {
     switch (errorCode) {
@@ -47,6 +48,21 @@ export function createErrorResponse(error: unknown, status?: number): ErrorRespo
     const knownError = error instanceof ApplicationException ? error : new UnknownException();
 
     const httpStatus = status ?? getHttpStatusFromErrorCode(knownError.errorCode);
+    if (httpStatus >= 500) {
+        log.error('Server Error', {
+            errorCode: knownError.errorCode,
+            message: knownError.message,
+            context: knownError.context,
+            stack: error instanceof Error ? error.stack : undefined,
+        });
+    } else if (httpStatus >= 400) {
+        log.warn('Client Error', {
+            errorCode: knownError.errorCode,
+            message: knownError.message,
+            context: knownError.context,
+        });
+    }
+
     return {
         type: `https://api.example.com/errors/${knownError.errorCode}`,
         title: getErrorTitle(knownError.errorCode),

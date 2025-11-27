@@ -20,6 +20,7 @@ import {
     NotificationController,
     UserTypeController,
 } from '../controllers';
+import { loggerMiddleware } from '../middlewares/logger-middleware';
 
 export function createAppRoutes(
     authController: AuthController,
@@ -32,6 +33,8 @@ export function createAppRoutes(
     tokenManager: ITokenManager,
 ): Router {
     const router = Router();
+
+    router.use(loggerMiddleware);
 
     router.use('/auth', createAuthRoutes(authController));
     router.use('/users', createUserRoutes(userController, tokenManager));
