@@ -2,8 +2,9 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { ApplicationException, safeAsync } from '@application/common';
+import { ApplicationException, executeInTransaction } from '@application/common';
 import { IEventReader } from '@application/readers/event';
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/models/notification';
 
 import { EventForNotificationNotFoundException } from '../exceptions';
@@ -19,10 +20,11 @@ export class NotifyEventSubscribersHandler {
     constructor(
         private readonly eventReader: IEventReader,
         private readonly notificationRepo: INotificationRepository,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     execute(command: NotifyEventSubscribers): Promise<Result<boolean, ApplicationException>> {
-        return safeAsync(async () => {
+        return executeInTransaction(this.unitOfWork, async () => {
             const event = await this.eventReader.findById(command.eventId);
             if (!event) throw new EventForNotificationNotFoundException();
 

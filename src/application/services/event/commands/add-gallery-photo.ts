@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, IFileStorageManager, AccessDeniedException, ApplicationException } from '@application/common';
+import { IFileStorageManager, AccessDeniedException, ApplicationException, safeAsync } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IEventRepository } from '@domain/models/event';
 
@@ -31,26 +31,25 @@ export class AddEventGalleryPhotosHandler {
                 throw new AccessDeniedException();
             }
 
-            event.addPhotos(command.fileNames);
-            await this.eventRepo.save(event);
-
+            const movedFiles: string[] = [];
             try {
                 for (const fileName of command.fileNames) {
                     await this.fileStorageManager.moveToPermanentStorage(fileName, 'events');
                 }
-
-                return event.id;
             } catch (error) {
+                for (const fileName of movedFiles) {
+                    await this.fileStorageManager.deleteFromPermanentStorage(fileName);
+                }
                 for (const fileName of command.fileNames) {
                     await this.fileStorageManager.deleteFromTempStorage(fileName);
                 }
-                for (const path of command.fileNames) {
-                    event.removePhoto(path);
-                }
-                await this.eventRepo.save(event);
-
                 throw error;
             }
+
+            event.addPhotos(command.fileNames);
+            await this.eventRepo.save(event);
+
+            return event.id;
         });
     }
 }

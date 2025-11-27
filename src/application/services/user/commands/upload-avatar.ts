@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException, ApplicationException, IFileStorageManager } from '@application/common';
+import { AccessDeniedException, ApplicationException, IFileStorageManager, safeAsync } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IUserRepository } from '@domain/models/user';
 
@@ -31,25 +31,21 @@ export class UploadUserAvatarHandler {
             }
 
             const oldImageName = user.imageName;
+            try {
+                await this.fileStorageManager.moveToPermanentStorage(command.fileName, 'avatars');
+            } catch (error) {
+                await this.fileStorageManager.deleteFromTempStorage(command.fileName);
+                throw error;
+            }
 
             user.changeAvatar(command.fileName);
             await this.userRepo.save(user);
 
-            try {
-                await this.fileStorageManager.moveToPermanentStorage(command.fileName, 'avatars');
-                if (oldImageName) {
-                    await this.fileStorageManager.deleteFromPermanentStorage(oldImageName);
-                }
-
-                return user.id;
-            } catch (error) {
-                await this.fileStorageManager.deleteFromTempStorage(command.fileName);
-
-                user.changeAvatar(oldImageName);
-                await this.userRepo.save(user);
-
-                throw error;
+            if (oldImageName) {
+                await this.fileStorageManager.deleteFromPermanentStorage(oldImageName);
             }
+
+            return user.id;
         });
     }
 }

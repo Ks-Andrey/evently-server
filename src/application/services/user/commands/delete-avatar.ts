@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, AccessDeniedException, ApplicationException, IFileStorageManager } from '@application/common';
+import { AccessDeniedException, ApplicationException, IFileStorageManager, safeAsync } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IUserRepository } from '@domain/models/user';
 
@@ -33,20 +33,12 @@ export class DeleteUserAvatarHandler {
             if (!avatarUrl) {
                 return user.id;
             }
+            await this.fileStorageManager.deleteFromPermanentStorage(avatarUrl);
 
             user.changeAvatar(undefined);
-
             await this.userRepo.save(user);
 
-            try {
-                await this.fileStorageManager.deleteFromPermanentStorage(avatarUrl);
-                return user.id;
-            } catch (error) {
-                user.changeAvatar(avatarUrl);
-                await this.userRepo.save(user);
-
-                throw error;
-            }
+            return user.id;
         });
     }
 }

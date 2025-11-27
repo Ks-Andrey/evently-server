@@ -2,10 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
+import { ICategoryReader } from '@application/readers/category';
+import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
-import { ICategoryRepository } from '@domain/models/category';
 import { EventCategory, IEventRepository } from '@domain/models/event';
-import { IUserRepository } from '@domain/models/user';
 
 import {
     EventNotFoundException,
@@ -28,9 +28,9 @@ export class EditEventDetails {
 
 export class EditEventDetailsHandler {
     constructor(
-        private readonly userRepo: IUserRepository,
         private readonly eventRepo: IEventRepository,
-        private readonly categoryRepo: ICategoryRepository,
+        private readonly userRepo: IUserReader,
+        private readonly categoryRepo: ICategoryReader,
     ) {}
 
     execute(command: EditEventDetails): Promise<Result<UUID, ApplicationException>> {

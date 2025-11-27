@@ -2,9 +2,9 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
+import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
 import { IEventRepository } from '@domain/models/event';
-import { IUserRepository } from '@domain/models/user';
 
 import { EventNotFoundException, UserForEventNotFoundException } from '../exceptions';
 
@@ -18,13 +18,13 @@ export class DeleteEvent {
 
 export class DeleteEventHandler {
     constructor(
-        private readonly userRepo: IUserRepository,
+        private readonly userReader: IUserReader,
         private readonly eventRepo: IEventRepository,
     ) {}
 
     execute(command: DeleteEvent): Promise<Result<boolean, ApplicationException>> {
         return safeAsync(async () => {
-            const requestUser = await this.userRepo.findById(command.userId);
+            const requestUser = await this.userReader.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();
 
             if (requestUser.isBlocked) throw new AccessDeniedException();

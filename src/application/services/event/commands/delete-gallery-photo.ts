@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { safeAsync, IFileStorageManager, AccessDeniedException, ApplicationException } from '@application/common';
+import { IFileStorageManager, AccessDeniedException, ApplicationException, safeAsync } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IEventRepository } from '@domain/models/event';
 
@@ -31,18 +31,12 @@ export class DeleteEventGalleryPhotoHandler {
                 throw new AccessDeniedException();
             }
 
+            await this.fileStorageManager.deleteFromPermanentStorage(command.photoUrl);
+
             event.removePhoto(command.photoUrl);
             await this.eventRepo.save(event);
 
-            try {
-                await this.fileStorageManager.deleteFromPermanentStorage(command.photoUrl);
-                return event.id;
-            } catch (error) {
-                event.addPhoto(command.photoUrl);
-                await this.eventRepo.save(event);
-
-                throw error;
-            }
+            return event.id;
         });
     }
 }

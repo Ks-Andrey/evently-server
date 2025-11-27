@@ -1,7 +1,8 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { ApplicationException, safeAsync } from '@application/common';
+import { ApplicationException, executeInTransaction } from '@application/common';
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
@@ -15,10 +16,11 @@ export class ConfirmUserEmailHandler {
     constructor(
         private readonly userRepo: IUserRepository,
         private readonly emailVerificationRepo: IEmailVerificationRepository,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     execute(command: ConfirmUserEmail): Promise<Result<UUID, ApplicationException>> {
-        return safeAsync(async () => {
+        return executeInTransaction(this.unitOfWork, async () => {
             const verification = await this.emailVerificationRepo.findById(command.token);
             if (!verification) throw new EmailVerificationNotFoundException();
 

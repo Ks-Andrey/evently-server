@@ -2,9 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
+import { executeInTransaction, AccessDeniedException, ApplicationException } from '@application/common';
 import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
 import { Roles } from '@common/constants/roles';
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
@@ -25,10 +26,11 @@ export class EditUserEmailHandler {
         private readonly userRepo: IUserRepository,
         private readonly emailVerificationRepo: IEmailVerificationRepository,
         private readonly emailService: IEmailManager,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     execute(command: EditUserEmail): Promise<Result<UUID, ApplicationException>> {
-        return safeAsync(async () => {
+        return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
             if (command.role !== Roles.ADMIN && !user.canEditedBy(command.userId)) {

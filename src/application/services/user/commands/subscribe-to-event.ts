@@ -1,7 +1,8 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { ApplicationException, safeAsync } from '@application/common';
+import { ApplicationException, executeInTransaction } from '@application/common';
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IEventRepository } from '@domain/models/event';
 import { IUserRepository } from '@domain/models/user';
 
@@ -20,10 +21,11 @@ export class SubscribeUserToEventHandler {
         readonly userRepo: IUserRepository,
         readonly eventRepo: IEventRepository,
         readonly subscriptionManager: ISubscriptionManager,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     execute(command: SubscribeUserToEvent): Promise<Result<boolean, ApplicationException>> {
-        return safeAsync(async () => {
+        return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
 
