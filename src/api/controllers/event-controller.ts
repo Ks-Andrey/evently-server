@@ -52,8 +52,8 @@ export class EventController {
     }
 
     async getEventById(req: Request, res: Response): Promise<void> {
-        const { eventId } = req.params;
-        const query = new FindEventById(eventId as UUID);
+        const { id } = req.params;
+        const query = new FindEventById(id as UUID);
         const result = await this.findEventByIdHandler.execute(query);
         handleResult(result, res);
     }

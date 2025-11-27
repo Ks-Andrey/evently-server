@@ -6,6 +6,8 @@ import { Roles } from '@common/constants/roles';
 import { CategoryController } from '../controllers/category-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
+import { validate } from '../middlewares/validation-middleware';
+import { createCategorySchema, editCategorySchema, deleteCategorySchema } from '../validations';
 
 export function createCategoryRoutes(categoryController: CategoryController, tokenManager: ITokenManager): Router {
     const router = Router();
@@ -16,9 +18,15 @@ export function createCategoryRoutes(categoryController: CategoryController, tok
     router.get('/', (req, res) => categoryController.getCategories(req, res));
 
     // Админские маршруты
-    router.post('/', auth, adminOnly, (req, res) => categoryController.createCategory(req, res));
-    router.put('/:id', auth, adminOnly, (req, res) => categoryController.editCategory(req, res));
-    router.delete('/:id', auth, adminOnly, (req, res) => categoryController.deleteCategory(req, res));
+    router.post('/', auth, adminOnly, validate(createCategorySchema), (req, res) =>
+        categoryController.createCategory(req, res),
+    );
+    router.put('/:id', auth, adminOnly, validate(editCategorySchema), (req, res) =>
+        categoryController.editCategory(req, res),
+    );
+    router.delete('/:id', auth, adminOnly, validate(deleteCategorySchema), (req, res) =>
+        categoryController.deleteCategory(req, res),
+    );
 
     return router;
 }

@@ -6,6 +6,14 @@ import { Roles } from '@common/constants/roles';
 import { CommentController } from '../controllers/comment-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
+import { validate } from '../middlewares/validation-middleware';
+import {
+    getCommentsByEventSchema,
+    getCommentsByUserSchema,
+    createCommentSchema,
+    editCommentSchema,
+    deleteCommentSchema,
+} from '../validations';
 
 export function createCommentRoutes(commentController: CommentController, tokenManager: ITokenManager): Router {
     const router = Router();
@@ -14,13 +22,21 @@ export function createCommentRoutes(commentController: CommentController, tokenM
 
     // Публичные маршруты
     router.get('/', (req, res) => commentController.getAllComments(req, res));
-    router.get('/event/:eventId', (req, res) => commentController.getCommentsByEvent(req, res));
-    router.get('/user/:userId', (req, res) => commentController.getCommentsByUser(req, res));
+    router.get('/event/:eventId', validate(getCommentsByEventSchema), (req, res) =>
+        commentController.getCommentsByEvent(req, res),
+    );
+    router.get('/user/:userId', validate(getCommentsByUserSchema), (req, res) =>
+        commentController.getCommentsByUser(req, res),
+    );
 
     // Защищенные маршруты
-    router.post('/', auth, (req, res) => commentController.createComment(req, res));
-    router.put('/:id', auth, adminOrUser, (req, res) => commentController.editComment(req, res));
-    router.delete('/:id', auth, adminOrUser, (req, res) => commentController.deleteComment(req, res));
+    router.post('/', auth, validate(createCommentSchema), (req, res) => commentController.createComment(req, res));
+    router.put('/:id', auth, adminOrUser, validate(editCommentSchema), (req, res) =>
+        commentController.editComment(req, res),
+    );
+    router.delete('/:id', auth, adminOrUser, validate(deleteCommentSchema), (req, res) =>
+        commentController.deleteComment(req, res),
+    );
 
     return router;
 }
