@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { AccessDeniedException } from '@application/common';
+import { NotAuthenticatedException } from '@application/common';
 import { ITokenManager } from '@application/services/auth';
 import { log } from '@common/utils/logger';
 
@@ -11,7 +11,7 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
         const header = req.headers.authorization;
 
         if (!header || !header.startsWith('Bearer ')) {
-            const errorResponse = createErrorResponse(new AccessDeniedException(), 401);
+            const errorResponse = createErrorResponse(new NotAuthenticatedException());
             return res.status(errorResponse.status).json(errorResponse);
         }
 
@@ -19,6 +19,9 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
 
         try {
             const user = await tokenManager.verifyToken(token, 'access');
+            if (!user) {
+                throw new NotAuthenticatedException();
+            }
             req.user = user;
             log.debug('User authenticated', { userId: user.userId, role: user.role });
             next();

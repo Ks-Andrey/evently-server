@@ -10,4 +10,8 @@ export class CommentDTO {
         readonly text: string,
         readonly createdAt: Date,
     ) {}
+
+    static create(id: UUID, eventId: UUID, author: CommentUserDTO, text: string, createdAt: Date): CommentDTO {
+        return new CommentDTO(id, eventId, author, text, createdAt);
+    }
 }

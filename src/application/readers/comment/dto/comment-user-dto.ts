@@ -6,4 +6,8 @@ export class CommentUserDTO {
         readonly username: string,
         readonly avatarUrl?: string,
     ) {}
+
+    static create(id: UUID, username: string, avatarUrl?: string): CommentUserDTO {
+        return new CommentUserDTO(id, username, avatarUrl);
+    }
 }

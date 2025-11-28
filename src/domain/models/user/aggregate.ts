@@ -36,6 +36,41 @@ export class User {
         private _imageUrl?: string,
     ) {}
 
+    static createSync(
+        id: UUID,
+        userType: UserType,
+        username: string,
+        email: string,
+        passwordHash: string,
+        personalData?: string,
+        isBlocked: boolean = false,
+        subscriptionCount: number = 0,
+        emailVerified: boolean = false,
+        pendingEmail?: string,
+        imageUrl?: string,
+    ): User {
+        User.ensureValidId(id);
+        User.ensureValidUserType(userType);
+        User.ensureValidUsername(username);
+        User.ensureValidEmail(email);
+        User.ensureValidPassword(passwordHash);
+        User.ensureValidSubscriptionCount(subscriptionCount);
+
+        return new User(
+            id,
+            userType,
+            username.trim(),
+            email.trim(),
+            emailVerified,
+            passwordHash,
+            subscriptionCount,
+            personalData?.trim(),
+            isBlocked,
+            pendingEmail?.trim(),
+            imageUrl?.trim(),
+        );
+    }
+
     static async create(
         id: UUID,
         userType: UserType,

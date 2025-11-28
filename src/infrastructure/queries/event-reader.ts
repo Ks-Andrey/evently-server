@@ -1,0 +1,166 @@
+import { Prisma } from '@generated/prisma/client';
+import { UUID } from 'crypto';
+
+import { IEventReader, EventFilters } from '@application/readers/event';
+import { EventCategoryDTO } from '@application/readers/event/dto/event-category-dto';
+import { EventDTO } from '@application/readers/event/dto/event-dto';
+import { EventOrganizerDTO } from '@application/readers/event/dto/event-organizer-dto';
+import { EventUserDTO } from '@application/readers/event/dto/event-user-dto';
+
+import { PrismaUnitOfWork } from '../database/unit-of-work';
+
+type EventWithRelations = Prisma.EventGetPayload<{
+    include: {
+        organizer: true;
+        category: true;
+    };
+}>;
+
+type EventSubscriptionWithUser = Prisma.EventSubscriptionGetPayload<{
+    include: { user: true };
+}>;
+
+export class EventReader implements IEventReader {
+    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
+
+    private get prisma() {
+        return this.unitOfWork.getClient();
+    }
+
+    async findEventUsers(eventId: UUID): Promise<EventUserDTO[]> {
+        const subscriptions = await this.prisma.eventSubscription.findMany({
+            where: { eventId },
+            include: {
+                user: true,
+            },
+        });
+
+        return (subscriptions as EventSubscriptionWithUser[]).map((sub) =>
+            EventUserDTO.create(sub.user.id as UUID, sub.user.username, sub.user.imageUrl || undefined),
+        );
+    }
+
+    async findById(eventId: UUID): Promise<EventDTO | null> {
+        const eventData = await this.prisma.event.findUnique({
+            where: { id: eventId },
+            include: {
+                organizer: true,
+                category: true,
+            },
+        });
+
+        if (!eventData) {
+            return null;
+        }
+
+        return this.toEventDTO(eventData);
+    }
+
+    async findAll(): Promise<EventDTO[]> {
+        const eventsData = await this.prisma.event.findMany({
+            include: {
+                organizer: true,
+                category: true,
+            },
+        });
+
+        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+    }
+
+    async findByOrganizer(organizerId: UUID): Promise<EventDTO[]> {
+        const eventsData = await this.prisma.event.findMany({
+            where: { organizerId },
+            include: {
+                organizer: true,
+                category: true,
+            },
+        });
+
+        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+    }
+
+    async findByCategory(categoryId: UUID): Promise<EventDTO[]> {
+        const eventsData = await this.prisma.event.findMany({
+            where: { categoryId },
+            include: {
+                organizer: true,
+                category: true,
+            },
+        });
+
+        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+    }
+
+    async findWithFilters(filters: EventFilters): Promise<EventDTO[]> {
+        interface PrismaWhereClause {
+            categoryId?: string;
+            date?: {
+                gte?: Date;
+                lte?: Date;
+            };
+            OR?: Array<{
+                title?: { contains: string; mode: 'insensitive' };
+                description?: { contains: string; mode: 'insensitive' };
+                location?: { contains: string; mode: 'insensitive' };
+            }>;
+        }
+        const where: PrismaWhereClause = {};
+
+        if (filters.categoryId) {
+            where.categoryId = filters.categoryId;
+        }
+
+        if (filters.dateFrom || filters.dateTo) {
+            where.date = {};
+            if (filters.dateFrom) {
+                where.date.gte = filters.dateFrom;
+            }
+            if (filters.dateTo) {
+                where.date.lte = filters.dateTo;
+            }
+        }
+
+        if (filters.keyword) {
+            where.OR = [
+                { title: { contains: filters.keyword, mode: 'insensitive' } },
+                { description: { contains: filters.keyword, mode: 'insensitive' } },
+                { location: { contains: filters.keyword, mode: 'insensitive' } },
+            ];
+        }
+
+        const eventsData = await this.prisma.event.findMany({
+            where,
+            include: {
+                organizer: true,
+                category: true,
+            },
+        });
+
+        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+    }
+
+    private toEventDTO(eventData: EventWithRelations): EventDTO {
+        const organizerDTO = EventOrganizerDTO.create(
+            eventData.organizer.id as UUID,
+            eventData.organizer.username,
+            eventData.organizer.personalData || undefined,
+        );
+
+        const categoryDTO = EventCategoryDTO.create(
+            eventData.category.categoryId as UUID,
+            eventData.category.categoryName,
+        );
+
+        return EventDTO.create(
+            eventData.id as UUID,
+            organizerDTO,
+            categoryDTO,
+            eventData.title,
+            eventData.description,
+            eventData.date,
+            eventData.location,
+            eventData.subscriberCount,
+            eventData.commentCount,
+        );
+    }
+}

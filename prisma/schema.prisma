@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                String   @id @default(uuid())
+  userTypeId        String
+  username          String   @unique
+  email             String   @unique
+  emailVerified     Boolean  @default(false)
+  passwordHash      String
+  subscriptionCount Int      @default(0)
+  personalData      String?
+  isBlocked         Boolean  @default(false)
+  pendingEmail      String?
+  imageUrl          String?
+
+  userType          UserType            @relation(fields: [userTypeId], references: [userTypeId], onDelete: Restrict)
+  events            Event[]              @relation("EventOrganizer")
+  comments          Comment[]
+  notifications     Notification[]
+  subscriptions     EventSubscription[]
+  emailVerifications EmailVerification[]
+
+  @@map("users")
+}
+
+model UserType {
+  userTypeId String @id @default(uuid())
+  typeName   String @unique
+  role       String // Roles enum: 'admin', 'organizer', 'user'
+
+  users      User[]
+
+  @@map("user_types")
+}
+
+model Category {
+  categoryId   String @id @default(uuid())
+  categoryName String @unique
+
+  events       Event[]
+
+  @@map("categories")
+}
+
+model Event {
+  id              String   @id @default(uuid())
+  organizerId     String
+  categoryId     String
+  title           String
+  description     String
+  date            DateTime
+  location        String
+  subscriberCount Int      @default(0)
+  commentCount    Int      @default(0)
+
+  organizer       User              @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: Cascade)
+  category        Category          @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
+  images          EventImage[]
+  comments        Comment[]
+  notifications   Notification[]
+  subscriptions   EventSubscription[]
+
+  @@map("events")
+}
+
+model EventImage {
+  id        String @id @default(uuid())
+  eventId   String
+  imageUrl  String
+
+  event     Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_images")
+}
+
+model EventSubscription {
+  eventId String
+  userId  String
+
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, userId])
+  @@map("event_subscriptions")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  eventId   String
+  authorId  String
+  text      String
+  createdAt DateTime @default(now())
+
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  eventId   String
+  userId    String
+  type      String           
+  message   String
+  createdAt DateTime         @default(now())
+
+  event     Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  userId    String
+  email     String
+  purpose   String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verifications")
+}

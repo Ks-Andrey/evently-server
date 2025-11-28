@@ -6,4 +6,8 @@ export class NotificationUserDTO {
         readonly username: string,
         readonly avatarUrl?: string,
     ) {}
+
+    static create(id: UUID, username: string, avatarUrl?: string): NotificationUserDTO {
+        return new NotificationUserDTO(id, username, avatarUrl);
+    }
 }

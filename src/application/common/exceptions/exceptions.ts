@@ -37,3 +37,9 @@ export class AccessDeniedException extends ApplicationException {
         super(ERROR_MESSAGES.domain.common.accessDenied, ApplicationErrorCodes.ACCESS_DENIED, context);
     }
 }
+
+export class NotAuthenticatedException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.domain.common.notAuthenticated, ApplicationErrorCodes.NOT_AUTHENTICATED, context);
+    }
+}

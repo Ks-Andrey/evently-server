@@ -9,6 +9,8 @@ export function getHttpStatusFromErrorCode(errorCode: string): number {
     switch (errorCode) {
         case ApplicationErrorCodes.INVALID_INPUT:
             return 400;
+        case ApplicationErrorCodes.NOT_AUTHENTICATED:
+            return 401;
         case ApplicationErrorCodes.RESOURCE_NOT_FOUND:
             return 404;
         case ApplicationErrorCodes.RESOURCE_ALREADY_EXISTS:
@@ -30,6 +32,8 @@ export function getErrorTitle(errorCode: string): string {
             return 'Validation Error';
         case ApplicationErrorCodes.RESOURCE_NOT_FOUND:
             return 'Resource Not Found';
+        case ApplicationErrorCodes.NOT_AUTHENTICATED:
+            return 'Not Authenticated';
         case ApplicationErrorCodes.RESOURCE_ALREADY_EXISTS:
             return 'Resource Already Exists';
         case ApplicationErrorCodes.ACCESS_DENIED:

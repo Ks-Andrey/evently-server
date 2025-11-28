@@ -7,8 +7,8 @@ import { EventDTO, IEventReader, EventFilters } from '@application/readers/event
 export class FindEvents {
     constructor(
         readonly categoryId?: UUID,
-        readonly dateFrom?: Date,
-        readonly dateTo?: Date,
+        readonly dateFrom?: string,
+        readonly dateTo?: string,
         readonly keyword?: string,
     ) {}
 }
@@ -20,8 +20,8 @@ export class FindEventsHandler {
         return safeAsync(async () => {
             const filters: EventFilters = {
                 categoryId: query.categoryId,
-                dateFrom: query.dateFrom,
-                dateTo: query.dateTo,
+                dateFrom: query.dateFrom ? new Date(query.dateFrom) : undefined,
+                dateTo: query.dateTo ? new Date(query.dateTo) : undefined,
                 keyword: query.keyword?.trim() || undefined,
             };
 

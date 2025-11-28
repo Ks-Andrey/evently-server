@@ -10,4 +10,14 @@ export class NotificationDTO {
         readonly createdAt: Date,
         readonly message: string,
     ) {}
+
+    static create(
+        id: UUID,
+        eventId: UUID,
+        user: NotificationUserDTO,
+        createdAt: Date,
+        message: string,
+    ): NotificationDTO {
+        return new NotificationDTO(id, eventId, user, createdAt, message);
+    }
 }

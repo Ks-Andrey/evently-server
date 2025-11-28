@@ -6,4 +6,8 @@ export class EventOrganizerDTO {
         readonly username: string,
         readonly personalData?: string,
     ) {}
+
+    static create(id: UUID, username: string, personalData?: string): EventOrganizerDTO {
+        return new EventOrganizerDTO(id, username, personalData);
+    }
 }

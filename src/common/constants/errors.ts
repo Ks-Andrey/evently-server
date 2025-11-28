@@ -83,6 +83,7 @@ export const ERROR_MESSAGES = {
         common: {
             unknownError: 'Неизвестная ошибка',
             accessDenied: 'У вас недостаточно прав для данного действия',
+            notAuthenticated: 'Не авторизован',
         },
     },
     application: {

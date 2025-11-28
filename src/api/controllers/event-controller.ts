@@ -43,8 +43,8 @@ export class EventController {
         const { categoryId, dateFrom, dateTo, keyword } = req.query;
         const query = new FindEvents(
             categoryId as UUID,
-            dateFrom ? new Date(dateFrom as string) : undefined,
-            dateTo ? new Date(dateTo as string) : undefined,
+            dateFrom as string,
+            dateTo as string,
             keyword as string | undefined,
         );
         const result = await this.findEventsHandler.execute(query);
@@ -87,7 +87,7 @@ export class EventController {
             id as UUID,
             title,
             description,
-            date ? new Date(date) : undefined,
+            date,
             location,
             categoryId,
         );
