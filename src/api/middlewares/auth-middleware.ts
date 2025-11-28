@@ -24,7 +24,7 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
             next();
         } catch (error: unknown) {
             log.warn('Authentication failed', {
-                error: error instanceof Error ? error.message : 'Unknown error',
+                error: log.formatError(error),
             });
             const errorResponse = createErrorResponse(error, 401);
             return res.status(errorResponse.status).json(errorResponse);

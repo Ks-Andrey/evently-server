@@ -47,6 +47,10 @@ if (NODE_ENV !== 'production') {
     );
 }
 
+function formatError(error: unknown): string {
+    return error instanceof Error ? error.message : 'Unknown error';
+}
+
 export const log = {
     error: (message: string, ...meta: unknown[]) => logger.error(message, ...meta),
     warn: (message: string, ...meta: unknown[]) => logger.warn(message, ...meta),
@@ -55,4 +59,5 @@ export const log = {
     verbose: (message: string, ...meta: unknown[]) => logger.verbose(message, ...meta),
     debug: (message: string, ...meta: unknown[]) => logger.debug(message, ...meta),
     silly: (message: string, ...meta: unknown[]) => logger.silly(message, ...meta),
+    formatError,
 };

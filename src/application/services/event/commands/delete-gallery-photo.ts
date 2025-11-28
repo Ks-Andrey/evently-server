@@ -1,8 +1,15 @@
 import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
-import { IFileStorageManager, AccessDeniedException, ApplicationException, safeAsync } from '@application/common';
+import {
+    IFileStorageManager,
+    AccessDeniedException,
+    ApplicationException,
+    executeInTransaction,
+} from '@application/common';
 import { Roles } from '@common/constants/roles';
+import { IUnitOfWork } from '@common/types/unit-of-work';
+import { log } from '@common/utils/logger';
 import { IEventRepository } from '@domain/models/event';
 
 import { EventNotFoundException } from '../exceptions';
@@ -20,10 +27,11 @@ export class DeleteEventGalleryPhotoHandler {
     constructor(
         private readonly eventRepo: IEventRepository,
         private readonly fileStorageManager: IFileStorageManager,
+        private readonly unitOfWork: IUnitOfWork,
     ) {}
 
     execute(command: DeleteEventGalleryPhoto): Promise<Result<UUID, ApplicationException>> {
-        return safeAsync(async () => {
+        return executeInTransaction(this.unitOfWork, async () => {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventNotFoundException();
 
@@ -31,10 +39,37 @@ export class DeleteEventGalleryPhotoHandler {
                 throw new AccessDeniedException();
             }
 
-            await this.fileStorageManager.deleteFromPermanentStorage(command.photoUrl);
+            const photoUrl = command.photoUrl;
+            let modelUpdated = false;
 
-            event.removePhoto(command.photoUrl);
-            await this.eventRepo.save(event);
+            try {
+                event.removePhoto(photoUrl);
+                await this.eventRepo.save(event);
+                modelUpdated = true;
+
+                await this.fileStorageManager.delete(photoUrl);
+            } catch (error) {
+                log.error('Error deleting gallery photo, starting rollback', {
+                    eventId: command.eventId,
+                    userId: command.userId,
+                    photoUrl,
+                    error: log.formatError(error),
+                });
+
+                if (modelUpdated) {
+                    try {
+                        event.addPhoto(photoUrl);
+                    } catch (rollbackErr) {
+                        log.error('Failed to rollback photo deletion in model', {
+                            eventId: command.eventId,
+                            photoUrl,
+                            error: log.formatError(rollbackErr),
+                        });
+                    }
+                }
+
+                throw error;
+            }
 
             return event.id;
         });

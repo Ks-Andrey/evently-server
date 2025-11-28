@@ -33,7 +33,7 @@ export class Event {
         private _location: string,
         private _subscriberCount: number,
         private _commentCount: number,
-        private _imageNames: string[],
+        private _imageUrls: string[],
     ) {}
 
     static create(
@@ -117,8 +117,8 @@ export class Event {
         return this._commentCount;
     }
 
-    get imageNames(): readonly string[] {
-        return [...this._imageNames];
+    get imageUrls(): readonly string[] {
+        return [...this._imageUrls];
     }
 
     updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
@@ -218,39 +218,39 @@ export class Event {
         }
     }
 
-    addPhotos(imageNames: string[]): void {
-        if (!Array.isArray(imageNames) || imageNames.length === 0) {
+    addPhotos(imageUrls: string[]): void {
+        if (!Array.isArray(imageUrls) || imageUrls.length === 0) {
             throw new GalleryUrlCannotBeEmptyException();
         }
 
-        const trimmedUrls = imageNames.map((name) => name.trim()).filter((name) => name.length > 0);
+        const trimmedUrls = imageUrls.map((url) => url.trim()).filter((url) => url.length > 0);
 
         if (trimmedUrls.length === 0) {
             throw new GalleryUrlCannotBeEmptyException();
         }
 
-        if (this._imageNames.length + trimmedUrls.length > GALLERY_MAX_PHOTOS) {
+        if (this._imageUrls.length + trimmedUrls.length > GALLERY_MAX_PHOTOS) {
             throw new GalleryMaxPhotosExceededException();
         }
 
-        this._imageNames.push(...trimmedUrls);
+        this._imageUrls.push(...trimmedUrls);
     }
 
-    addPhoto(imageName: string): void {
-        if (!imageName || imageName.trim().length === 0) {
+    addPhoto(imageUrl: string): void {
+        if (!imageUrl || imageUrl.trim().length === 0) {
             throw new GalleryUrlCannotBeEmptyException();
         }
-        if (this._imageNames.length >= GALLERY_MAX_PHOTOS) {
+        if (this._imageUrls.length >= GALLERY_MAX_PHOTOS) {
             throw new GalleryMaxPhotosExceededException();
         }
-        this._imageNames.push(imageName.trim());
+        this._imageUrls.push(imageUrl.trim());
     }
 
-    removePhoto(imageName: string): void {
-        const index = this._imageNames.findIndex((name) => name === imageName);
+    removePhoto(imageUrl: string): void {
+        const index = this._imageUrls.findIndex((url) => url === imageUrl);
         if (index === -1) {
             throw new GalleryPhotoNotFoundException();
         }
-        this._imageNames.splice(index, 1);
+        this._imageUrls.splice(index, 1);
     }
 }

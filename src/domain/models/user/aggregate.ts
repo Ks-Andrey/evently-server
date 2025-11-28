@@ -33,7 +33,7 @@ export class User {
         private _personalData?: string,
         private _isBlocked: boolean = false,
         private _pendingEmail?: string,
-        private _imageName?: string,
+        private _imageUrl?: string,
     ) {}
 
     static async create(
@@ -135,8 +135,8 @@ export class User {
         return this._pendingEmail;
     }
 
-    get imageName(): string | undefined {
-        return this._imageName;
+    get imageUrl(): string | undefined {
+        return this._imageUrl;
     }
 
     incrementSubscriptionCount(): void {
@@ -223,10 +223,10 @@ export class User {
         }
     }
 
-    changeAvatar(imageName: string | undefined): void {
-        if (imageName !== undefined && (!imageName || imageName.trim().length === 0)) {
+    changeAvatar(imageUrl: string | undefined): void {
+        if (imageUrl !== undefined && (!imageUrl || imageUrl.trim().length === 0)) {
             throw new AvatarUrlCannotBeEmptyException();
         }
-        this._imageName = imageName?.trim();
+        this._imageUrl = imageUrl?.trim();
     }
 }
