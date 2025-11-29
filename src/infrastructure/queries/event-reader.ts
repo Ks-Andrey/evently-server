@@ -7,7 +7,7 @@ import { EventOrganizerDTO } from '@application/readers/event/dto/event-organize
 import { EventUserDTO } from '@application/readers/event/dto/event-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {
@@ -21,14 +21,8 @@ type EventSubscriptionWithUser = Prisma.EventSubscriptionGetPayload<{
 }>;
 
 export class EventReader implements IEventReader {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findEventUsers(eventId: UUID): Promise<EventUserDTO[]> {
-        const subscriptions = await this.prisma.eventSubscription.findMany({
+        const subscriptions = await prisma.eventSubscription.findMany({
             where: { eventId },
             include: {
                 user: true,
@@ -41,7 +35,7 @@ export class EventReader implements IEventReader {
     }
 
     async findById(eventId: UUID): Promise<EventDTO | null> {
-        const eventData = await this.prisma.event.findUnique({
+        const eventData = await prisma.event.findUnique({
             where: { id: eventId },
             include: {
                 organizer: true,
@@ -57,7 +51,7 @@ export class EventReader implements IEventReader {
     }
 
     async findAll(): Promise<EventDTO[]> {
-        const eventsData = await this.prisma.event.findMany({
+        const eventsData = await prisma.event.findMany({
             include: {
                 organizer: true,
                 category: true,
@@ -68,7 +62,7 @@ export class EventReader implements IEventReader {
     }
 
     async findByOrganizer(organizerId: UUID): Promise<EventDTO[]> {
-        const eventsData = await this.prisma.event.findMany({
+        const eventsData = await prisma.event.findMany({
             where: { organizerId },
             include: {
                 organizer: true,
@@ -80,7 +74,7 @@ export class EventReader implements IEventReader {
     }
 
     async findByCategory(categoryId: UUID): Promise<EventDTO[]> {
-        const eventsData = await this.prisma.event.findMany({
+        const eventsData = await prisma.event.findMany({
             where: { categoryId },
             include: {
                 organizer: true,
@@ -128,7 +122,7 @@ export class EventReader implements IEventReader {
             ];
         }
 
-        const eventsData = await this.prisma.event.findMany({
+        const eventsData = await prisma.event.findMany({
             where,
             include: {
                 organizer: true,

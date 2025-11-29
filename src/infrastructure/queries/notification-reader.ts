@@ -5,21 +5,15 @@ import { NotificationDTO } from '@application/readers/notification/dto/notificat
 import { NotificationUserDTO } from '@application/readers/notification/dto/notification-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };
 }>;
 
 export class NotificationReader implements INotificationReader {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findByUserId(userId: UUID): Promise<NotificationDTO[]> {
-        const notificationsData = await this.prisma.notification.findMany({
+        const notificationsData = await prisma.notification.findMany({
             where: { userId },
             include: { user: true },
             orderBy: { createdAt: 'desc' },

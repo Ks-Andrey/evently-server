@@ -4,28 +4,27 @@ import { DATABASE_URL } from '@common/config/database';
 import { log } from '@common/utils/logger';
 import { PrismaClient } from '@generated/prisma/client';
 
-let prisma: PrismaClient;
+const adapter = new PrismaPg({ connectionString: DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
-export function getPrismaClient(): PrismaClient {
+(async () => {
     try {
-        const adapter = new PrismaPg({ connectionString: DATABASE_URL });
-        if (!prisma) {
-            prisma = new PrismaClient({ adapter });
-        }
-        return prisma;
+        await prisma.$connect();
+        log.info('Successfully connected to the database');
     } catch (error) {
-        log.error('Failed to create Prisma client', { error });
-        throw error;
-    }
-}
+        log.error('Failed to connect to the database', { error });
 
-export async function disconnectPrisma(): Promise<void> {
-    if (prisma) {
-        try {
-            await prisma.$disconnect();
-        } catch (error) {
-            log.error('Failed to disconnect Prisma client', { error });
-            throw error;
-        }
+        process.exit(1);
     }
-}
+})();
+
+export const disconnectPrisma = async () => {
+    try {
+        await prisma.$disconnect();
+        log.info('Successfully disconnected from the database');
+    } catch (error) {
+        log.error('Failed to disconnect from the database', { error });
+    }
+};
+
+export { prisma };

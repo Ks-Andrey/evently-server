@@ -6,7 +6,7 @@ import { EventCategory } from '@domain/models/event/entities/event-category';
 import { EventOrganizer } from '@domain/models/event/entities/event-organizer';
 import { Prisma, PrismaClient } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {
@@ -22,14 +22,8 @@ type PrismaTransactionClient = Omit<
 >;
 
 export class EventRepository implements IEventRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<Event | null> {
-        const eventData = await this.prisma.event.findUnique({
+        const eventData = await prisma.event.findUnique({
             where: { id },
             include: {
                 organizer: true,
@@ -62,8 +56,7 @@ export class EventRepository implements IEventRepository {
             commentCount: entity.commentCount,
         };
 
-        const mainClient = this.unitOfWork.getMainClient();
-        await mainClient.$transaction(async (tx: PrismaTransactionClient) => {
+        await prisma.$transaction(async (tx: PrismaTransactionClient) => {
             await tx.event.upsert({
                 where: { id: entity.id },
                 create: eventData,
@@ -87,7 +80,7 @@ export class EventRepository implements IEventRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.event.delete({
+        await prisma.event.delete({
             where: { id },
         });
     }

@@ -4,19 +4,13 @@ import { IEmailVerificationRepository } from '@domain/models/auth';
 import { EmailVerification, EmailVerificationPurpose } from '@domain/models/auth';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type EmailVerificationData = Prisma.EmailVerificationGetPayload<{}>;
 
 export class EmailVerificationRepository implements IEmailVerificationRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<EmailVerification | null> {
-        const verificationData = await this.prisma.emailVerification.findUnique({
+        const verificationData = await prisma.emailVerification.findUnique({
             where: { id },
         });
 
@@ -28,7 +22,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
     }
 
     async findByEmail(email: string): Promise<EmailVerification | null> {
-        const verificationData = await this.prisma.emailVerification.findFirst({
+        const verificationData = await prisma.emailVerification.findFirst({
             where: { email },
             orderBy: { expiresAt: 'desc' },
         });
@@ -50,7 +44,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
             used: entity.isUsed,
         };
 
-        await this.prisma.emailVerification.upsert({
+        await prisma.emailVerification.upsert({
             where: { id: entity.id },
             create: verificationData,
             update: verificationData,
@@ -58,7 +52,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.emailVerification.delete({
+        await prisma.emailVerification.delete({
             where: { id },
         });
     }

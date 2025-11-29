@@ -5,19 +5,13 @@ import { IUserTypeRepository } from '@domain/models/user-type';
 import { UserType } from '@domain/models/user-type';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 
 export class UserTypeRepository implements IUserTypeRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<UserType | null> {
-        const userTypeData = await this.prisma.userType.findUnique({
+        const userTypeData = await prisma.userType.findUnique({
             where: { userTypeId: id },
         });
 
@@ -29,7 +23,7 @@ export class UserTypeRepository implements IUserTypeRepository {
     }
 
     async findByName(name: string): Promise<UserType | null> {
-        const userTypeData = await this.prisma.userType.findUnique({
+        const userTypeData = await prisma.userType.findUnique({
             where: { typeName: name },
         });
 
@@ -47,7 +41,7 @@ export class UserTypeRepository implements IUserTypeRepository {
             role: entity.role,
         };
 
-        await this.prisma.userType.upsert({
+        await prisma.userType.upsert({
             where: { userTypeId: entity.userTypeId },
             create: userTypeData,
             update: userTypeData,
@@ -55,7 +49,7 @@ export class UserTypeRepository implements IUserTypeRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.userType.delete({
+        await prisma.userType.delete({
             where: { userTypeId: id },
         });
     }

@@ -1,7 +1,7 @@
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { PrismaClient } from '@generated/prisma/client';
 
-import { getPrismaClient } from './prisma-client';
+import { prisma } from './prisma-client';
 
 type PrismaTransactionClient = Omit<
     PrismaClient,
@@ -9,15 +9,12 @@ type PrismaTransactionClient = Omit<
 >;
 
 export class PrismaUnitOfWork implements IUnitOfWork {
-    private prisma: PrismaClient;
     private transactionClient: PrismaTransactionClient | null = null;
 
-    constructor() {
-        this.prisma = getPrismaClient();
-    }
+    constructor() {}
 
     async execute<T>(fn: () => Promise<T>): Promise<T> {
-        return this.prisma.$transaction(async (tx: PrismaTransactionClient) => {
+        return prisma.$transaction(async (tx: PrismaTransactionClient) => {
             this.transactionClient = tx;
             try {
                 const result = await fn();
@@ -33,12 +30,4 @@ export class PrismaUnitOfWork implements IUnitOfWork {
     async commit(): Promise<void> {}
 
     async rollback(): Promise<void> {}
-
-    getClient(): PrismaTransactionClient | PrismaClient {
-        return this.transactionClient || this.prisma;
-    }
-
-    getMainClient(): PrismaClient {
-        return this.prisma;
-    }
 }

@@ -7,7 +7,7 @@ import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
 import { Roles } from '@common/constants/roles';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
@@ -18,14 +18,8 @@ type EventSubscriptionWithEvent = Prisma.EventSubscriptionGetPayload<{
 }>;
 
 export class UserReader implements IUserReader {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findUserEvents(userId: UUID): Promise<UserEventDTO[]> {
-        const subscriptions = await this.prisma.eventSubscription.findMany({
+        const subscriptions = await prisma.eventSubscription.findMany({
             where: { userId },
             include: {
                 event: true,
@@ -38,7 +32,7 @@ export class UserReader implements IUserReader {
     }
 
     async findByUsername(username: string): Promise<UserDTO | null> {
-        const userData = await this.prisma.user.findUnique({
+        const userData = await prisma.user.findUnique({
             where: { username },
             include: { userType: true },
         });
@@ -51,7 +45,7 @@ export class UserReader implements IUserReader {
     }
 
     async findById(userId: UUID): Promise<UserDTO | null> {
-        const userData = await this.prisma.user.findUnique({
+        const userData = await prisma.user.findUnique({
             where: { id: userId },
             include: { userType: true },
         });
@@ -64,7 +58,7 @@ export class UserReader implements IUserReader {
     }
 
     async findAll(): Promise<UserDTO[]> {
-        const usersData = await this.prisma.user.findMany({
+        const usersData = await prisma.user.findMany({
             include: { userType: true },
         });
 

@@ -43,3 +43,9 @@ export class NotAuthenticatedException extends ApplicationException {
         super(ERROR_MESSAGES.domain.common.notAuthenticated, ApplicationErrorCodes.NOT_AUTHENTICATED, context);
     }
 }
+
+export class RouteNotFoundException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.common.routeNotFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
+    }
+}

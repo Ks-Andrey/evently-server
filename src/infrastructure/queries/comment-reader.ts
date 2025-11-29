@@ -5,21 +5,15 @@ import { CommentDTO } from '@application/readers/comment/dto/comment-dto';
 import { CommentUserDTO } from '@application/readers/comment/dto/comment-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };
 }>;
 
 export class CommentReader implements ICommentReader {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findAll(): Promise<CommentDTO[]> {
-        const commentsData = await this.prisma.comment.findMany({
+        const commentsData = await prisma.comment.findMany({
             include: { author: true },
         });
 
@@ -27,7 +21,7 @@ export class CommentReader implements ICommentReader {
     }
 
     async findCommentsByEventId(eventId: UUID): Promise<CommentDTO[]> {
-        const commentsData = await this.prisma.comment.findMany({
+        const commentsData = await prisma.comment.findMany({
             where: { eventId },
             include: { author: true },
             orderBy: { createdAt: 'desc' },
@@ -37,7 +31,7 @@ export class CommentReader implements ICommentReader {
     }
 
     async findAllCommentsByUserId(userId: UUID): Promise<CommentDTO[]> {
-        const commentsData = await this.prisma.comment.findMany({
+        const commentsData = await prisma.comment.findMany({
             where: { authorId: userId },
             include: { author: true },
             orderBy: { createdAt: 'desc' },

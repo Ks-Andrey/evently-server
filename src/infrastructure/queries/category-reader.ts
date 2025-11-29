@@ -4,25 +4,19 @@ import { ICategoryReader } from '@application/readers/category';
 import { CategoryDTO } from '@application/readers/category/dto/category-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 
 export class CategoryReader implements ICategoryReader {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findAll(): Promise<CategoryDTO[]> {
-        const categoriesData = await this.prisma.category.findMany();
+        const categoriesData = await prisma.category.findMany();
 
         return categoriesData.map((categoryData) => this.toCategoryDTO(categoryData));
     }
 
     async findById(categoryId: UUID): Promise<CategoryDTO | null> {
-        const categoryData = await this.prisma.category.findUnique({
+        const categoryData = await prisma.category.findUnique({
             where: { categoryId },
         });
 
@@ -34,7 +28,7 @@ export class CategoryReader implements ICategoryReader {
     }
 
     async findByName(name: string): Promise<CategoryDTO | null> {
-        const categoryData = await this.prisma.category.findUnique({
+        const categoryData = await prisma.category.findUnique({
             where: { categoryName: name },
         });
 

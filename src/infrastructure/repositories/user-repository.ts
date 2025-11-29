@@ -3,21 +3,15 @@ import { UUID } from 'crypto';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
 }>;
 
 export class UserRepository implements IUserRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<User | null> {
-        const userData = await this.prisma.user.findUnique({
+        const userData = await prisma.user.findUnique({
             where: { id },
             include: { userType: true },
         });
@@ -30,7 +24,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        const userData = await this.prisma.user.findUnique({
+        const userData = await prisma.user.findUnique({
             where: { email },
             include: { userType: true },
         });
@@ -66,7 +60,7 @@ export class UserRepository implements IUserRepository {
             imageUrl: userPrivate._imageUrl,
         };
 
-        await this.prisma.user.upsert({
+        await prisma.user.upsert({
             where: { id: entity.id },
             create: userData,
             update: userData,
@@ -74,7 +68,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.user.delete({
+        await prisma.user.delete({
             where: { id },
         });
     }

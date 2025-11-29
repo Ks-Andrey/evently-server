@@ -5,21 +5,15 @@ import { Notification, NotificationType } from '@domain/models/notification';
 import { NotificationUser } from '@domain/models/notification/entities/notification-user';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };
 }>;
 
 export class NotificationRepository implements INotificationRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<Notification | null> {
-        const notificationData = await this.prisma.notification.findUnique({
+        const notificationData = await prisma.notification.findUnique({
             where: { id },
             include: { user: true },
         });
@@ -42,7 +36,7 @@ export class NotificationRepository implements INotificationRepository {
             createdAt: entity.createdAt,
         };
 
-        await this.prisma.notification.upsert({
+        await prisma.notification.upsert({
             where: { id: entity.id },
             create: notificationData,
             update: notificationData,
@@ -50,7 +44,7 @@ export class NotificationRepository implements INotificationRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.notification.delete({
+        await prisma.notification.delete({
             where: { id },
         });
     }

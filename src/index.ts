@@ -2,11 +2,12 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 
 import { createErrorResponse } from '@api/common/utils/error-handler';
 import { createAppRoutes } from '@api/routes/app-routes';
-import { ApplicationException } from '@application/common';
+import { RouteNotFoundException } from '@application/common';
 
 import { log } from '@common/utils/logger';
-import { disconnectPrisma } from '@infrastructure/database/prisma-client';
+import { disconnectPrisma } from '@infrastructure/database';
 import { createDIContainer, getAppDependencies } from '@infrastructure/di/container';
+import { disconnectRedis } from '@infrastructure/redis';
 
 import { PORT } from './common/config/app';
 import { NODE_ENV } from './common/config/logger';
@@ -45,7 +46,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
     });
 
     app.use((req: Request, res: Response) => {
-        const errorResponse = createErrorResponse(new ApplicationException('Route not found', 'ROUTE_NOT_FOUND'), 404);
+        const errorResponse = createErrorResponse(new RouteNotFoundException());
         res.status(404).json(errorResponse);
     });
 
@@ -83,12 +84,8 @@ async function startServer() {
             server.close(async () => {
                 log.info('HTTP server closed');
 
-                try {
-                    await disconnectPrisma();
-                    log.info('Database connection closed');
-                } catch (error) {
-                    log.error('Error closing database connection', { error });
-                }
+                await disconnectPrisma();
+                await disconnectRedis();
 
                 process.exit(0);
             });

@@ -4,19 +4,13 @@ import { ICategoryRepository } from '@domain/models/category';
 import { Category } from '@domain/models/category';
 import { Prisma } from '@generated/prisma/client';
 
-import { PrismaUnitOfWork } from '../database/unit-of-work';
+import { prisma } from '../database/prisma-client';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 
 export class CategoryRepository implements ICategoryRepository {
-    constructor(private readonly unitOfWork: PrismaUnitOfWork) {}
-
-    private get prisma() {
-        return this.unitOfWork.getClient();
-    }
-
     async findById(id: UUID): Promise<Category | null> {
-        const categoryData = await this.prisma.category.findUnique({
+        const categoryData = await prisma.category.findUnique({
             where: { categoryId: id },
         });
 
@@ -33,7 +27,7 @@ export class CategoryRepository implements ICategoryRepository {
             categoryName: entity.categoryName,
         };
 
-        await this.prisma.category.upsert({
+        await prisma.category.upsert({
             where: { categoryId: entity.categoryId },
             create: categoryData,
             update: categoryData,
@@ -41,7 +35,7 @@ export class CategoryRepository implements ICategoryRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.category.delete({
+        await prisma.category.delete({
             where: { categoryId: id },
         });
     }

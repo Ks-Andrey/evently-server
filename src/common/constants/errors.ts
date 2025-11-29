@@ -89,6 +89,7 @@ export const ERROR_MESSAGES = {
     application: {
         common: {
             invalidInput: 'Некорректный формат данных',
+            routeNotFound: 'Маршрут не найден',
         },
         user: {
             notFound: 'Пользователь не найден',

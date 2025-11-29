@@ -1,25 +1,12 @@
 import jwt from 'jsonwebtoken';
-import { createClient } from 'redis';
 
 import { ITokenManager } from '@application/services/auth';
-import { redisUrl } from '@common/config/redis';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
-import { log } from '@common/utils/logger';
+
+import { redisClient } from '../redis';
 
 export class TokenManager implements ITokenManager {
-    private redisClient;
-
-    constructor() {
-        this.redisClient = createClient({ url: redisUrl });
-        this.redisClient.on('error', (err) => {
-            log.error('Redis Client Error', { error: err });
-        });
-        this.redisClient.connect().catch((err) => {
-            log.error('Failed to connect to Redis', { error: err });
-        });
-    }
-
     async issueTokens(payload: UserJwtPayload): Promise<Tokens> {
         const accessToken = jwt.sign(payload, secret, {
             expiresIn: accessTokenTtlSeconds,
@@ -30,7 +17,7 @@ export class TokenManager implements ITokenManager {
         });
 
         const refreshKey = this.getRefreshTokenKey(payload.userId, refreshToken);
-        await this.redisClient.setEx(refreshKey, refreshTokenTtlSeconds, '1');
+        await redisClient.setEx(refreshKey, refreshTokenTtlSeconds, '1');
 
         return {
             accessToken,
@@ -52,13 +39,13 @@ export class TokenManager implements ITokenManager {
 
         const decoded = jwt.decode(token) as any;
         const ttl = decoded.exp - Math.floor(Date.now() / 1000);
-        await this.redisClient.setEx(key, ttl, '1');
+        await redisClient.setEx(key, ttl, '1');
     }
 
     private async isTokenRevoked(token: string, type: TokenType, userId?: string): Promise<boolean> {
         const key = type === 'refresh' ? this.getRefreshTokenKey(userId!, token) : this.getRevokedTokenKey(token, type);
 
-        const result = await this.redisClient.get(key);
+        const result = await redisClient.get(key);
         return result !== null && result === '1';
     }
 
