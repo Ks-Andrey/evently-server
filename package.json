@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node ./dist/index.js",
-        "build": "tsc",
+        "build": "tsc && tsc-alias -p tsconfig.json && ts-add-js-extension --dir=dist",
         "dev": "nodemon",
         "lint": "eslint \"{src,test}/**/*.ts\" --fix",
         "format": "prettier --write \"{src,test}/**/*.ts\"",
@@ -37,7 +37,10 @@
         "nodemon": "^3.1.10",
         "prettier": "^3.6.2",
         "prisma": "^7.0.1",
-        "ts-node": "^10.9.2",
+        "ts-add-js-extension": "^1.6.6",
+        "tsc-alias": "^1.8.16",
+        "tsconfig-paths": "^4.2.0",
+        "tsx": "^4.20.6",
         "typescript": "^5.9.3"
     },
     "dependencies": {
@@ -47,6 +50,7 @@
         "@types/multer": "^2.0.0",
         "@types/node": "^24.10.0",
         "@types/winston": "^2.4.4",
+        "awilix": "^12.0.5",
         "bcrypt": "^6.0.0",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",

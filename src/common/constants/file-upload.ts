@@ -21,8 +21,3 @@ export const ALLOWED_EXTENSIONS = {
     AVATAR: ['.jpg', '.jpeg', '.png', '.webp'] as const,
     GALLERY: ['.jpg', '.jpeg', '.png', '.webp'] as const,
 } as const;
-
-export const STORAGE_PATHS = {
-    TEMP_DIR_NAME: 'temp-uploads',
-    PERMANENT_DIR_NAME: 'uploads',
-} as const;

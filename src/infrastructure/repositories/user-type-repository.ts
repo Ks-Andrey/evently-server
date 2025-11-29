@@ -1,9 +1,9 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { Roles } from '@common/constants/roles';
 import { IUserTypeRepository } from '@domain/models/user-type';
 import { UserType } from '@domain/models/user-type';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

@@ -1,6 +1,5 @@
-import { PrismaClient } from '@generated/prisma/client';
-
 import { IUnitOfWork } from '@common/types/unit-of-work';
+import { PrismaClient } from '@generated/prisma/client';
 
 import { getPrismaClient } from './prisma-client';
 

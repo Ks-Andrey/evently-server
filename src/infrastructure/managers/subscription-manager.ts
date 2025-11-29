@@ -1,7 +1,7 @@
-import { PrismaClient } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { ISubscriptionManager } from '@application/services/user/interfaces/subscription-manager';
+import { PrismaClient } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

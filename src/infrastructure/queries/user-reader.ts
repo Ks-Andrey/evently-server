@@ -1,4 +1,3 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { IUserReader } from '@application/readers/user';
@@ -6,6 +5,7 @@ import { UserDTO } from '@application/readers/user/dto/user-dto';
 import { UserEventDTO } from '@application/readers/user/dto/user-event-dto';
 import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
 import { Roles } from '@common/constants/roles';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

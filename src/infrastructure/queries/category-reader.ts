@@ -1,8 +1,8 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { ICategoryReader } from '@application/readers/category';
 import { CategoryDTO } from '@application/readers/category/dto/category-dto';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

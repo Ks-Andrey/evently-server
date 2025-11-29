@@ -1,8 +1,8 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { ICategoryRepository } from '@domain/models/category';
 import { Category } from '@domain/models/category';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

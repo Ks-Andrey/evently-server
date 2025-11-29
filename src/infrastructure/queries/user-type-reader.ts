@@ -1,9 +1,9 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { IUserTypeReader } from '@application/readers/user-type';
 import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
 import { Roles } from '@common/constants/roles';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

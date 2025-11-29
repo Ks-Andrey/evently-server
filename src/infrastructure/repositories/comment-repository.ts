@@ -1,9 +1,9 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { ICommentRepository } from '@domain/models/comment';
 import { Comment } from '@domain/models/comment';
 import { CommentUser } from '@domain/models/comment/entities/comment-user';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

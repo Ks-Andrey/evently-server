@@ -5,6 +5,7 @@ import { ITokenManager } from '@application/services/auth';
 import { redisUrl } from '@common/config/redis';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
+import { log } from '@common/utils/logger';
 
 export class TokenManager implements ITokenManager {
     private redisClient;
@@ -12,9 +13,11 @@ export class TokenManager implements ITokenManager {
     constructor() {
         this.redisClient = createClient({ url: redisUrl });
         this.redisClient.on('error', (err) => {
-            console.error('Redis Client Error', err);
+            log.error('Redis Client Error', { error: err });
         });
-        this.redisClient.connect().catch(console.error);
+        this.redisClient.connect().catch((err) => {
+            log.error('Failed to connect to Redis', { error: err });
+        });
     }
 
     async issueTokens(payload: UserJwtPayload): Promise<Tokens> {

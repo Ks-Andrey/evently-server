@@ -12,8 +12,8 @@ import {
     FileProcessingException,
 } from '@application/services/file';
 
+import { TEMP_UPLOADS_DIR } from '@common/config/app';
 import {
-    STORAGE_PATHS,
     FILE_SIZE_LIMITS,
     ALLOWED_MIME_TYPES,
     ALLOWED_EXTENSIONS,
@@ -23,7 +23,7 @@ import {
 
 import { createErrorResponse } from '../common';
 
-const tempStoragePath = path.join(process.cwd(), STORAGE_PATHS.TEMP_DIR_NAME);
+const tempStoragePath = path.join(process.cwd(), TEMP_UPLOADS_DIR);
 
 function createStorage() {
     return multer.diskStorage({

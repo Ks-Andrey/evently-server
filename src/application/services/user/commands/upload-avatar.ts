@@ -7,7 +7,7 @@ import {
     IFileStorageManager,
     executeInTransaction,
 } from '@application/common';
-import { STORAGE_PATHS } from '@common/constants/file-upload';
+import { TEMP_UPLOADS_DIR, UPLOADS_DIR } from '@common/config/app';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
@@ -40,13 +40,13 @@ export class UploadUserAvatarHandler {
             }
 
             const oldImagePath = user.imageUrl;
-            const newTempPath = `${STORAGE_PATHS.TEMP_DIR_NAME}/${command.fileName}`;
-            const newPermanentPath = `${STORAGE_PATHS.PERMANENT_DIR_NAME}/${command.fileName}`;
+            const newTempPath = `${TEMP_UPLOADS_DIR}/${command.fileName}`;
+            const newPermanentPath = `${UPLOADS_DIR}/${command.fileName}`;
 
             let fileMoved = false;
 
             try {
-                await this.fileStorageManager.moveTo(newTempPath, STORAGE_PATHS.PERMANENT_DIR_NAME);
+                await this.fileStorageManager.moveTo(newTempPath, UPLOADS_DIR);
                 fileMoved = true;
 
                 user.changeAvatar(newPermanentPath);

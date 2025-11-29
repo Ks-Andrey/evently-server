@@ -1,9 +1,9 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { INotificationRepository } from '@domain/models/notification';
 import { Notification, NotificationType } from '@domain/models/notification';
 import { NotificationUser } from '@domain/models/notification/entities/notification-user';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

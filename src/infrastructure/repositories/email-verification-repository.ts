@@ -1,8 +1,8 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { IEmailVerificationRepository } from '@domain/models/auth';
 import { EmailVerification, EmailVerificationPurpose } from '@domain/models/auth';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 

@@ -1,4 +1,3 @@
-import { Prisma } from '@generated/prisma/client';
 import { UUID } from 'crypto';
 
 import { IEventReader, EventFilters } from '@application/readers/event';
@@ -6,6 +5,7 @@ import { EventCategoryDTO } from '@application/readers/event/dto/event-category-
 import { EventDTO } from '@application/readers/event/dto/event-dto';
 import { EventOrganizerDTO } from '@application/readers/event/dto/event-organizer-dto';
 import { EventUserDTO } from '@application/readers/event/dto/event-user-dto';
+import { Prisma } from '@generated/prisma/client';
 
 import { PrismaUnitOfWork } from '../database/unit-of-work';
 
