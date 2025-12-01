@@ -80,16 +80,14 @@ export const ERROR_MESSAGES = {
             userIdCannotBeEmpty: 'Идентификатор пользователя уведомления не может быть пустым',
             usernameCannotBeEmpty: 'Имя пользователя уведомления не может быть пустым',
         },
-        common: {
-            unknownError: 'Неизвестная ошибка',
-            accessDenied: 'У вас недостаточно прав для данного действия',
-            notAuthenticated: 'Не авторизован',
-        },
     },
     application: {
         common: {
             invalidInput: 'Некорректный формат данных',
             routeNotFound: 'Маршрут не найден',
+            unknownError: 'Неизвестная ошибка',
+            accessDenied: 'У вас недостаточно прав для данного действия',
+            notAuthenticated: 'Не авторизован',
         },
         user: {
             notFound: 'Пользователь не найден',

@@ -60,11 +60,13 @@ import {
     FindUserTypesHandler,
     FindUserTypeByIdHandler,
 } from '@application/services/user-type';
-import { PrismaUnitOfWork } from '@infrastructure/database/unit-of-work';
-import { EmailManager } from '@infrastructure/managers/email-manager';
-import { FileStorageManager } from '@infrastructure/managers/file-storage-manager';
-import { SubscriptionManager } from '@infrastructure/managers/subscription-manager';
-import { TokenManager } from '@infrastructure/managers/token-manager';
+import {
+    TokenManager,
+    BotManager,
+    EmailManager,
+    FileStorageManager,
+    SubscriptionManager,
+} from '@infrastructure/managers';
 import {
     UserReader,
     EventReader,
@@ -82,6 +84,7 @@ import {
     UserTypeRepository,
     EmailVerificationRepository,
 } from '@infrastructure/repositories';
+import { PrismaUnitOfWork } from '@infrastructure/utils';
 
 export interface Container {
     unitOfWork: PrismaUnitOfWork;
@@ -108,6 +111,7 @@ export interface Container {
     emailManager: EmailManager;
     fileStorageManager: FileStorageManager;
     subscriptionManager: SubscriptionManager;
+    botManager: BotManager;
 
     // Auth Handlers
     authenticateUserHandler: AuthenticateUserHandler;
@@ -213,6 +217,7 @@ export function createDIContainer() {
         emailManager: asClass(EmailManager).singleton(),
         fileStorageManager: asClass(FileStorageManager).singleton(),
         subscriptionManager: asClass(SubscriptionManager).singleton(),
+        botManager: asClass(BotManager).singleton(),
     });
 
     // Auth Handlers
@@ -408,6 +413,7 @@ export function createDIContainer() {
                 eventReader: container.resolve('eventReader'),
                 notificationRepo: container.resolve('notificationRepository'),
                 unitOfWork: container.resolve('unitOfWork'),
+                botManager: container.resolve('botManager'),
             }))
             .singleton(),
         findUserNotificationsHandler: asClass(FindUserNotificationsHandler).singleton(),

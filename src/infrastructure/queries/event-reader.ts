@@ -7,7 +7,7 @@ import { EventOrganizerDTO } from '@application/readers/event/dto/event-organize
 import { EventUserDTO } from '@application/readers/event/dto/event-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {

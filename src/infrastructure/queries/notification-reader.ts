@@ -5,7 +5,7 @@ import { NotificationDTO } from '@application/readers/notification/dto/notificat
 import { NotificationUserDTO } from '@application/readers/notification/dto/notification-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };

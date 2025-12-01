@@ -4,7 +4,7 @@ import { ICategoryRepository } from '@domain/models/category';
 import { Category } from '@domain/models/category';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 

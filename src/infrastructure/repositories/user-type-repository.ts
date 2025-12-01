@@ -5,7 +5,7 @@ import { IUserTypeRepository } from '@domain/models/user-type';
 import { UserType } from '@domain/models/user-type';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 

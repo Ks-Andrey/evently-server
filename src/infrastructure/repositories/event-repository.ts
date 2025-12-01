@@ -6,7 +6,7 @@ import { EventCategory } from '@domain/models/event/entities/event-category';
 import { EventOrganizer } from '@domain/models/event/entities/event-organizer';
 import { Prisma, PrismaClient } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {

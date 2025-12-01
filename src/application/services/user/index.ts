@@ -18,4 +18,4 @@ export * from './queries/find-user-by-name';
 export * from './queries/find-user-by-id';
 
 export * from './interfaces/subscription-manager';
-export * from '../../common/interfaces/file-storage-manager';
+export * from './interfaces/email-manager';

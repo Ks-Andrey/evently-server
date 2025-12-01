@@ -19,7 +19,7 @@ export class NotificationUser {
         return new NotificationUser(id, username.trim());
     }
 
-    get id(): string {
+    get id(): UUID {
         return this._id;
     }
 

@@ -64,10 +64,6 @@ export class Notification {
         return this._user;
     }
 
-    get userId(): NotificationUser {
-        return this._user;
-    }
-
     get message(): string {
         return this._message;
     }

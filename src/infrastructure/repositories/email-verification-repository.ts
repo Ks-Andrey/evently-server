@@ -4,7 +4,7 @@ import { IEmailVerificationRepository } from '@domain/models/auth';
 import { EmailVerification, EmailVerificationPurpose } from '@domain/models/auth';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type EmailVerificationData = Prisma.EmailVerificationGetPayload<{}>;
 

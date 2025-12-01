@@ -5,7 +5,7 @@ import { CommentDTO } from '@application/readers/comment/dto/comment-dto';
 import { CommentUserDTO } from '@application/readers/comment/dto/comment-user-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };

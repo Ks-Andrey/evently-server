@@ -4,7 +4,7 @@ import { ITokenManager } from '@application/services/auth';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
 
-import { redisClient } from '../redis';
+import { redisClient } from '../utils';
 
 export class TokenManager implements ITokenManager {
     async issueTokens(payload: UserJwtPayload): Promise<Tokens> {

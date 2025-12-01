@@ -1,20 +1,10 @@
-import nodemailer from 'nodemailer';
-
-import { IEmailManager, SendEmailVerificationParams } from '@application/services/user/interfaces/email-manager';
-import { FRONTEND_URL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER } from '@common/config/email';
+import { IEmailManager, SendEmailVerificationParams } from '@application/services/user';
+import { FRONTEND_URL } from '@common/config/email';
 import { log } from '@common/utils/logger';
 
-export class EmailManager implements IEmailManager {
-    private transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: Number(SMTP_PORT),
-        secure: false,
-        auth: {
-            user: SMTP_USER,
-            pass: SMTP_PASSWORD,
-        },
-    });
+import { emailClient } from '../utils';
 
+export class EmailManager implements IEmailManager {
     async sendEmailVerification(params: SendEmailVerificationParams): Promise<void> {
         const { to, token } = params;
 
@@ -22,7 +12,7 @@ export class EmailManager implements IEmailManager {
         const subject = 'Подтвердите ваш email';
         const body = this.getEmailTemplate(verificationUrl);
 
-        await this.transporter.sendMail({
+        await emailClient.sendMail({
             to,
             subject,
             html: body,

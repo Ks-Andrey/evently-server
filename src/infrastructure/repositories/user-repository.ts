@@ -3,7 +3,7 @@ import { UUID } from 'crypto';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };

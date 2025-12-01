@@ -5,7 +5,7 @@ import { Comment } from '@domain/models/comment';
 import { CommentUser } from '@domain/models/comment/entities/comment-user';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };

@@ -4,7 +4,7 @@ import { ICategoryReader } from '@application/readers/category';
 import { CategoryDTO } from '@application/readers/category/dto/category-dto';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 

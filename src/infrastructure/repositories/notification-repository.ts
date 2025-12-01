@@ -5,7 +5,7 @@ import { Notification, NotificationType } from '@domain/models/notification';
 import { NotificationUser } from '@domain/models/notification/entities/notification-user';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };

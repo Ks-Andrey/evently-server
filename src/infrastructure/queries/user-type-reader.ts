@@ -5,7 +5,7 @@ import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
 import { Roles } from '@common/constants/roles';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../database/prisma-client';
+import { prisma } from '../utils/database/prisma-client';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 
