@@ -8,8 +8,8 @@ export class GeocoderController {
     constructor(private readonly findCoordinatesByLocationHandler: FindCoordinatesByLocationHandler) {}
 
     async getCoordinatesByLocation(req: Request, res: Response): Promise<void> {
-        const { location } = req.query;
-        const query = new FindCoordinatesByLocation(location as string);
+        const queryParams = req.query as { location: string };
+        const query = new FindCoordinatesByLocation(queryParams.location);
         const result = await this.findCoordinatesByLocationHandler.execute(query);
         handleResult(result, res);
     }
