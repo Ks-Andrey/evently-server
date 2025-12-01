@@ -74,6 +74,8 @@ model Event {
   description     String
   date            DateTime
   location        String
+  latitude        Float
+  longitude       Float
   subscriberCount Int      @default(0)
   commentCount    Int      @default(0)
 

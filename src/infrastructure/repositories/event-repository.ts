@@ -1,6 +1,6 @@
 import { UUID, randomUUID } from 'crypto';
 
-import { EventCategory, EventOrganizer, Event, IEventRepository } from '@domain/models/event';
+import { EventCategory, EventOrganizer, Event, EventLocation, IEventRepository } from '@domain/models/event';
 import { Prisma, PrismaClient } from '@generated/prisma/client';
 
 import { prisma } from '../utils/database/prisma-client';
@@ -48,7 +48,9 @@ export class EventRepository implements IEventRepository {
             title: entity.title,
             description: entity.description,
             date: entity.date,
-            location: entity.location,
+            location: entity.location.location,
+            latitude: entity.location.latitude,
+            longitude: entity.location.longitude,
             subscriberCount: entity.subscriberCount,
             commentCount: entity.commentCount,
         };
@@ -89,6 +91,7 @@ export class EventRepository implements IEventRepository {
             eventData.organizer.personalData || undefined,
         );
         const category = EventCategory.create(eventData.category.categoryId as UUID, eventData.category.categoryName);
+        const location = EventLocation.create(eventData.location, eventData.longitude, eventData.latitude);
 
         return Event.create(
             eventData.id as UUID,
@@ -97,7 +100,7 @@ export class EventRepository implements IEventRepository {
             eventData.title,
             eventData.description,
             eventData.date,
-            eventData.location,
+            location,
         );
     }
 }

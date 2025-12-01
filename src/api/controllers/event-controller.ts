@@ -72,15 +72,24 @@ export class EventController {
     }
 
     async createEvent(req: Request, res: Response): Promise<void> {
-        const { categoryId, title, description, date, location } = req.body;
-        const command = new CreateEvent(req.user!.userId, categoryId, title, description, new Date(date), location);
+        const { categoryId, title, description, date, location, latitude, longitude } = req.body;
+        const command = new CreateEvent(
+            req.user!.userId,
+            categoryId,
+            title,
+            description,
+            new Date(date),
+            location,
+            latitude,
+            longitude,
+        );
         const result = await this.createEventHandler.execute(command);
         handleResult(result, res, 201);
     }
 
     async editEvent(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const { title, description, date, location, categoryId } = req.body;
+        const { title, description, date, location, latitude, longitude, categoryId } = req.body;
         const command = new EditEventDetails(
             req.user!.role,
             req.user!.userId,
@@ -89,6 +98,8 @@ export class EventController {
             description,
             date,
             location,
+            latitude,
+            longitude,
             categoryId,
         );
         const result = await this.editEventDetailsHandler.execute(command);

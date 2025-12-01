@@ -1,6 +1,7 @@
 import { UUID } from 'crypto';
 
 import { EventCategoryDTO } from './event-category-dto';
+import { EventLocationDTO } from './event-location-dto';
 import { EventOrganizerDTO } from './event-organizer-dto';
 
 export class EventDTO {
@@ -11,7 +12,7 @@ export class EventDTO {
         readonly title: string,
         readonly description: string,
         readonly date: Date,
-        readonly location: string,
+        readonly location: EventLocationDTO,
         readonly subscriberCount: number,
         readonly commentCount: number,
     ) {}
@@ -23,7 +24,7 @@ export class EventDTO {
         title: string,
         description: string,
         date: Date,
-        location: string,
+        location: EventLocationDTO,
         subscriberCount: number,
         commentCount: number,
     ): EventDTO {

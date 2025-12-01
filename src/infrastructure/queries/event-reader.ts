@@ -7,6 +7,7 @@ import {
     EventCategoryDTO,
     EventOrganizerDTO,
     EventUserDTO,
+    EventLocationDTO,
 } from '@application/readers/event';
 import { Prisma } from '@generated/prisma/client';
 
@@ -148,6 +149,8 @@ export class EventReader implements IEventReader {
             eventData.category.categoryName,
         );
 
+        const locationDTO = EventLocationDTO.create(eventData.location, eventData.latitude, eventData.longitude);
+
         return EventDTO.create(
             eventData.id as UUID,
             organizerDTO,
@@ -155,7 +158,7 @@ export class EventReader implements IEventReader {
             eventData.title,
             eventData.description,
             eventData.date,
-            eventData.location,
+            locationDTO,
             eventData.subscriberCount,
             eventData.commentCount,
         );

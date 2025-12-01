@@ -49,7 +49,7 @@ export class NotifyEventSubscribersHandler {
                 try {
                     await this.botManager.sendMessage(notification.user.id, notification.message);
                 } catch (error) {
-                    log.error('Error send telegram message', error);
+                    log.error('Error send telegram message', { error });
                 }
             }
 

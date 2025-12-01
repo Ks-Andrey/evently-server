@@ -21,6 +21,7 @@ import {
     GalleryMaxPhotosExceededException,
     GalleryPhotoNotFoundException,
 } from './exceptions';
+import { EventLocation } from './value-objects/event-location';
 
 export class Event {
     private constructor(
@@ -30,7 +31,7 @@ export class Event {
         private _title: string,
         private _description: string,
         private _date: Date,
-        private _location: string,
+        private _location: EventLocation,
         private _subscriberCount: number,
         private _commentCount: number,
         private _imageUrls: string[],
@@ -43,7 +44,7 @@ export class Event {
         title: string,
         description: string,
         date: Date,
-        location: string,
+        location: EventLocation,
         subscriberCount: number = 0,
         commentCount: number = 0,
     ) {
@@ -56,9 +57,11 @@ export class Event {
         if (!category) {
             throw new EventCategoryIsRequiredException();
         }
+        if (!location) {
+            throw new EventLocationCannotBeEmptyException();
+        }
         Event.ensureValidTitle(title);
         Event.ensureValidDescription(description);
-        Event.ensureValidLocation(location);
         Event.ensureValidEventDate(date);
         if (subscriberCount < 0) {
             throw new SubscriberCountCannotBeNegativeException();
@@ -74,7 +77,7 @@ export class Event {
             title.trim(),
             description.trim(),
             new Date(date),
-            location.trim(),
+            location,
             subscriberCount,
             commentCount,
             [],
@@ -105,7 +108,7 @@ export class Event {
         return this._date;
     }
 
-    get location(): string {
+    get location(): EventLocation {
         return this._location;
     }
 
@@ -121,7 +124,7 @@ export class Event {
         return [...this._imageUrls];
     }
 
-    updateDetails(title?: string, description?: string, date?: Date, location?: string): void {
+    updateDetails(title?: string, description?: string, date?: Date, location?: EventLocation): void {
         if (title !== undefined) {
             Event.ensureValidTitle(title);
             this._title = title.trim();
@@ -133,8 +136,10 @@ export class Event {
         }
 
         if (location !== undefined) {
-            Event.ensureValidLocation(location);
-            this._location = location.trim();
+            if (!location) {
+                throw new EventLocationCannotBeEmptyException();
+            }
+            this._location = location;
         }
 
         if (date !== undefined) {
@@ -203,12 +208,6 @@ export class Event {
     private static ensureValidDescription(description: string): void {
         if (!description || description.trim().length === 0) {
             throw new EventDescriptionCannotBeEmptyException();
-        }
-    }
-
-    private static ensureValidLocation(location: string): void {
-        if (!location || location.trim().length === 0) {
-            throw new EventLocationCannotBeEmptyException();
         }
     }
 

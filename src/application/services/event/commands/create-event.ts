@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
-import { Event, EventCategory, EventOrganizer, IEventRepository } from '@domain/models/event';
+import { Event, EventCategory, EventOrganizer, EventLocation, IEventRepository } from '@domain/models/event';
 
 import { UserForEventNotFoundException, CategoryForEventNotFoundException } from '../exceptions';
 
@@ -17,6 +17,8 @@ export class CreateEvent {
         readonly description: string,
         readonly date: Date,
         readonly location: string,
+        readonly latitude: number,
+        readonly longitude: number,
     ) {}
 }
 
@@ -37,6 +39,7 @@ export class CreateEventHandler {
 
             const organizer = EventOrganizer.create(actor.id, actor.username, actor.personalData);
             const eventCategory = EventCategory.create(category.categoryId, category.categoryName);
+            const eventLocation = EventLocation.create(command.location, command.longitude, command.latitude);
 
             const event = Event.create(
                 v4() as UUID,
@@ -45,7 +48,7 @@ export class CreateEventHandler {
                 command.title,
                 command.description,
                 command.date,
-                command.location,
+                eventLocation,
             );
 
             await this.eventRepo.save(event);

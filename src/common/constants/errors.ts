@@ -72,6 +72,8 @@ export const ERROR_MESSAGES = {
             galleryUrlCannotBeEmpty: 'URL фотографии галереи не может быть пустым',
             galleryMaxPhotosExceeded: 'Максимальное количество фотографий в галерее превышено',
             galleryPhotoNotFoundException: 'Фотография в галерее не найдена',
+            invalidLatitude: 'Широта должна быть в диапазоне от -90 до 90',
+            invalidLongitude: 'Долгота должна быть в диапазоне от -180 до 180',
         },
         notification: {
             messageCannotBeEmpty: 'Сообщение уведомления не может быть пустым',

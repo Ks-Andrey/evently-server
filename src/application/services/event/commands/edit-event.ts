@@ -5,7 +5,7 @@ import { safeAsync, AccessDeniedException, ApplicationException } from '@applica
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
-import { EventCategory, IEventRepository } from '@domain/models/event';
+import { EventCategory, EventLocation, IEventRepository } from '@domain/models/event';
 
 import {
     EventNotFoundException,
@@ -22,6 +22,8 @@ export class EditEventDetails {
         readonly description?: string,
         readonly date?: Date,
         readonly location?: string,
+        readonly latitude?: number,
+        readonly longitude?: number,
         readonly categoryId?: UUID,
     ) {}
 }
@@ -46,7 +48,12 @@ export class EditEventDetailsHandler {
 
             if (!isAdmin && !isOwner) throw new AccessDeniedException();
 
-            event.updateDetails(command.title, command.description, command.date, command.location);
+            let eventLocation: EventLocation | undefined;
+            if (command.location !== undefined && command.latitude !== undefined && command.longitude !== undefined) {
+                eventLocation = EventLocation.create(command.location, command.longitude, command.latitude);
+            }
+
+            event.updateDetails(command.title, command.description, command.date, eventLocation);
 
             if (command.categoryId) {
                 const category = await this.categoryRepo.findById(command.categoryId);

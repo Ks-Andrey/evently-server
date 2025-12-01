@@ -139,3 +139,15 @@ export class GalleryPhotoNotFoundException extends DomainException {
         super(ERROR_MESSAGES.domain.event.galleryPhotoNotFoundException);
     }
 }
+
+export class InvalidLatitudeException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.invalidLatitude);
+    }
+}
+
+export class InvalidLongitudeException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.invalidLongitude);
+    }
+}
