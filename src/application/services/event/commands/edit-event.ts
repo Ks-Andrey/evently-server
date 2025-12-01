@@ -43,12 +43,11 @@ export class EditEventDetailsHandler {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventNotFoundException();
 
-            const isAdmin = command.role === Roles.ADMIN;
-            const isOwner = event.canEditedBy(requestUser.id);
+            if (command.role !== Roles.ADMIN && !event.canEditedBy(command.userId)) {
+                throw new AccessDeniedException();
+            }
 
-            if (!isAdmin && !isOwner) throw new AccessDeniedException();
-
-            let eventLocation: EventLocation | undefined;
+            let eventLocation = event.location;
             if (command.location !== undefined && command.latitude !== undefined && command.longitude !== undefined) {
                 eventLocation = EventLocation.create(command.location, command.longitude, command.latitude);
             }
