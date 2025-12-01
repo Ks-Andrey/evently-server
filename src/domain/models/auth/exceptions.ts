@@ -49,3 +49,9 @@ export class InactiveTokenException extends DomainException {
         super(ERROR_MESSAGES.domain.auth.inactiveToken);
     }
 }
+
+export class InvalidEmailVerificationPurposeException extends DomainException {
+    constructor(purpose: string) {
+        super(`${ERROR_MESSAGES.domain.auth.invalidEmailVerificationPurpose}: ${purpose}`);
+    }
+}

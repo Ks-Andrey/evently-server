@@ -1,4 +1,4 @@
-import { EmailVerificationPurpose } from '@common/constants/email-verification';
+import { EmailVerificationPurpose } from '@domain/models/auth';
 
 export interface SendEmailVerificationParams {
     to: string;

@@ -2,9 +2,8 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { ApplicationException, executeInTransaction } from '@application/common';
-import { EmailVerificationPurpose } from '@common/constants/email-verification';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { IEmailVerificationRepository } from '@domain/models/auth';
+import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository } from '@domain/models/user';
 
 import { EmailVerificationNotFoundException, UserForAuthNotFoundException } from '../exceptions';

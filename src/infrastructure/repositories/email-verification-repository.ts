@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { EmailVerificationPurpose } from '@common/constants/email-verification';
-import { IEmailVerificationRepository } from '@domain/models/auth';
-import { EmailVerification } from '@domain/models/auth';
+import { IEmailVerificationRepository, EmailVerification } from '@domain/models/auth';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type EmailVerificationData = Prisma.EmailVerificationGetPayload<{}>;
 
@@ -63,7 +61,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
             verificationData.id as UUID,
             verificationData.userId as UUID,
             verificationData.email,
-            verificationData.purpose as EmailVerificationPurpose,
+            verificationData.purpose,
             verificationData.expiresAt,
         );
     }

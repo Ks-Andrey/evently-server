@@ -8,12 +8,7 @@ import {
     NotificationUserIsRequiredException,
     NotificationTypeCannotBeEmptyException,
 } from './exceptions';
-
-export enum NotificationType {
-    EVENT_UPDATED = 'EVENT_UPDATED',
-    EVENT_REMINDER = 'EVENT_REMINDER',
-    EVENT_CANCELLED = 'EVENT_CANCELLED',
-}
+import { NotificationType } from './value-objects/notification-type';
 
 export class Notification {
     private constructor(

@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { INotificationRepository } from '@domain/models/notification';
-import { Notification, NotificationType } from '@domain/models/notification';
-import { NotificationUser } from '@domain/models/notification/entities/notification-user';
+import { Notification, INotificationRepository, NotificationUser } from '@domain/models/notification';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };
@@ -51,12 +49,13 @@ export class NotificationRepository implements INotificationRepository {
 
     private toDomain(notificationData: NotificationWithUser): Notification {
         const user = NotificationUser.create(notificationData.user.id as UUID, notificationData.user.username);
+
         return Notification.create(
             notificationData.id as UUID,
             notificationData.eventId as UUID,
             user,
             notificationData.message,
-            notificationData.type as NotificationType,
+            notificationData.type,
             notificationData.createdAt,
         );
     }

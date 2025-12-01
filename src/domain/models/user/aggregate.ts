@@ -170,7 +170,7 @@ export class User {
         return this._pendingEmail;
     }
 
-    get passwordHash(): string | undefined {
+    get passwordHash(): string {
         return this._passwordHash;
     }
 

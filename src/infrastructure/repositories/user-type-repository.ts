@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { Roles } from '@common/constants/roles';
-import { IUserTypeRepository } from '@domain/models/user-type';
-import { UserType } from '@domain/models/user-type';
+import { UserType, IUserTypeRepository } from '@domain/models/user-type';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 
@@ -55,6 +53,6 @@ export class UserTypeRepository implements IUserTypeRepository {
     }
 
     private toDomain(userTypeData: UserTypeData): UserType {
-        return UserType.create(userTypeData.userTypeId as UUID, userTypeData.typeName, userTypeData.role as Roles);
+        return UserType.create(userTypeData.userTypeId as UUID, userTypeData.typeName, userTypeData.role);
     }
 }

@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 import { ITokenManager } from '@application/services/auth';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
-import { InvalidTokenPayloadException } from '@domain/models/auth/exceptions';
+import { InvalidTokenPayloadException } from '@domain/models/auth';
 
-import { redisClient } from '../utils';
+import { isUserJwtPayload, redisClient } from '../utils';
 
 export class TokenManager implements ITokenManager {
     async issueTokens(payload: UserJwtPayload): Promise<Tokens> {
@@ -27,7 +27,8 @@ export class TokenManager implements ITokenManager {
     }
 
     async verifyToken(token: string, type: TokenType = 'access'): Promise<UserJwtPayload | null> {
-        const decoded = jwt.verify(token, secret) as UserJwtPayload;
+        const decoded = jwt.verify(token, secret);
+        if (!isUserJwtPayload(decoded)) return null;
 
         const revoked = await this.isTokenRevoked(token, type, decoded.userId);
         if (revoked) return null;

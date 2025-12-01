@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { ICommentRepository } from '@domain/models/comment';
-import { Comment } from '@domain/models/comment';
-import { CommentUser } from '@domain/models/comment/entities/comment-user';
+import { ICommentRepository, Comment, CommentUser } from '@domain/models/comment';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };

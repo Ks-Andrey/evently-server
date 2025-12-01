@@ -1,10 +1,9 @@
 import { UUID } from 'crypto';
 
-import { ICategoryReader } from '@application/readers/category';
-import { CategoryDTO } from '@application/readers/category/dto/category-dto';
+import { ICategoryReader, CategoryDTO } from '@application/readers/category';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 

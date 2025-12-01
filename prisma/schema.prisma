@@ -7,6 +7,23 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  ADMIN
+  ORGANIZER
+  USER
+}
+
+enum NotificationType {
+  EVENT_UPDATED
+  EVENT_REMINDER
+  EVENT_CANCELLED
+}
+
+enum EmailVerificationPurpose {
+  REGISTRATION
+  EMAIL_CHANGE
+}
+
 model User {
   id                String   @id @default(uuid())
   userTypeId        String
@@ -33,7 +50,7 @@ model User {
 model UserType {
   userTypeId String @id @default(uuid())
   typeName   String @unique
-  role       String // Roles enum: 'admin', 'organizer', 'user'
+  role       Role
 
   users      User[]
 
@@ -108,7 +125,7 @@ model Notification {
   id        String           @id @default(uuid())
   eventId   String
   userId    String
-  type      String           
+  type      NotificationType
   message   String
   createdAt DateTime         @default(now())
 
@@ -122,7 +139,7 @@ model EmailVerification {
   id        String   @id @default(uuid())
   userId    String
   email     String
-  purpose   String
+  purpose   EmailVerificationPurpose
   expiresAt DateTime
   used      Boolean  @default(false)
 

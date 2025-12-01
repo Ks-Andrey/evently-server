@@ -9,6 +9,7 @@ export const ERROR_MESSAGES = {
             emailVerificationEmailCannotBeEmpty: 'Email в запросе подтверждения не может быть пустым',
             invalidTokenPayload: 'Неверные токены авторизации',
             inactiveToken: 'Срок действия авторизации истек',
+            invalidEmailVerificationPurpose: 'Неверная цель подтверждения email',
         },
         user: {
             alreadyBlocked: 'Пользователь уже заблокирован',
@@ -35,6 +36,7 @@ export const ERROR_MESSAGES = {
             nameCannotBeEmpty: 'Название типа пользователя не может быть пустым',
             alreadyExists: 'Тип пользователя с таким названием уже существует',
             inUse: 'Нельзя удалить тип пользователя, так как есть пользователи с этим типом',
+            invalidRole: 'Неверная роль пользователя',
         },
         comment: {
             textCannotBeEmpty: 'Текст комментария не может быть пустым',
@@ -78,6 +80,7 @@ export const ERROR_MESSAGES = {
             userIsRequired: 'Пользователь уведомления обязателен',
             typeCannotBeEmpty: 'Тип уведомления не может быть пустым',
             userIdCannotBeEmpty: 'Идентификатор пользователя уведомления не может быть пустым',
+            invalidType: 'Неверный тип уведомления',
             usernameCannotBeEmpty: 'Имя пользователя уведомления не может быть пустым',
         },
     },

@@ -1,13 +1,16 @@
 import { UUID } from 'crypto';
 
-import { IEventReader, EventFilters } from '@application/readers/event';
-import { EventCategoryDTO } from '@application/readers/event/dto/event-category-dto';
-import { EventDTO } from '@application/readers/event/dto/event-dto';
-import { EventOrganizerDTO } from '@application/readers/event/dto/event-organizer-dto';
-import { EventUserDTO } from '@application/readers/event/dto/event-user-dto';
+import {
+    IEventReader,
+    EventFilters,
+    EventDTO,
+    EventCategoryDTO,
+    EventOrganizerDTO,
+    EventUserDTO,
+} from '@application/readers/event';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {
@@ -29,7 +32,7 @@ export class EventReader implements IEventReader {
             },
         });
 
-        return (subscriptions as EventSubscriptionWithUser[]).map((sub) =>
+        return subscriptions.map((sub) =>
             EventUserDTO.create(sub.user.id as UUID, sub.user.username, sub.user.imageUrl || undefined),
         );
     }
@@ -58,7 +61,7 @@ export class EventReader implements IEventReader {
             },
         });
 
-        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+        return eventsData.map((eventData) => this.toEventDTO(eventData));
     }
 
     async findByOrganizer(organizerId: UUID): Promise<EventDTO[]> {
@@ -70,7 +73,7 @@ export class EventReader implements IEventReader {
             },
         });
 
-        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+        return eventsData.map((eventData) => this.toEventDTO(eventData));
     }
 
     async findByCategory(categoryId: UUID): Promise<EventDTO[]> {
@@ -82,7 +85,7 @@ export class EventReader implements IEventReader {
             },
         });
 
-        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+        return eventsData.map((eventData) => this.toEventDTO(eventData));
     }
 
     async findWithFilters(filters: EventFilters): Promise<EventDTO[]> {
@@ -130,7 +133,7 @@ export class EventReader implements IEventReader {
             },
         });
 
-        return (eventsData as EventWithRelations[]).map((eventData) => this.toEventDTO(eventData));
+        return eventsData.map((eventData) => this.toEventDTO(eventData));
     }
 
     private toEventDTO(eventData: EventWithRelations): EventDTO {

@@ -25,3 +25,9 @@ export class UserTypeInUseException extends DomainException {
         super(ERROR_MESSAGES.domain.userType.inUse);
     }
 }
+
+export class InvalidRoleException extends DomainException {
+    constructor(role: string) {
+        super(`${ERROR_MESSAGES.domain.userType.invalidRole}: ${role}`);
+    }
+}

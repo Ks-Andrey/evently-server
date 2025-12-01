@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises } from 'fs';
 import { join, dirname } from 'path';
 
 import { IFileStorageManager } from '@application/common';
@@ -15,18 +15,18 @@ export class FileStorageManager implements IFileStorageManager {
         const targetDir = join(this.basePath, directory);
         const targetPath = join(targetDir, this.getFileName(filePath));
 
-        await fs.mkdir(targetDir, { recursive: true });
+        await promises.mkdir(targetDir, { recursive: true });
 
-        await fs.rename(sourcePath, targetPath);
+        await promises.rename(sourcePath, targetPath);
     }
 
     async delete(filePath: string): Promise<void> {
         const fullPath = join(this.basePath, filePath);
 
-        await fs.unlink(fullPath);
+        await promises.unlink(fullPath);
 
         const parentDir = dirname(fullPath);
-        await fs.rmdir(parentDir);
+        await promises.rmdir(parentDir);
     }
 
     private getFileName(filePath: string): string {

@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { IUserTypeReader } from '@application/readers/user-type';
-import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
-import { Roles } from '@common/constants/roles';
+import { IUserTypeReader, UserTypeDTO } from '@application/readers/user-type';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 
@@ -41,6 +39,6 @@ export class UserTypeReader implements IUserTypeReader {
     }
 
     private toUserTypeDTO(userTypeData: UserTypeData): UserTypeDTO {
-        return UserTypeDTO.create(userTypeData.userTypeId as UUID, userTypeData.typeName, userTypeData.role as Roles);
+        return UserTypeDTO.create(userTypeData.userTypeId as UUID, userTypeData.typeName, userTypeData.role);
     }
 }

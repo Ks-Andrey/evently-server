@@ -64,10 +64,10 @@ async function validateImageDimensions(
 function avatarFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const ext = path.extname(file.originalname).toLowerCase();
 
-    if (!(allowedMimeTypes.AVATAR as readonly string[]).includes(file.mimetype)) {
+    if (!allowedMimeTypes.AVATAR.some((type) => type === file.mimetype)) {
         return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
     }
-    if (!(allowedExtensions.AVATAR as readonly string[]).includes(ext)) {
+    if (!allowedExtensions.AVATAR.some((extension) => extension === ext)) {
         return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
     }
 
@@ -77,10 +77,10 @@ function avatarFileFilter(req: Request, file: Express.Multer.File, cb: FileFilte
 function galleryFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const ext = path.extname(file.originalname).toLowerCase();
 
-    if (!(allowedMimeTypes.GALLERY as readonly string[]).includes(file.mimetype)) {
+    if (!allowedMimeTypes.GALLERY.some((type) => type === file.mimetype)) {
         return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
     }
-    if (!(allowedExtensions.GALLERY as readonly string[]).includes(ext)) {
+    if (!allowedExtensions.GALLERY.some((extension) => extension === ext)) {
         return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
     }
 

@@ -1,7 +1,6 @@
 import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
-import { Roles } from '@common/constants/roles';
 import { Tokens, UserJwtPayload } from '@common/types/auth';
 import { IUserRepository } from '@domain/models/user';
 
@@ -30,7 +29,7 @@ export class AuthenticateUserHandler {
 
             const payload: UserJwtPayload = {
                 userId: user.id,
-                role: user.userType.typeName as Roles,
+                role: user.userType.role,
             };
 
             return this.tokenManager.issueTokens(payload);

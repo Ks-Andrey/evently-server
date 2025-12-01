@@ -1,8 +1,8 @@
 import { UUID } from 'crypto';
 
-import { ISubscriptionManager } from '@application/services/user/interfaces/subscription-manager';
+import { ISubscriptionManager } from '@application/services/user';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 export class SubscriptionManager implements ISubscriptionManager {
     async hasSubscribed(eventId: UUID, userId: UUID): Promise<boolean> {

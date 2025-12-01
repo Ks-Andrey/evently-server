@@ -42,3 +42,9 @@ export class NotificationUsernameCannotBeEmptyException extends DomainException 
         super(ERROR_MESSAGES.domain.notification.usernameCannotBeEmpty);
     }
 }
+
+export class InvalidNotificationTypeException extends DomainException {
+    constructor(type: string) {
+        super(`${ERROR_MESSAGES.domain.notification.invalidType}: ${type}`);
+    }
+}

@@ -1,20 +1,12 @@
 import { UUID } from 'crypto';
 
-import { IUserReader } from '@application/readers/user';
-import { UserDTO } from '@application/readers/user/dto/user-dto';
-import { UserEventDTO } from '@application/readers/user/dto/user-event-dto';
-import { UserTypeDTO } from '@application/readers/user-type/dto/user-type-dto';
-import { Roles } from '@common/constants/roles';
+import { IUserReader, UserDTO, UserEventDTO, UserTypeDTO } from '@application/readers/user';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
-}>;
-
-type EventSubscriptionWithEvent = Prisma.EventSubscriptionGetPayload<{
-    include: { event: true };
 }>;
 
 export class UserReader implements IUserReader {
@@ -26,7 +18,7 @@ export class UserReader implements IUserReader {
             },
         });
 
-        return (subscriptions as EventSubscriptionWithEvent[]).map((sub) =>
+        return subscriptions.map((sub) =>
             UserEventDTO.create(sub.event.id as UUID, sub.event.title, sub.event.subscriberCount),
         );
     }
@@ -62,14 +54,14 @@ export class UserReader implements IUserReader {
             include: { userType: true },
         });
 
-        return (usersData as UserWithType[]).map((userData) => this.toUserDTO(userData));
+        return usersData.map((userData) => this.toUserDTO(userData));
     }
 
     private toUserDTO(userData: UserWithType): UserDTO {
         const userTypeDTO = UserTypeDTO.create(
             userData.userType.userTypeId as UUID,
             userData.userType.typeName,
-            userData.userType.role as Roles,
+            userData.userType.role,
         );
 
         return UserDTO.create(

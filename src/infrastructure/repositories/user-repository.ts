@@ -3,7 +3,7 @@ import { UUID } from 'crypto';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
@@ -43,7 +43,7 @@ export class UserRepository implements IUserRepository {
             username: entity.username,
             email: entity.email,
             emailVerified: entity.isEmailVerified,
-            passwordHash: entity.passwordHash as string,
+            passwordHash: entity.passwordHash,
             subscriptionCount: entity.subscriptionCount,
             personalData: entity.personalData,
             isBlocked: entity.isBlocked,
@@ -65,7 +65,11 @@ export class UserRepository implements IUserRepository {
     }
 
     private toDomain(userData: UserWithType): User {
-        const userType = UserType.create(userData.userType?.userTypeId as UUID, userData.userType?.typeName);
+        const userType = UserType.create(
+            userData.userType?.userTypeId as UUID,
+            userData.userType?.typeName,
+            userData.userType.role,
+        );
 
         return User.createSync(
             userData.id as UUID,

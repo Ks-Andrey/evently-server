@@ -1,11 +1,9 @@
 import { UUID } from 'crypto';
 
-import { INotificationReader } from '@application/readers/notification';
-import { NotificationDTO } from '@application/readers/notification/dto/notification-dto';
-import { NotificationUserDTO } from '@application/readers/notification/dto/notification-user-dto';
+import { INotificationReader, NotificationDTO, NotificationUserDTO } from '@application/readers/notification';
 import { Prisma } from '@generated/prisma/client';
 
-import { prisma } from '../utils/database/prisma-client';
+import { prisma } from '../utils';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };
