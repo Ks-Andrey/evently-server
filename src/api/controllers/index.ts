@@ -5,3 +5,4 @@ export * from './category-controller';
 export * from './comment-controller';
 export * from './notification-controller';
 export * from './user-type-controller';
+export * from './geocoder-controller';

@@ -1,39 +1,84 @@
 import jwt from 'jsonwebtoken';
 
+import {
+    ExpiredTokenException,
+    InvalidTokenException,
+    TokenSignException,
+    TokenVerifyException,
+} from '@application/services/auth';
 import { ITokenManager } from '@application/services/auth';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
+import { getErrorMessage } from '@common/utils/error';
+import { log } from '@common/utils/logger';
 import { InvalidTokenPayloadException } from '@domain/models/auth';
 
-import { isUserJwtPayload, redisClient } from '../utils';
+import { redisClient } from '../utils';
 
 export class TokenManager implements ITokenManager {
     async issueTokens(payload: UserJwtPayload): Promise<Tokens> {
-        const accessToken = jwt.sign(payload, secret, {
-            expiresIn: accessTokenTtlSeconds,
-        });
+        try {
+            const accessToken = jwt.sign(payload, secret, {
+                expiresIn: accessTokenTtlSeconds,
+            });
 
-        const refreshToken = jwt.sign(payload, secret, {
-            expiresIn: refreshTokenTtlSeconds,
-        });
+            const refreshToken = jwt.sign(payload, secret, {
+                expiresIn: refreshTokenTtlSeconds,
+            });
 
-        const refreshKey = this.getRefreshTokenKey(payload.userId, refreshToken);
-        await redisClient.setEx(refreshKey, refreshTokenTtlSeconds, '1');
+            const refreshKey = this.getRefreshTokenKey(payload.userId, refreshToken);
+            await redisClient.setEx(refreshKey, refreshTokenTtlSeconds, '1');
 
-        return {
-            accessToken,
-            refreshToken,
-        };
+            return {
+                accessToken,
+                refreshToken,
+            };
+        } catch (error: unknown) {
+            log.error('Error issuing tokens', {
+                userId: payload.userId,
+                error: log.formatError(error),
+            });
+
+            throw new TokenSignException({
+                userId: payload.userId,
+                error: getErrorMessage(error),
+            });
+        }
     }
 
     async verifyToken(token: string, type: TokenType = 'access'): Promise<UserJwtPayload | null> {
-        const decoded = jwt.verify(token, secret);
-        if (!isUserJwtPayload(decoded)) return null;
+        try {
+            const decoded = jwt.verify(token, secret) as UserJwtPayload;
 
-        const revoked = await this.isTokenRevoked(token, type, decoded.userId);
-        if (revoked) return null;
+            const revoked = await this.isTokenRevoked(token, type, decoded.userId);
+            if (revoked) return null;
 
-        return decoded;
+            return decoded;
+        } catch (error: unknown) {
+            if (error instanceof jwt.TokenExpiredError) {
+                throw new ExpiredTokenException({
+                    type,
+                    expiredAt: error.expiredAt,
+                });
+            }
+
+            if (error instanceof jwt.JsonWebTokenError) {
+                throw new InvalidTokenException({
+                    type,
+                    message: error.message,
+                });
+            }
+
+            log.error('Error verifying token', {
+                type,
+                error: log.formatError(error),
+            });
+
+            throw new TokenVerifyException({
+                type,
+                error: getErrorMessage(error),
+            });
+        }
     }
 
     async revokeToken(token: string, type: TokenType = 'access', userId?: string): Promise<void> {

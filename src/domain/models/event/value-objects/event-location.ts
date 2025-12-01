@@ -1,13 +1,10 @@
+import { Coordinates } from '@common/types/coordinates';
+
 import {
     EventLocationCannotBeEmptyException,
     InvalidLatitudeException,
     InvalidLongitudeException,
 } from '../exceptions';
-
-export type Coordinates = {
-    longitude: number;
-    latitude: number;
-};
 
 export class EventLocation {
     private constructor(

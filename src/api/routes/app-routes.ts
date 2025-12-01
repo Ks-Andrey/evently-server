@@ -10,6 +10,7 @@ import {
     createCommentRoutes,
     createNotificationRoutes,
     createUserTypeRoutes,
+    createGeocoderRoutes,
 } from './index';
 import {
     AuthController,
@@ -19,6 +20,7 @@ import {
     CommentController,
     NotificationController,
     UserTypeController,
+    GeocoderController,
 } from '../controllers';
 import { loggerMiddleware } from '../middlewares/logger-middleware';
 
@@ -30,6 +32,7 @@ export function createAppRoutes(
     commentController: CommentController,
     notificationController: NotificationController,
     userTypeController: UserTypeController,
+    geocoderController: GeocoderController,
     tokenManager: ITokenManager,
 ): Router {
     const router = Router();
@@ -43,6 +46,7 @@ export function createAppRoutes(
     router.use('/comments', createCommentRoutes(commentController, tokenManager));
     router.use('/notifications', createNotificationRoutes(notificationController, tokenManager));
     router.use('/user-types', createUserTypeRoutes(userTypeController, tokenManager));
+    router.use('/geocoder', createGeocoderRoutes(geocoderController));
 
     return router;
 }

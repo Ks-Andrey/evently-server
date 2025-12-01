@@ -1,5 +1,6 @@
 import { Result } from 'true-myth';
 
+import { getErrorMessage } from '@common/utils/error';
 import { DomainException } from '@domain/common';
 
 import { ApplicationErrorCodes } from '../exceptions/error-codes';
@@ -18,6 +19,6 @@ export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, Appl
             return Result.err(new ApplicationException(error.message, ApplicationErrorCodes.BUSINESS_RULE_VIOLATION));
         }
 
-        return Result.err(new UnknownException(error instanceof Error ? error.message : undefined));
+        return Result.err(new UnknownException(getErrorMessage(error) || undefined));
     }
 }

@@ -17,3 +17,9 @@ export class EventForNotificationNotFoundException extends ApplicationException 
         );
     }
 }
+
+export class BotSendMessageException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.bot.sendMessageFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}

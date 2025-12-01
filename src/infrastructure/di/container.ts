@@ -8,6 +8,7 @@ import {
     CommentController,
     NotificationController,
     UserTypeController,
+    GeocoderController,
 } from '@api/controllers';
 import { AuthenticateUserHandler, ConfirmUserEmailHandler } from '@application/services/auth';
 import {
@@ -35,6 +36,7 @@ import {
     FindOrganizerEventsHandler,
     FindEventSubscribersHandler,
 } from '@application/services/event';
+import { FindCoordinatesByLocationHandler } from '@application/services/geocoder';
 import { NotifyEventSubscribersHandler, FindUserNotificationsHandler } from '@application/services/notification';
 import {
     CreateUserHandler,
@@ -66,6 +68,7 @@ import {
     EmailManager,
     FileStorageManager,
     SubscriptionManager,
+    GeocoderManager,
 } from '@infrastructure/managers';
 import {
     UserReader,
@@ -112,6 +115,7 @@ export interface Container {
     fileStorageManager: FileStorageManager;
     subscriptionManager: SubscriptionManager;
     botManager: BotManager;
+    geocoderManager: GeocoderManager;
 
     // Auth Handlers
     authenticateUserHandler: AuthenticateUserHandler;
@@ -170,6 +174,9 @@ export interface Container {
     findUserTypesHandler: FindUserTypesHandler;
     findUserTypeByIdHandler: FindUserTypeByIdHandler;
 
+    // Geocoder Handlers
+    findCoordinatesByLocationHandler: FindCoordinatesByLocationHandler;
+
     // Controllers
     authController: AuthController;
     userController: UserController;
@@ -178,6 +185,7 @@ export interface Container {
     commentController: CommentController;
     notificationController: NotificationController;
     userTypeController: UserTypeController;
+    geocoderController: GeocoderController;
 }
 
 export function createDIContainer() {
@@ -218,6 +226,7 @@ export function createDIContainer() {
         fileStorageManager: asClass(FileStorageManager).singleton(),
         subscriptionManager: asClass(SubscriptionManager).singleton(),
         botManager: asClass(BotManager).singleton(),
+        geocoderManager: asClass(GeocoderManager).singleton(),
     });
 
     // Auth Handlers
@@ -442,6 +451,15 @@ export function createDIContainer() {
         findUserTypeByIdHandler: asClass(FindUserTypeByIdHandler).singleton(),
     });
 
+    // Geocoder Handlers
+    container.register({
+        findCoordinatesByLocationHandler: asClass(FindCoordinatesByLocationHandler)
+            .inject((container) => ({
+                geocoderManager: container.resolve('geocoderManager'),
+            }))
+            .singleton(),
+    });
+
     // Controllers
     container.register({
         authController: asClass(AuthController).singleton(),
@@ -451,6 +469,11 @@ export function createDIContainer() {
         commentController: asClass(CommentController).singleton(),
         notificationController: asClass(NotificationController).singleton(),
         userTypeController: asClass(UserTypeController).singleton(),
+        geocoderController: asClass(GeocoderController)
+            .inject((container) => ({
+                findCoordinatesByLocationHandler: container.resolve('findCoordinatesByLocationHandler'),
+            }))
+            .singleton(),
     });
 
     return container;
@@ -465,6 +488,7 @@ export interface AppDependencies {
     commentController: CommentController;
     notificationController: NotificationController;
     userTypeController: UserTypeController;
+    geocoderController: GeocoderController;
 }
 
 export function getAppDependencies(container: ReturnType<typeof createDIContainer>): AppDependencies {
@@ -477,5 +501,6 @@ export function getAppDependencies(container: ReturnType<typeof createDIContaine
         commentController: container.resolve('commentController'),
         notificationController: container.resolve('notificationController'),
         userTypeController: container.resolve('userTypeController'),
+        geocoderController: container.resolve('geocoderController'),
     };
 }

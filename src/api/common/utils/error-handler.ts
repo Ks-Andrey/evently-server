@@ -3,6 +3,7 @@ import { Result } from 'true-myth';
 
 import { ErrorResponse } from '@api/common/types/error';
 import { ApplicationErrorCodes, ApplicationException, UnknownException } from '@application/common';
+import { getErrorStack } from '@common/utils/error';
 import { log } from '@common/utils/logger';
 
 export function getHttpStatusFromErrorCode(errorCode: string): number {
@@ -57,7 +58,7 @@ export function createErrorResponse(error: unknown, status?: number): ErrorRespo
             errorCode: knownError.errorCode,
             message: knownError.message,
             context: knownError.context,
-            stack: error instanceof Error ? error.stack : undefined,
+            stack: getErrorStack(error),
         });
     } else if (httpStatus >= 400) {
         log.warn('Client Error', {

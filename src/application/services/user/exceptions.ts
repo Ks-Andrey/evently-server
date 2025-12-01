@@ -55,3 +55,9 @@ export class UserNotSubscribedException extends ApplicationException {
         );
     }
 }
+
+export class EmailSendException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.email.sendFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}

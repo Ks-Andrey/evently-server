@@ -1,5 +1,7 @@
+import { EmailSendException } from '@application/services/user';
 import { IEmailManager, SendEmailVerificationParams } from '@application/services/user';
 import { FRONTEND_URL } from '@common/config/email';
+import { getErrorMessage } from '@common/utils/error';
 import { log } from '@common/utils/logger';
 
 import { emailClient } from '../utils';
@@ -12,16 +14,28 @@ export class EmailManager implements IEmailManager {
         const subject = 'Подтвердите ваш email';
         const body = this.getEmailTemplate(verificationUrl);
 
-        await emailClient.sendMail({
-            to,
-            subject,
-            html: body,
-        });
+        try {
+            await emailClient.sendMail({
+                to,
+                subject,
+                html: body,
+            });
 
-        log.info('Email verification sent', {
-            to,
-            verificationUrl,
-        });
+            log.info('Email verification sent', {
+                to,
+                verificationUrl,
+            });
+        } catch (error: unknown) {
+            log.error('Error sending email', {
+                to,
+                error: log.formatError(error),
+            });
+
+            throw new EmailSendException({
+                to,
+                error: getErrorMessage(error),
+            });
+        }
     }
 
     private getEmailTemplate(verificationUrl: string): string {

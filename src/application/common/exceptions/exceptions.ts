@@ -49,3 +49,33 @@ export class InvalidInputException extends ApplicationException {
         super(message, ApplicationErrorCodes.INVALID_INPUT, context);
     }
 }
+
+export class FileStorageMoveException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.fileStorage.moveFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}
+
+export class FileStorageDeleteException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.fileStorage.deleteFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}
+
+export class FileStorageFileNotFoundException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.fileStorage.fileNotFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
+    }
+}
+
+export class FileStorageAccessDeniedException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.fileStorage.accessDenied, ApplicationErrorCodes.ACCESS_DENIED, context);
+    }
+}
+
+export class FileStorageIoException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super('Ошибка ввода-вывода файловой системы', ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}

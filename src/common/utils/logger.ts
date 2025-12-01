@@ -47,8 +47,10 @@ if (NODE_ENV !== 'production') {
     );
 }
 
+import { getErrorMessage } from './error';
+
 function formatError(error: unknown): string {
-    return error instanceof Error ? error.message : 'Unknown error';
+    return getErrorMessage(error) || 'Unknown error';
 }
 
 export const log = {

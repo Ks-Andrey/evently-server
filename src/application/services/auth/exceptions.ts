@@ -53,3 +53,27 @@ export class UserForAuthNotFoundException extends ApplicationException {
         super(ERROR_MESSAGES.application.auth.userForAuthNotFound, ApplicationErrorCodes.RESOURCE_NOT_FOUND, context);
     }
 }
+
+export class TokenSignException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.token.signFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}
+
+export class TokenVerifyException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.token.verifyFailed, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}
+
+export class InvalidTokenException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.token.invalidToken, ApplicationErrorCodes.INVALID_INPUT, context);
+    }
+}
+
+export class ExpiredTokenException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.token.expiredToken, ApplicationErrorCodes.NOT_AUTHENTICATED, context);
+    }
+}

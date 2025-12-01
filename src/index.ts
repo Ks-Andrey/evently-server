@@ -34,6 +34,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         controllers.commentController,
         controllers.notificationController,
         controllers.userTypeController,
+        controllers.geocoderController,
         controllers.tokenManager,
     );
 
