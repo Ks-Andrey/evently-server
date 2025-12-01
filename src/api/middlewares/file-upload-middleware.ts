@@ -14,11 +14,11 @@ import {
 
 import { TEMP_UPLOADS_DIR } from '@common/config/app';
 import {
-    FILE_SIZE_LIMITS,
-    ALLOWED_MIME_TYPES,
-    ALLOWED_EXTENSIONS,
-    IMAGE_DIMENSIONS,
-    GALLERY_MAX_PHOTOS,
+    fileSizeLimits,
+    allowedMimeTypes,
+    allowedExtensions,
+    imageDimensions,
+    galleryMaxPhotos,
 } from '@common/constants/file-upload';
 
 import { createErrorResponse } from '../common';
@@ -64,33 +64,27 @@ async function validateImageDimensions(
 function avatarFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const ext = path.extname(file.originalname).toLowerCase();
 
-    const allowedMimeTypes = ALLOWED_MIME_TYPES.AVATAR as readonly string[];
-    const allowedExtensions = ALLOWED_EXTENSIONS.AVATAR as readonly string[];
-
-    if (!allowedMimeTypes.includes(file.mimetype)) {
+    if (!(allowedMimeTypes.AVATAR as readonly string[]).includes(file.mimetype)) {
         return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
     }
-    if (!allowedExtensions.includes(ext)) {
+    if (!(allowedExtensions.AVATAR as readonly string[]).includes(ext)) {
         return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
     }
 
-    validateImageDimensions(file, IMAGE_DIMENSIONS.AVATAR_MAX_WIDTH, IMAGE_DIMENSIONS.AVATAR_MAX_HEIGHT, cb);
+    validateImageDimensions(file, imageDimensions.AVATAR_MAX_WIDTH, imageDimensions.AVATAR_MAX_HEIGHT, cb);
 }
 
 function galleryFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const ext = path.extname(file.originalname).toLowerCase();
 
-    const allowedMimeTypes = ALLOWED_MIME_TYPES.GALLERY as readonly string[];
-    const allowedExtensions = ALLOWED_EXTENSIONS.GALLERY as readonly string[];
-
-    if (!allowedMimeTypes.includes(file.mimetype)) {
+    if (!(allowedMimeTypes.GALLERY as readonly string[]).includes(file.mimetype)) {
         return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
     }
-    if (!allowedExtensions.includes(ext)) {
+    if (!(allowedExtensions.GALLERY as readonly string[]).includes(ext)) {
         return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
     }
 
-    validateImageDimensions(file, IMAGE_DIMENSIONS.GALLERY_MAX_WIDTH, IMAGE_DIMENSIONS.GALLERY_MAX_HEIGHT, cb);
+    validateImageDimensions(file, imageDimensions.GALLERY_MAX_WIDTH, imageDimensions.GALLERY_MAX_HEIGHT, cb);
 }
 
 function createMulterMiddleware(multerInstance: ReturnType<Multer['single']>) {
@@ -132,7 +126,7 @@ export const uploadAvatar = createMulterMiddleware(
     multer({
         storage: createStorage(),
         fileFilter: avatarFileFilter,
-        limits: { fileSize: FILE_SIZE_LIMITS.AVATAR_MAX_SIZE },
+        limits: { fileSize: fileSizeLimits.AVATAR_MAX_SIZE },
     }).single('file'),
 );
 
@@ -140,6 +134,6 @@ export const uploadGalleryImages = createMulterArrayMiddleware(
     multer({
         storage: createStorage(),
         fileFilter: galleryFileFilter,
-        limits: { fileSize: FILE_SIZE_LIMITS.GALLERY_IMAGE_MAX_SIZE },
-    }).array('files', GALLERY_MAX_PHOTOS),
+        limits: { fileSize: fileSizeLimits.GALLERY_IMAGE_MAX_SIZE },
+    }).array('files', galleryMaxPhotos),
 );

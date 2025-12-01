@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { GALLERY_MAX_PHOTOS } from '@common/constants/file-upload';
+import { galleryMaxPhotos } from '@common/constants/file-upload';
 
 import { EventCategory } from './entities/event-category';
 import { EventOrganizer } from './entities/event-organizer';
@@ -229,7 +229,7 @@ export class Event {
             throw new GalleryUrlCannotBeEmptyException();
         }
 
-        if (this._imageUrls.length + trimmedUrls.length > GALLERY_MAX_PHOTOS) {
+        if (this._imageUrls.length + trimmedUrls.length > galleryMaxPhotos) {
             throw new GalleryMaxPhotosExceededException();
         }
 
@@ -240,7 +240,7 @@ export class Event {
         if (!imageUrl || imageUrl.trim().length === 0) {
             throw new GalleryUrlCannotBeEmptyException();
         }
-        if (this._imageUrls.length >= GALLERY_MAX_PHOTOS) {
+        if (this._imageUrls.length >= galleryMaxPhotos) {
             throw new GalleryMaxPhotosExceededException();
         }
         this._imageUrls.push(imageUrl.trim());

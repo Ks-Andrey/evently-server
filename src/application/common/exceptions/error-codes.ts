@@ -1,3 +1,5 @@
+import { Enum } from '@common/types/enum';
+
 export const ApplicationErrorCodes = {
     INVALID_INPUT: 'INVALID_INPUT',
     RESOURCE_ALREADY_EXISTS: 'RESOURCE_ALREADY_EXISTS',
@@ -8,4 +10,4 @@ export const ApplicationErrorCodes = {
     BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION',
     UNKNOWN_ERROR: 'UNKNOWN_ERROR',
 } as const;
-export type ApplicationErrorCode = (typeof ApplicationErrorCodes)[keyof typeof ApplicationErrorCodes];
+export type ApplicationErrorCode = Enum<typeof ApplicationErrorCodes>;

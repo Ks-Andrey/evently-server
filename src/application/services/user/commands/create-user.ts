@@ -3,9 +3,9 @@ import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
 import { ApplicationException, executeInTransaction } from '@application/common';
-import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
+import { EMAIL_VERIFICATION_TTL, EmailVerificationPurpose } from '@common/constants/email-verification';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
+import { EmailVerification, IEmailVerificationRepository } from '@domain/models/auth';
 import { IUserRepository, User, UserType } from '@domain/models/user';
 import { IUserTypeRepository } from '@domain/models/user-type';
 

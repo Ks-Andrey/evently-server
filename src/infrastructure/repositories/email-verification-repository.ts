@@ -1,7 +1,8 @@
 import { UUID } from 'crypto';
 
+import { EmailVerificationPurpose } from '@common/constants/email-verification';
 import { IEmailVerificationRepository } from '@domain/models/auth';
-import { EmailVerification, EmailVerificationPurpose } from '@domain/models/auth';
+import { EmailVerification } from '@domain/models/auth';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils/database/prisma-client';

@@ -170,6 +170,10 @@ export class User {
         return this._pendingEmail;
     }
 
+    get passwordHash(): string | undefined {
+        return this._passwordHash;
+    }
+
     get imageUrl(): string | undefined {
         return this._imageUrl;
     }

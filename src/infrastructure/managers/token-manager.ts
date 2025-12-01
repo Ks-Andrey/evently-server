@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { ITokenManager } from '@application/services/auth';
 import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/config/token';
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
+import { InvalidTokenPayloadException } from '@domain/models/auth/exceptions';
 
 import { redisClient } from '../utils';
 
@@ -37,7 +38,10 @@ export class TokenManager implements ITokenManager {
     async revokeToken(token: string, type: TokenType = 'access', userId?: string): Promise<void> {
         const key = type === 'refresh' ? this.getRefreshTokenKey(userId!, token) : this.getRevokedTokenKey(token, type);
 
-        const decoded = jwt.decode(token) as any;
+        const decoded = jwt.decode(token, { complete: false });
+        if (!decoded || typeof decoded === 'string' || typeof decoded.exp !== 'number') {
+            throw new InvalidTokenPayloadException();
+        }
         const ttl = decoded.exp - Math.floor(Date.now() / 1000);
         await redisClient.setEx(key, ttl, '1');
     }

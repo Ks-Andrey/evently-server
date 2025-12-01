@@ -37,27 +37,18 @@ export class UserRepository implements IUserRepository {
     }
 
     async save(entity: User): Promise<void> {
-        const userType = entity.userType;
-        // Access private fields using type assertion
-        interface UserPrivate {
-            _passwordHash: string;
-            _pendingEmail?: string;
-            _imageUrl?: string;
-        }
-        const userPrivate = entity as unknown as UserPrivate;
-
         const userData = {
             id: entity.id,
-            userTypeId: userType.userTypeId,
+            userTypeId: entity.userType.userTypeId,
             username: entity.username,
             email: entity.email,
             emailVerified: entity.isEmailVerified,
-            passwordHash: userPrivate._passwordHash,
+            passwordHash: entity.passwordHash as string,
             subscriptionCount: entity.subscriptionCount,
             personalData: entity.personalData,
             isBlocked: entity.isBlocked,
-            pendingEmail: userPrivate._pendingEmail,
-            imageUrl: userPrivate._imageUrl,
+            pendingEmail: entity.pendingEmail,
+            imageUrl: entity.imageUrl,
         };
 
         await prisma.user.upsert({

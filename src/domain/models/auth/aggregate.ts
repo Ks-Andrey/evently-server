@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { EmailVerificationPurpose } from '@common/constants/email-verification';
+
 import {
     EmailVerificationAlreadyUsedException,
     EmailVerificationEmailCannotBeEmptyException,
@@ -7,11 +9,6 @@ import {
     EmailVerificationUserIdCannotBeEmptyException,
     EmailVerificationIdCannotBeEmptyException,
 } from './exceptions';
-
-export enum EmailVerificationPurpose {
-    REGISTRATION = 'REGISTRATION',
-    EMAIL_CHANGE = 'EMAIL_CHANGE',
-}
 
 export class EmailVerification {
     private constructor(
