@@ -19,7 +19,7 @@ export class CommentUser {
         return new CommentUser(id, username.trim());
     }
 
-    get id(): string {
+    get id(): UUID {
         return this._id;
     }
 

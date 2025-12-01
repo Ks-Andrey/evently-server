@@ -20,11 +20,11 @@ export class EventOrganizer {
         if (!username || username.trim().length === 0) {
             throw new OrganizerUsernameCannotBeEmptyException();
         }
-        if (!personalData || personalData.trim().length === 0) {
+        if (personalData && personalData.trim().length === 0) {
             throw new OrganizerPersonalDataCannotBeEmptyException();
         }
 
-        return new EventOrganizer(id, username.trim(), personalData.trim());
+        return new EventOrganizer(id, username.trim(), personalData?.trim());
     }
 
     get id(): UUID {

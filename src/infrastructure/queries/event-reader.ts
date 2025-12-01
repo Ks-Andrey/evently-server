@@ -20,10 +20,6 @@ type EventWithRelations = Prisma.EventGetPayload<{
     };
 }>;
 
-type EventSubscriptionWithUser = Prisma.EventSubscriptionGetPayload<{
-    include: { user: true };
-}>;
-
 export class EventReader implements IEventReader {
     async findEventUsers(eventId: UUID): Promise<EventUserDTO[]> {
         const subscriptions = await prisma.eventSubscription.findMany({
