@@ -62,14 +62,7 @@ import {
     FindUserTypesHandler,
     FindUserTypeByIdHandler,
 } from '@application/services/user-type';
-import {
-    TokenManager,
-    BotManager,
-    EmailManager,
-    FileStorageManager,
-    SubscriptionManager,
-    GeocoderManager,
-} from '@infrastructure/managers';
+import { TokenManager, BotManager, EmailManager, FileStorageManager, GeocoderManager } from '@infrastructure/managers';
 import {
     UserReader,
     EventReader,
@@ -86,6 +79,7 @@ import {
     NotificationRepository,
     UserTypeRepository,
     EmailVerificationRepository,
+    EventSubscriptionRepository,
 } from '@infrastructure/repositories';
 import { PrismaUnitOfWork } from '@infrastructure/utils';
 
@@ -108,12 +102,12 @@ export interface Container {
     notificationRepository: NotificationRepository;
     userTypeRepository: UserTypeRepository;
     emailVerificationRepository: EmailVerificationRepository;
+    eventSubscriptionRepository: EventSubscriptionRepository;
 
     // Managers
     tokenManager: TokenManager;
     emailManager: EmailManager;
     fileStorageManager: FileStorageManager;
-    subscriptionManager: SubscriptionManager;
     botManager: BotManager;
     geocoderManager: GeocoderManager;
 
@@ -217,6 +211,7 @@ export function createDIContainer() {
         notificationRepository: asClass(NotificationRepository).singleton(),
         userTypeRepository: asClass(UserTypeRepository).singleton(),
         emailVerificationRepository: asClass(EmailVerificationRepository).singleton(),
+        eventSubscriptionRepository: asClass(EventSubscriptionRepository).singleton(),
     });
 
     // Managers
@@ -224,7 +219,6 @@ export function createDIContainer() {
         tokenManager: asClass(TokenManager).singleton(),
         emailManager: asClass(EmailManager).singleton(),
         fileStorageManager: asClass(FileStorageManager).singleton(),
-        subscriptionManager: asClass(SubscriptionManager).singleton(),
         botManager: asClass(BotManager).singleton(),
         geocoderManager: asClass(GeocoderManager).singleton(),
     });
@@ -289,7 +283,7 @@ export function createDIContainer() {
             .inject((container) => ({
                 userRepo: container.resolve('userRepository'),
                 eventRepo: container.resolve('eventRepository'),
-                subscriptionManager: container.resolve('subscriptionManager'),
+                subscriptionRepo: container.resolve('eventSubscriptionRepository'),
                 unitOfWork: container.resolve('unitOfWork'),
             }))
             .singleton(),
@@ -297,7 +291,7 @@ export function createDIContainer() {
             .inject((container) => ({
                 userRepo: container.resolve('userRepository'),
                 eventRepo: container.resolve('eventRepository'),
-                subscriptionManager: container.resolve('subscriptionManager'),
+                subscriptionRepo: container.resolve('eventSubscriptionRepository'),
                 unitOfWork: container.resolve('unitOfWork'),
             }))
             .singleton(),

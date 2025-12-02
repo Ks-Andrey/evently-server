@@ -5,3 +5,4 @@ export * from './comment-repository';
 export * from './notification-repository';
 export * from './user-type-repository';
 export * from './email-verification-repository';
+export * from './event-subscription-repository';

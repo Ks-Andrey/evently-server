@@ -4,10 +4,10 @@ import { Result } from 'true-myth';
 import { ApplicationException, executeInTransaction } from '@application/common';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IEventRepository } from '@domain/events/event';
+import { IEventSubscriptionRepository } from '@domain/events/event-subscription';
 import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException, EventForUserNotFoundException, UserNotSubscribedException } from '../exceptions';
-import { ISubscriptionManager } from '../interfaces/subscription-manager';
 
 export class UnsubscribeUserFromEvent {
     constructor(
@@ -20,7 +20,7 @@ export class UnsubscribeUserFromEventHandler {
     constructor(
         readonly userRepo: IUserRepository,
         readonly eventRepo: IEventRepository,
-        readonly subscriptionManager: ISubscriptionManager,
+        readonly subscriptionRepo: IEventSubscriptionRepository,
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
@@ -32,13 +32,13 @@ export class UnsubscribeUserFromEventHandler {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventForUserNotFoundException();
 
-            const isSubscribed = await this.subscriptionManager.hasSubscribed(event.id, user.id);
+            const isSubscribed = await this.subscriptionRepo.isUserSubscribedToEvent(user.id, event.id);
             if (!isSubscribed) throw new UserNotSubscribedException();
 
             event.decrementSubscriberCount();
             user.decrementSubscriptionCount();
 
-            await this.subscriptionManager.unsubscribe(event.id, user.id);
+            await this.subscriptionRepo.removeSubscription(user.id, event.id);
 
             await this.eventRepo.save(event);
             await this.userRepo.save(user);
