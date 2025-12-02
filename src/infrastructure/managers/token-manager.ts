@@ -11,7 +11,7 @@ import { secret, accessTokenTtlSeconds, refreshTokenTtlSeconds } from '@common/c
 import { Tokens, TokenType, UserJwtPayload } from '@common/types/auth';
 import { getErrorMessage } from '@common/utils/error';
 import { log } from '@common/utils/logger';
-import { InvalidTokenPayloadException } from '@domain/models/auth';
+import { InvalidTokenPayloadException } from '@domain/identity/auth';
 
 import { redisClient } from '../utils';
 

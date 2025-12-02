@@ -36,7 +36,7 @@ export class User {
         private _imageUrl?: string,
     ) {}
 
-    static createSync(
+    static createFromDatabase(
         id: UUID,
         userType: UserType,
         username: string,
@@ -71,7 +71,7 @@ export class User {
         );
     }
 
-    static async create(
+    static async createFromRegistration(
         id: UUID,
         userType: UserType,
         username: string,

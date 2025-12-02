@@ -5,7 +5,7 @@ import { safeAsync, AccessDeniedException, ApplicationException } from '@applica
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
-import { EventCategory, EventLocation, IEventRepository } from '@domain/models/event';
+import { EventCategory, EventLocation, IEventRepository } from '@domain/events/event';
 
 import {
     EventNotFoundException,

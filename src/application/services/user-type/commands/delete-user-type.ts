@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
 import { IUserReader } from '@application/readers/user';
-import { IUserTypeRepository } from '@domain/models/user-type';
+import { IUserTypeRepository } from '@domain/identity/user-type';
 
 import { UserTypeNotFoundException, UserTypeInUseException } from '../exceptions';
 

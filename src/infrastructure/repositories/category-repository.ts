@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { ICategoryRepository, Category } from '@domain/models/category';
+import { ICategoryRepository, Category } from '@domain/events/category';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils';

@@ -6,7 +6,7 @@ import { ApplicationException, executeInTransaction } from '@application/common'
 import { IEventReader } from '@application/readers/event';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
-import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/models/notification';
+import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/social/notification';
 
 import { EventForNotificationNotFoundException } from '../exceptions';
 import { IBotManager } from '../interfaces/bot-manager';

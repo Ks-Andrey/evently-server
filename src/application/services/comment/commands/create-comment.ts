@@ -4,9 +4,9 @@ import { v4 } from 'uuid';
 
 import { executeInTransaction, AccessDeniedException, ApplicationException } from '@application/common';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { Comment, CommentUser, ICommentRepository } from '@domain/models/comment';
-import { IEventRepository } from '@domain/models/event';
-import { IUserRepository } from '@domain/models/user';
+import { Comment, CommentUser, ICommentRepository } from '@domain/social/comment';
+import { IEventRepository } from '@domain/events/event';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserForCommentNotFoundException, EventForCommentNotFoundException } from '../exceptions';
 

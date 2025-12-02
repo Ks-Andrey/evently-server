@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { ApplicationException, safeAsync } from '@application/common';
 import { IUserTypeReader } from '@application/readers/user-type';
 import { Roles } from '@common/constants/roles';
-import { UserType, IUserTypeRepository } from '@domain/models/user-type';
+import { UserType, IUserTypeRepository } from '@domain/identity/user-type';
 
 import { UserTypeAlreadyExistsException } from '../exceptions';
 

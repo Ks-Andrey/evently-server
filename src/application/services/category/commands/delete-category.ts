@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
 import { IEventReader } from '@application/readers/event';
-import { ICategoryRepository } from '@domain/models/category';
+import { ICategoryRepository } from '@domain/events/category';
 
 import { CategoryInUseException, CategoryNotFoundException } from '../exceptions';
 

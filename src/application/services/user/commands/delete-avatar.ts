@@ -10,7 +10,7 @@ import {
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
-import { IUserRepository } from '@domain/models/user';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException } from '../exceptions';
 

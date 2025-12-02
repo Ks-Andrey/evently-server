@@ -1,6 +1,6 @@
 import { UUID, randomUUID } from 'crypto';
 
-import { EventCategory, EventOrganizer, Event, EventLocation, IEventRepository } from '@domain/models/event';
+import { EventCategory, EventOrganizer, Event, EventLocation, IEventRepository } from '@domain/events/event';
 import { Prisma, PrismaClient } from '@generated/prisma/client';
 
 import { prisma } from '../utils/database/prisma-client';

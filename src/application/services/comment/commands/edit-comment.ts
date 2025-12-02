@@ -3,8 +3,8 @@ import { Result } from 'true-myth';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/constants/roles';
-import { ICommentRepository } from '@domain/models/comment';
-import { IUserRepository } from '@domain/models/user';
+import { ICommentRepository } from '@domain/social/comment';
+import { IUserRepository } from '@domain/identity/user';
 
 import { CommentNotFoundException, UserForCommentNotFoundException } from '../exceptions';
 

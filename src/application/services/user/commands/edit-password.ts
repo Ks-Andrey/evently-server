@@ -3,7 +3,7 @@ import { Result } from 'true-myth';
 
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/constants/roles';
-import { IUserRepository } from '@domain/models/user';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException } from '../exceptions';
 

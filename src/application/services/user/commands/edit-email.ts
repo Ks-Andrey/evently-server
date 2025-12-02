@@ -6,8 +6,8 @@ import { executeInTransaction, AccessDeniedException, ApplicationException } fro
 import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { EmailVerification, IEmailVerificationRepository, EmailVerificationPurpose } from '@domain/models/auth';
-import { IUserRepository } from '@domain/models/user';
+import { EmailVerification, IEmailVerificationRepository, EmailVerificationPurpose } from '@domain/identity/auth';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException, EmailVerificationForUserAlreadyRequestedException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';

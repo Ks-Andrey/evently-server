@@ -4,7 +4,7 @@ import { Result } from 'true-myth';
 import { safeAsync, AccessDeniedException, ApplicationException } from '@application/common';
 import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
-import { IEventRepository } from '@domain/models/event';
+import { IEventRepository } from '@domain/events/event';
 
 import { EventNotFoundException, UserForEventNotFoundException } from '../exceptions';
 

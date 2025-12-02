@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
-import { ICategoryRepository } from '@domain/models/category';
+import { ICategoryRepository } from '@domain/events/category';
 
 import { CategoryNotFoundException } from '../exceptions';
 

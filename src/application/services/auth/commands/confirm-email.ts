@@ -3,8 +3,8 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, executeInTransaction } from '@application/common';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/models/auth';
-import { IUserRepository } from '@domain/models/user';
+import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/identity/auth';
+import { IUserRepository } from '@domain/identity/user';
 
 import { EmailVerificationNotFoundException, UserForAuthNotFoundException } from '../exceptions';
 

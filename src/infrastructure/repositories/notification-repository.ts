@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { Notification, INotificationRepository, NotificationUser } from '@domain/models/notification';
+import { Notification, INotificationRepository, NotificationUser } from '@domain/social/notification';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils';

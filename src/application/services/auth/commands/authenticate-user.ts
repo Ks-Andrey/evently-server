@@ -2,7 +2,7 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
 import { Tokens, UserJwtPayload } from '@common/types/auth';
-import { IUserRepository } from '@domain/models/user';
+import { IUserRepository } from '@domain/identity/user';
 
 import { InvalidCredentialsException } from '../exceptions';
 import { ITokenManager } from '../interfaces/token-manager';

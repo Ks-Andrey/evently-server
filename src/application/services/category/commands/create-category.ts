@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryReader } from '@application/readers/category';
-import { Category, ICategoryRepository } from '@domain/models/category';
+import { Category, ICategoryRepository } from '@domain/events/category';
 
 import { CategoryAlreadyExistsException } from '../exceptions';
 

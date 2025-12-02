@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { ICommentRepository, Comment, CommentUser } from '@domain/models/comment';
+import { ICommentRepository, Comment, CommentUser } from '@domain/social/comment';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils';

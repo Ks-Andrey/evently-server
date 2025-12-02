@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { UserType, IUserTypeRepository } from '@domain/models/user-type';
+import { UserType, IUserTypeRepository } from '@domain/identity/user-type';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils';

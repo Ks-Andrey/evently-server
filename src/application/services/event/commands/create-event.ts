@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { ApplicationException, safeAsync } from '@application/common';
 import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
-import { Event, EventCategory, EventOrganizer, EventLocation, IEventRepository } from '@domain/models/event';
+import { Event, EventCategory, EventOrganizer, EventLocation, IEventRepository } from '@domain/events/event';
 
 import { UserForEventNotFoundException, CategoryForEventNotFoundException } from '../exceptions';
 

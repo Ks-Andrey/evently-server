@@ -10,7 +10,7 @@ import {
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
-import { IEventRepository } from '@domain/models/event';
+import { IEventRepository } from '@domain/events/event';
 
 import { EventNotFoundException } from '../exceptions';
 

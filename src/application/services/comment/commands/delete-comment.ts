@@ -4,9 +4,9 @@ import { Result } from 'true-myth';
 import { executeInTransaction, AccessDeniedException, ApplicationException } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { ICommentRepository } from '@domain/models/comment';
-import { IEventRepository } from '@domain/models/event';
-import { IUserRepository } from '@domain/models/user';
+import { ICommentRepository } from '@domain/social/comment';
+import { IEventRepository } from '@domain/events/event';
+import { IUserRepository } from '@domain/identity/user';
 
 import {
     CommentNotFoundException,

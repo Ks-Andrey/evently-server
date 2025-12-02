@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
-import { IUserRepository } from '@domain/models/user';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException } from '../exceptions';
 

@@ -3,8 +3,8 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, executeInTransaction } from '@application/common';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { IEventRepository } from '@domain/models/event';
-import { IUserRepository } from '@domain/models/user';
+import { IEventRepository } from '@domain/events/event';
+import { IUserRepository } from '@domain/identity/user';
 
 import { UserNotFoundException, EventForUserNotFoundException, UserAlreadySubscribedException } from '../exceptions';
 import { ISubscriptionManager } from '../interfaces/subscription-manager';

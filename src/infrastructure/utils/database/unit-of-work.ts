@@ -13,6 +13,10 @@ export class PrismaUnitOfWork implements IUnitOfWork {
 
     constructor() {}
 
+    getClient(): PrismaTransactionClient | PrismaClient {
+        return this.transactionClient || prisma;
+    }
+
     async execute<T>(fn: () => Promise<T>): Promise<T> {
         return prisma.$transaction(async (tx: PrismaTransactionClient) => {
             this.transactionClient = tx;
@@ -24,10 +28,4 @@ export class PrismaUnitOfWork implements IUnitOfWork {
             }
         });
     }
-
-    async begin(): Promise<void> {}
-
-    async commit(): Promise<void> {}
-
-    async rollback(): Promise<void> {}
 }
