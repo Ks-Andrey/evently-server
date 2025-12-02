@@ -328,7 +328,7 @@ export function createDIContainer() {
         editEventDetailsHandler: asClass(EditEventDetailsHandler)
             .inject((container) => ({
                 eventRepo: container.resolve('eventRepository'),
-                userRepo: container.resolve('userReader'),
+                userReader: container.resolve('userReader'),
                 categoryRepo: container.resolve('categoryReader'),
             }))
             .singleton(),

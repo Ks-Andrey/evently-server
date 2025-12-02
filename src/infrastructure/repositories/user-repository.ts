@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { IUserRepository, User, UserType } from '@domain/identity/user';
+import { IUserRepository, User, UserTypeData } from '@domain/identity/user';
 import { Prisma } from '@generated/prisma/client';
 
 import { prisma } from '../utils';
@@ -65,7 +65,7 @@ export class UserRepository implements IUserRepository {
     }
 
     private toDomain(userData: UserWithType): User {
-        const userType = UserType.create(
+        const userType = UserTypeData.create(
             userData.userType?.userTypeId as UUID,
             userData.userType?.typeName,
             userData.userType.role,

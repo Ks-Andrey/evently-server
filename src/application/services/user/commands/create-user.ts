@@ -6,7 +6,7 @@ import { ApplicationException, executeInTransaction } from '@application/common'
 import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/identity/auth';
-import { IUserRepository, User, UserType } from '@domain/identity/user';
+import { IUserRepository, User, UserTypeData } from '@domain/identity/user';
 import { IUserTypeRepository } from '@domain/identity/user-type';
 
 import { UserAlreadyExistsException, UserTypeNotFoundException } from '../exceptions';
@@ -42,7 +42,7 @@ export class CreateUserHandler {
 
             const user = await User.createFromRegistration(
                 userId,
-                UserType.create(command.userTypeId, userType.typeName),
+                UserTypeData.create(command.userTypeId, userType.typeName, userType.role),
                 command.username,
                 command.email,
                 command.password,

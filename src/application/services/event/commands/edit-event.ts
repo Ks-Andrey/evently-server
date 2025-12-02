@@ -31,13 +31,13 @@ export class EditEventDetails {
 export class EditEventDetailsHandler {
     constructor(
         private readonly eventRepo: IEventRepository,
-        private readonly userRepo: IUserReader,
+        private readonly userReader: IUserReader,
         private readonly categoryRepo: ICategoryReader,
     ) {}
 
     execute(command: EditEventDetails): Promise<Result<UUID, ApplicationException>> {
         return safeAsync(async () => {
-            const requestUser = await this.userRepo.findById(command.userId);
+            const requestUser = await this.userReader.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();
 
             const event = await this.eventRepo.findById(command.eventId);

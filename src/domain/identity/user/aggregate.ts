@@ -1,7 +1,9 @@
 import { hash, compare } from 'bcrypt';
 import { UUID } from 'crypto';
 
-import { UserType } from './entities/user-type';
+import { BCRYPT_ROUNDS } from '@common/constants/encrypt';
+
+import { UserTypeData } from './entities/user-type-data';
 import {
     UserAlreadyBlockedException,
     UserNotBlockedException,
@@ -24,7 +26,7 @@ import {
 export class User {
     private constructor(
         private readonly _id: UUID,
-        private _userType: UserType,
+        private _userType: UserTypeData,
         private _username: string,
         private _email: string,
         private _emailVerified: boolean,
@@ -38,7 +40,7 @@ export class User {
 
     static createFromDatabase(
         id: UUID,
-        userType: UserType,
+        userType: UserTypeData,
         username: string,
         email: string,
         passwordHash: string,
@@ -73,7 +75,7 @@ export class User {
 
     static async createFromRegistration(
         id: UUID,
-        userType: UserType,
+        userType: UserTypeData,
         username: string,
         email: string,
         password: string,
@@ -89,7 +91,7 @@ export class User {
         User.ensureValidPassword(password);
         User.ensureValidSubscriptionCount(subscriptionCount);
 
-        const passwordHash = await hash(password, 10);
+        const passwordHash = await hash(password, BCRYPT_ROUNDS);
 
         return new User(
             id,
@@ -112,7 +114,7 @@ export class User {
         }
     }
 
-    private static ensureValidUserType(userType: UserType): void {
+    private static ensureValidUserType(userType: UserTypeData): void {
         if (!userType) {
             throw new UserTypeIsRequiredException();
         }
@@ -125,7 +127,22 @@ export class User {
     }
 
     private static ensureValidEmail(email: string): void {
-        if (!email || !email.includes('@')) {
+        if (!email || email.trim().length === 0) {
+            throw new InvalidEmailFormatException();
+        }
+
+        const trimmed = email.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(trimmed)) {
+            throw new InvalidEmailFormatException();
+        }
+
+        if (trimmed.length > 254) {
+            throw new InvalidEmailFormatException();
+        }
+
+        const [localPart, domain] = trimmed.split('@');
+        if (localPart.length > 64 || domain.length > 253) {
             throw new InvalidEmailFormatException();
         }
     }
@@ -145,7 +162,7 @@ export class User {
     get id(): UUID {
         return this._id;
     }
-    get userType(): UserType {
+    get userType(): UserTypeData {
         return this._userType;
     }
     get username(): string {
@@ -253,7 +270,7 @@ export class User {
 
     async changePassword(newPassword: string): Promise<void> {
         User.ensureValidPassword(newPassword);
-        this._passwordHash = await hash(newPassword, 10);
+        this._passwordHash = await hash(newPassword, BCRYPT_ROUNDS);
     }
 
     async ensureValidPassword(password: string): Promise<void> {

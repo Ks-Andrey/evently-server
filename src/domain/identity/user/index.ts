@@ -1,4 +1,4 @@
 export * from './aggregate';
 export * from './exceptions';
 export * from './repository';
-export * from './entities/user-type';
+export * from './entities/user-type-data';
