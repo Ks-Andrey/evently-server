@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { ERROR_MESSAGES } from '@common/constants/errors';
 import { Roles } from '@common/constants/roles';
 
 const uuidSchema = z.string().uuid();
@@ -13,7 +14,10 @@ export const getUserTypeByIdSchema = z.object({
 
 export const createUserTypeSchema = z.object({
     body: z.object({
-        typeName: z.string().min(1, 'Type name is required').max(100, 'Type name is too long'),
+        typeName: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.userType.nameRequired)
+            .max(100, ERROR_MESSAGES.api.userType.nameTooLong),
         role: roleSchema.optional().default(Roles.USER),
     }),
 });
@@ -23,7 +27,10 @@ export const editUserTypeSchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        typeName: z.string().min(1, 'Type name is required').max(100, 'Type name is too long'),
+        typeName: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.userType.nameRequired)
+            .max(100, ERROR_MESSAGES.api.userType.nameTooLong),
         role: roleSchema,
     }),
 });

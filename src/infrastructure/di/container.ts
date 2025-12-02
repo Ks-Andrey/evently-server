@@ -1,4 +1,4 @@
-import { asClass, createContainer, InjectionMode } from 'awilix';
+import { asClass, createContainer, InjectionMode, AwilixContainer } from 'awilix';
 
 import {
     AuthController,
@@ -182,17 +182,15 @@ export interface Container {
     geocoderController: GeocoderController;
 }
 
-export function createDIContainer() {
-    const container = createContainer<Container>({
-        injectionMode: InjectionMode.CLASSIC,
-    });
+type ContainerType = AwilixContainer<Container>;
 
-    // Infrastructure Layer
+function registerInfrastructure(container: ContainerType): void {
     container.register({
         unitOfWork: asClass(PrismaUnitOfWork).singleton(),
     });
+}
 
-    // Readers
+function registerReaders(container: ContainerType): void {
     container.register({
         userReader: asClass(UserReader).singleton(),
         eventReader: asClass(EventReader).singleton(),
@@ -201,8 +199,9 @@ export function createDIContainer() {
         notificationReader: asClass(NotificationReader).singleton(),
         userTypeReader: asClass(UserTypeReader).singleton(),
     });
+}
 
-    // Repositories
+function registerRepositories(container: ContainerType): void {
     container.register({
         userRepository: asClass(UserRepository).singleton(),
         eventRepository: asClass(EventRepository).singleton(),
@@ -213,8 +212,9 @@ export function createDIContainer() {
         emailVerificationRepository: asClass(EmailVerificationRepository).singleton(),
         eventSubscriptionRepository: asClass(EventSubscriptionRepository).singleton(),
     });
+}
 
-    // Managers
+function registerManagers(container: ContainerType): void {
     container.register({
         tokenManager: asClass(TokenManager).singleton(),
         emailManager: asClass(EmailManager).singleton(),
@@ -222,8 +222,9 @@ export function createDIContainer() {
         botManager: asClass(BotManager).singleton(),
         geocoderManager: asClass(GeocoderManager).singleton(),
     });
+}
 
-    // Auth Handlers
+function registerAuthHandlers(container: ContainerType): void {
     container.register({
         authenticateUserHandler: asClass(AuthenticateUserHandler)
             .inject((container) => ({
@@ -239,8 +240,9 @@ export function createDIContainer() {
             }))
             .singleton(),
     });
+}
 
-    // User Handlers
+function registerUserHandlers(container: ContainerType): void {
     container.register({
         createUserHandler: asClass(CreateUserHandler)
             .inject((container) => ({
@@ -315,8 +317,9 @@ export function createDIContainer() {
         findUserByEmailHandler: asClass(FindUserByEmailHandler).singleton(),
         findUserSubscriptionsHandler: asClass(FindUserSubscriptionsHandler).singleton(),
     });
+}
 
-    // Event Handlers
+function registerEventHandlers(container: ContainerType): void {
     container.register({
         createEventHandler: asClass(CreateEventHandler)
             .inject((container) => ({
@@ -357,8 +360,9 @@ export function createDIContainer() {
         findOrganizerEventsHandler: asClass(FindOrganizerEventsHandler).singleton(),
         findEventSubscribersHandler: asClass(FindEventSubscribersHandler).singleton(),
     });
+}
 
-    // Category Handlers
+function registerCategoryHandlers(container: ContainerType): void {
     container.register({
         createCategoryHandler: asClass(CreateCategoryHandler)
             .inject((container) => ({
@@ -379,8 +383,9 @@ export function createDIContainer() {
             .singleton(),
         findCategoriesHandler: asClass(FindCategoriesHandler).singleton(),
     });
+}
 
-    // Comment Handlers
+function registerCommentHandlers(container: ContainerType): void {
     container.register({
         createCommentHandler: asClass(CreateCommentHandler)
             .inject((container) => ({
@@ -408,8 +413,9 @@ export function createDIContainer() {
         findCommentsByEventHandler: asClass(FindCommentsByEventHandler).singleton(),
         findCommentsByUserHandler: asClass(FindCommentsByUserHandler).singleton(),
     });
+}
 
-    // Notification Handlers
+function registerNotificationHandlers(container: ContainerType): void {
     container.register({
         notifyEventSubscribersHandler: asClass(NotifyEventSubscribersHandler)
             .inject((container) => ({
@@ -421,8 +427,9 @@ export function createDIContainer() {
             .singleton(),
         findUserNotificationsHandler: asClass(FindUserNotificationsHandler).singleton(),
     });
+}
 
-    // UserType Handlers
+function registerUserTypeHandlers(container: ContainerType): void {
     container.register({
         createUserTypeHandler: asClass(CreateUserTypeHandler)
             .inject((container) => ({
@@ -444,8 +451,9 @@ export function createDIContainer() {
         findUserTypesHandler: asClass(FindUserTypesHandler).singleton(),
         findUserTypeByIdHandler: asClass(FindUserTypeByIdHandler).singleton(),
     });
+}
 
-    // Geocoder Handlers
+function registerGeocoderHandlers(container: ContainerType): void {
     container.register({
         findCoordinatesByLocationHandler: asClass(FindCoordinatesByLocationHandler)
             .inject((container) => ({
@@ -453,8 +461,9 @@ export function createDIContainer() {
             }))
             .singleton(),
     });
+}
 
-    // Controllers
+function registerControllers(container: ContainerType): void {
     container.register({
         authController: asClass(AuthController).singleton(),
         userController: asClass(UserController).singleton(),
@@ -469,6 +478,26 @@ export function createDIContainer() {
             }))
             .singleton(),
     });
+}
+
+export function createDIContainer() {
+    const container = createContainer<Container>({
+        injectionMode: InjectionMode.CLASSIC,
+    });
+
+    registerInfrastructure(container);
+    registerReaders(container);
+    registerRepositories(container);
+    registerManagers(container);
+    registerAuthHandlers(container);
+    registerUserHandlers(container);
+    registerEventHandlers(container);
+    registerCategoryHandlers(container);
+    registerCommentHandlers(container);
+    registerNotificationHandlers(container);
+    registerUserTypeHandlers(container);
+    registerGeocoderHandlers(container);
+    registerControllers(container);
 
     return container;
 }

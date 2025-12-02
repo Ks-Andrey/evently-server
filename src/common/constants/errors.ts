@@ -1,4 +1,52 @@
 export const ERROR_MESSAGES = {
+    api: {
+        auth: {
+            usernameRequired: 'Имя пользователя обязательно',
+            usernameTooLong: 'Имя пользователя слишком длинное (максимум 100 символов)',
+            emailInvalid: 'Неверный формат email',
+            passwordRequired: 'Пароль обязателен',
+            passwordMinLength: 'Пароль должен содержать минимум 8 символов',
+            passwordUppercase: 'Пароль должен содержать хотя бы одну заглавную букву',
+            passwordLowercase: 'Пароль должен содержать хотя бы одну строчную букву',
+            passwordNumber: 'Пароль должен содержать хотя бы одну цифру',
+            passwordSpecialChar: 'Пароль должен содержать хотя бы один специальный символ',
+        },
+        user: {
+            usernameRequired: 'Имя пользователя обязательно',
+            emailInvalid: 'Неверный формат email',
+            passwordRequired: 'Пароль обязателен',
+            oldPasswordRequired: 'Старый пароль обязателен',
+            newPasswordMinLength: 'Новый пароль должен содержать минимум 8 символов',
+        },
+        event: {
+            titleRequired: 'Название события обязательно',
+            titleTooLong: 'Название события слишком длинное (максимум 200 символов)',
+            descriptionRequired: 'Описание события обязательно',
+            locationRequired: 'Местоположение обязательно',
+            locationTooLong: 'Местоположение слишком длинное (максимум 200 символов)',
+            dateInvalid: 'Неверный формат даты',
+            latitudeOutOfRange: 'Широта должна быть в диапазоне от -90 до 90',
+            longitudeOutOfRange: 'Долгота должна быть в диапазоне от -180 до 180',
+            locationRequiresCoordinates: 'Если указано местоположение, необходимо указать широту и долготу',
+            messageRequired: 'Сообщение обязательно',
+            photoUrlInvalid: 'Неверный формат URL фотографии',
+        },
+        category: {
+            nameRequired: 'Название категории обязательно',
+            nameTooLong: 'Название категории слишком длинное (максимум 100 символов)',
+        },
+        comment: {
+            textRequired: 'Текст комментария обязателен',
+            textTooLong: 'Комментарий слишком длинный (максимум 1000 символов)',
+        },
+        userType: {
+            nameRequired: 'Название типа пользователя обязательно',
+            nameTooLong: 'Название типа пользователя слишком длинное (максимум 100 символов)',
+        },
+        geocoder: {
+            locationRequired: 'Местоположение не может быть пустым',
+        },
+    },
     domain: {
         auth: {
             emailVerificationIdCannotBeEmpty: 'Идентификатор подтверждения email не может быть пустым',
@@ -166,12 +214,18 @@ export const ERROR_MESSAGES = {
             deleteFailed: 'Не удалось удалить файл. Попробуйте позже',
             fileNotFound: 'Файл не найден',
             accessDenied: 'Нет доступа к файлу',
+            ioError: 'Ошибка ввода-вывода файловой системы',
         },
         token: {
             signFailed: 'Не удалось выполнить операцию. Попробуйте позже',
             verifyFailed: 'Не удалось выполнить операцию. Попробуйте позже',
             invalidToken: 'Сессия недействительна. Войдите снова',
             expiredToken: 'Сессия истекла. Войдите снова',
+        },
+        security: {
+            csrfOriginRequired: 'Заголовок Origin или Referer обязателен для данного запроса',
+            csrfInvalidOrigin: 'Недопустимый источник запроса',
+            rateLimitExceeded: 'Слишком много попыток аутентификации, попробуйте снова через 15 минут',
         },
     },
 } as const;

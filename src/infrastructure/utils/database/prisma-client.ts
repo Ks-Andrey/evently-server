@@ -27,4 +27,14 @@ export const disconnectPrisma = async () => {
     }
 };
 
+export const checkDatabase = async (): Promise<boolean> => {
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        return true;
+    } catch (error) {
+        log.error('Database health check failed', { error });
+        return false;
+    }
+};
+
 export { prisma };

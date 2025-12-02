@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ERROR_MESSAGES } from '@common/constants/errors';
+
 const uuidSchema = z.string().uuid();
 
 export const getUserByIdSchema = z.object({
@@ -10,13 +12,13 @@ export const getUserByIdSchema = z.object({
 
 export const getUserByNameSchema = z.object({
     params: z.object({
-        username: z.string().min(1, 'Username is required'),
+        username: z.string().min(1, ERROR_MESSAGES.api.user.usernameRequired),
     }),
 });
 
 export const getUserByEmailSchema = z.object({
     params: z.object({
-        email: z.string().email('Invalid email format'),
+        email: z.string().email(ERROR_MESSAGES.api.user.emailInvalid),
     }),
 });
 
@@ -30,16 +32,16 @@ export const editUserSchema = z.object({
 
 export const editEmailSchema = z.object({
     body: z.object({
-        password: z.string().min(1, 'Password is required'),
-        newEmail: z.string().email('Invalid email format'),
+        password: z.string().min(1, ERROR_MESSAGES.api.user.passwordRequired),
+        newEmail: z.string().email(ERROR_MESSAGES.api.user.emailInvalid),
         userId: uuidSchema.optional(),
     }),
 });
 
 export const editPasswordSchema = z.object({
     body: z.object({
-        oldPassword: z.string().min(1, 'Old password is required'),
-        newPassword: z.string().min(8, 'New password must be at least 8 characters'),
+        oldPassword: z.string().min(1, ERROR_MESSAGES.api.user.oldPasswordRequired),
+        newPassword: z.string().min(8, ERROR_MESSAGES.api.user.newPasswordMinLength),
         userId: uuidSchema.optional(),
     }),
 });

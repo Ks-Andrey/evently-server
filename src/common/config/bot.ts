@@ -1,4 +1,3 @@
-import { config } from 'dotenv';
-config();
+import { requireEnv } from '../utils/requireEnv';
 
-export const BOT_TOKEN = process.env.BOT_TOKEN || '';
+export const BOT_TOKEN = requireEnv('BOT_TOKEN');

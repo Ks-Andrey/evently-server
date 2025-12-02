@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ERROR_MESSAGES } from '@common/constants/errors';
+
 const uuidSchema = z.string().uuid();
 
 const dateSchema = z
@@ -9,7 +11,7 @@ const dateSchema = z
             const date = new Date(val);
             return !isNaN(date.getTime());
         },
-        { message: 'Invalid date format' },
+        { message: ERROR_MESSAGES.api.event.dateInvalid },
     )
     .optional();
 
@@ -23,7 +25,7 @@ export const getEventsSchema = z.object({
                     const date = new Date(val);
                     return !isNaN(date.getTime());
                 },
-                { message: 'Invalid date format' },
+                { message: ERROR_MESSAGES.api.event.dateInvalid },
             )
             .optional(),
         dateTo: z
@@ -33,7 +35,7 @@ export const getEventsSchema = z.object({
                     const date = new Date(val);
                     return !isNaN(date.getTime());
                 },
-                { message: 'Invalid date format' },
+                { message: ERROR_MESSAGES.api.event.dateInvalid },
             )
             .optional(),
         keyword: z.string().optional(),
@@ -55,24 +57,30 @@ export const getEventSubscribersSchema = z.object({
 export const createEventSchema = z.object({
     body: z.object({
         categoryId: uuidSchema,
-        title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-        description: z.string().min(1, 'Description is required'),
+        title: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.event.titleRequired)
+            .max(200, ERROR_MESSAGES.api.event.titleTooLong),
+        description: z.string().min(1, ERROR_MESSAGES.api.event.descriptionRequired),
         date: z.string().refine(
             (val) => {
                 const date = new Date(val);
                 return !isNaN(date.getTime());
             },
-            { message: 'Invalid date format' },
+            { message: ERROR_MESSAGES.api.event.dateInvalid },
         ),
-        location: z.string().min(1, 'Location is required').max(200, 'Location is too long'),
+        location: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.event.locationRequired)
+            .max(200, ERROR_MESSAGES.api.event.locationTooLong),
         latitude: z
             .number()
-            .min(-90, 'Latitude must be between -90 and 90')
-            .max(90, 'Latitude must be between -90 and 90'),
+            .min(-90, ERROR_MESSAGES.api.event.latitudeOutOfRange)
+            .max(90, ERROR_MESSAGES.api.event.latitudeOutOfRange),
         longitude: z
             .number()
-            .min(-180, 'Longitude must be between -180 and 180')
-            .max(180, 'Longitude must be between -180 and 180'),
+            .min(-180, ERROR_MESSAGES.api.event.longitudeOutOfRange)
+            .max(180, ERROR_MESSAGES.api.event.longitudeOutOfRange),
     }),
 });
 
@@ -100,7 +108,7 @@ export const editEventSchema = z
             return true;
         },
         {
-            message: 'If location is provided, both latitude and longitude must be provided',
+            message: ERROR_MESSAGES.api.event.locationRequiresCoordinates,
             path: ['body', 'location'],
         },
     );
@@ -116,7 +124,7 @@ export const notifySubscribersSchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        message: z.string().min(1, 'Message is required'),
+        message: z.string().min(1, ERROR_MESSAGES.api.event.messageRequired),
     }),
 });
 
@@ -131,6 +139,6 @@ export const deleteGalleryPhotoSchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        photoUrl: z.string().url('Invalid photo URL'),
+        photoUrl: z.string().url(ERROR_MESSAGES.api.event.photoUrlInvalid),
     }),
 });

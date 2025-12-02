@@ -76,6 +76,18 @@ export class FileStorageAccessDeniedException extends ApplicationException {
 
 export class FileStorageIoException extends ApplicationException {
     constructor(context?: Record<string, unknown>) {
-        super('Ошибка ввода-вывода файловой системы', ApplicationErrorCodes.UNKNOWN_ERROR, context);
+        super(ERROR_MESSAGES.application.fileStorage.ioError, ApplicationErrorCodes.UNKNOWN_ERROR, context);
+    }
+}
+
+export class CsrfOriginRequiredException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.security.csrfOriginRequired, ApplicationErrorCodes.ACCESS_DENIED, context);
+    }
+}
+
+export class CsrfInvalidOriginException extends ApplicationException {
+    constructor(context?: Record<string, unknown>) {
+        super(ERROR_MESSAGES.application.security.csrfInvalidOrigin, ApplicationErrorCodes.ACCESS_DENIED, context);
     }
 }

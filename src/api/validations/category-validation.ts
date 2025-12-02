@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ERROR_MESSAGES } from '@common/constants/errors';
+
 const uuidSchema = z.string().uuid();
 
 export const getCategoryByIdSchema = z.object({
@@ -10,7 +12,10 @@ export const getCategoryByIdSchema = z.object({
 
 export const createCategorySchema = z.object({
     body: z.object({
-        name: z.string().min(1, 'Category name is required').max(100, 'Category name is too long'),
+        name: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.category.nameRequired)
+            .max(100, ERROR_MESSAGES.api.category.nameTooLong),
     }),
 });
 
@@ -19,7 +24,10 @@ export const editCategorySchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        name: z.string().min(1, 'Category name is required').max(100, 'Category name is too long'),
+        name: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.category.nameRequired)
+            .max(100, ERROR_MESSAGES.api.category.nameTooLong),
     }),
 });
 

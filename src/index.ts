@@ -1,23 +1,31 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response } from 'express';
+
+import helmet from 'helmet';
 
 import { createErrorResponse } from '@api/common';
+import { csrfProtection } from '@api/middlewares/csrf-middleware';
 import { createAppRoutes } from '@api/routes';
 import { RouteNotFoundException } from '@application/common';
 
-import { PORT } from '@common/config/app';
-import { NODE_ENV } from '@common/config/logger';
+import { PORT, ALLOWED_ORIGINS, SHUTDOWN_TIMEOUT, NODE_ENV } from '@common/config/app';
 import { log } from '@common/utils/logger';
 import { getAppDependencies, createDIContainer } from '@infrastructure/di';
-import { disconnectPrisma, disconnectRedis } from '@infrastructure/utils';
+import { disconnectPrisma, disconnectRedis, checkDatabase, checkRedis } from '@infrastructure/utils';
 
 function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Express {
     const app = express();
 
+    app.use(helmet());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
+    // CORS with whitelist
     app.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
+        const origin = req.headers.origin;
+        if (origin && ALLOWED_ORIGINS.includes(origin)) {
+            res.header('Access-Control-Allow-Origin', origin);
+            res.header('Access-Control-Allow-Credentials', 'true');
+        }
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
         if (req.method === 'OPTIONS') {
@@ -25,6 +33,8 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         }
         next();
     });
+
+    app.use(csrfProtection);
 
     const appRoutes = createAppRoutes(
         controllers.authController,
@@ -40,21 +50,20 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
 
     app.use('/api', appRoutes);
 
-    app.get('/health', (req: Request, res: Response) => {
-        res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    app.get('/health', async (req: Request, res: Response) => {
+        const checks = {
+            database: await checkDatabase(),
+            redis: await checkRedis(),
+            timestamp: new Date().toISOString(),
+        };
+
+        const isHealthy = Object.values(checks).every((v) => v === true);
+
+        res.status(isHealthy ? 200 : 503).json(checks);
     });
 
     app.use((req: Request, res: Response) => {
         const errorResponse = createErrorResponse(new RouteNotFoundException());
-        res.status(errorResponse.status).json(errorResponse);
-    });
-
-    app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-        if (res.headersSent) {
-            return next(err);
-        }
-
-        const errorResponse = createErrorResponse(err);
         res.status(errorResponse.status).json(errorResponse);
     });
 
@@ -90,9 +99,9 @@ async function startServer() {
             });
 
             setTimeout(() => {
-                log.error('Forced shutdown after timeout');
+                log.error(`Forced shutdown after ${SHUTDOWN_TIMEOUT}ms timeout`);
                 process.exit(1);
-            }, 10000);
+            }, SHUTDOWN_TIMEOUT);
         };
 
         process.on('SIGTERM', () => shutdown('SIGTERM'));

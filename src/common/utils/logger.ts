@@ -1,6 +1,8 @@
 import winston from 'winston';
 
-import { LOG_DIR, LOG_LEVEL, NODE_ENV } from '../config/logger';
+import { getErrorMessage } from './error';
+import { NODE_ENV } from '../config/app';
+import { LOG_DIR, LOG_LEVEL } from '../config/logger';
 
 const { combine, timestamp, errors, json, printf, colorize } = winston.format;
 
@@ -46,8 +48,6 @@ if (NODE_ENV !== 'production') {
         }),
     );
 }
-
-import { getErrorMessage } from './error';
 
 function formatError(error: unknown): string {
     return getErrorMessage(error) || 'Unknown error';

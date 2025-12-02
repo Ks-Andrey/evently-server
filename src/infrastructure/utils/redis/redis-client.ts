@@ -29,4 +29,14 @@ export const disconnectRedis = async () => {
     }
 };
 
+export const checkRedis = async (): Promise<boolean> => {
+    try {
+        await redisClient.ping();
+        return true;
+    } catch (error) {
+        log.error('Redis health check failed', { error });
+        return false;
+    }
+};
+
 export { redisClient };

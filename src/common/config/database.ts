@@ -1,4 +1,3 @@
-import { config } from 'dotenv';
-config();
+import { requireEnv } from '../utils/requireEnv';
 
-export const DATABASE_URL = process.env.DATABASE_URL;
+export const DATABASE_URL = requireEnv('DATABASE_URL');

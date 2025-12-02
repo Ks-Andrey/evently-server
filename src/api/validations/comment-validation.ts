@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ERROR_MESSAGES } from '@common/constants/errors';
+
 const uuidSchema = z.string().uuid();
 
 export const getCommentsByEventSchema = z.object({
@@ -17,7 +19,10 @@ export const getCommentsByUserSchema = z.object({
 export const createCommentSchema = z.object({
     body: z.object({
         eventId: uuidSchema,
-        text: z.string().min(1, 'Comment text is required').max(1000, 'Comment is too long'),
+        text: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.comment.textRequired)
+            .max(1000, ERROR_MESSAGES.api.comment.textTooLong),
     }),
 });
 
@@ -26,7 +31,10 @@ export const editCommentSchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        text: z.string().min(1, 'Comment text is required').max(1000, 'Comment is too long'),
+        text: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.comment.textRequired)
+            .max(1000, ERROR_MESSAGES.api.comment.textTooLong),
     }),
 });
 
