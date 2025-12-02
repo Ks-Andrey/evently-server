@@ -1,17 +1,19 @@
 import { UUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { Notification, INotificationRepository, NotificationUser } from '@domain/social/notification';
 import { Prisma } from '@generated/prisma/client';
-
-import { prisma } from '../utils';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };
 }>;
 
 export class NotificationRepository implements INotificationRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async findById(id: UUID): Promise<Notification | null> {
-        const notificationData = await prisma.notification.findUnique({
+        const client = this.unitOfWork.getClient();
+        const notificationData = await client.notification.findUnique({
             where: { id },
             include: { user: true },
         });
@@ -24,6 +26,7 @@ export class NotificationRepository implements INotificationRepository {
     }
 
     async save(entity: Notification): Promise<void> {
+        const client = this.unitOfWork.getClient();
         const user = entity.user;
         const notificationData = {
             id: entity.id,
@@ -34,7 +37,7 @@ export class NotificationRepository implements INotificationRepository {
             createdAt: entity.createdAt,
         };
 
-        await prisma.notification.upsert({
+        await client.notification.upsert({
             where: { id: entity.id },
             create: notificationData,
             update: notificationData,
@@ -42,7 +45,8 @@ export class NotificationRepository implements INotificationRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await prisma.notification.delete({
+        const client = this.unitOfWork.getClient();
+        await client.notification.delete({
             where: { id },
         });
     }

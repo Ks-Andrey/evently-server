@@ -1,29 +1,20 @@
-import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 
 import {
-    CreateEvent,
     CreateEventHandler,
-    DeleteEvent,
     DeleteEventHandler,
-    EditEventDetails,
     EditEventDetailsHandler,
-    FindEventById,
     FindEventByIdHandler,
-    FindEventSubscribers,
     FindEventSubscribersHandler,
-    FindEvents,
     FindEventsHandler,
-    FindOrganizerEvents,
     FindOrganizerEventsHandler,
-    AddEventGalleryPhotos,
     AddEventGalleryPhotosHandler,
-    DeleteEventGalleryPhoto,
     DeleteEventGalleryPhotoHandler,
 } from '@application/services/event';
-import { NotifyEventSubscribers, NotifyEventSubscribersHandler } from '@application/services/notification';
+import { NotifyEventSubscribersHandler } from '@application/services/notification';
 
 import { handleResult } from '../common/utils/error-handler';
+import { EventMapper } from '../mappers';
 
 export class EventController {
     constructor(
@@ -40,98 +31,61 @@ export class EventController {
     ) {}
 
     async getEvents(req: Request, res: Response): Promise<void> {
-        const { categoryId, dateFrom, dateTo, keyword } = req.query;
-        const query = new FindEvents(
-            categoryId as UUID,
-            dateFrom as string,
-            dateTo as string,
-            keyword as string | undefined,
-        );
+        const query = EventMapper.toFindEventsQuery(req);
         const result = await this.findEventsHandler.execute(query);
         handleResult(result, res);
     }
 
     async getEventById(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const query = new FindEventById(id as UUID);
+        const query = EventMapper.toFindEventByIdQuery(req);
         const result = await this.findEventByIdHandler.execute(query);
         handleResult(result, res);
     }
 
     async getOrganizerEvents(req: Request, res: Response): Promise<void> {
-        const query = new FindOrganizerEvents(req.user!.userId);
+        const query = EventMapper.toFindOrganizerEventsQuery(req);
         const result = await this.findOrganizerEventsHandler.execute(query);
         handleResult(result, res);
     }
 
     async getEventSubscribers(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const query = new FindEventSubscribers(id as UUID);
+        const query = EventMapper.toFindEventSubscribersQuery(req);
         const result = await this.findEventSubscribersHandler.execute(query);
         handleResult(result, res);
     }
 
     async createEvent(req: Request, res: Response): Promise<void> {
-        const { categoryId, title, description, date, location, latitude, longitude } = req.body;
-        const command = new CreateEvent(
-            req.user!.userId,
-            categoryId,
-            title,
-            description,
-            new Date(date),
-            location,
-            latitude,
-            longitude,
-        );
+        const command = EventMapper.toCreateEventCommand(req);
         const result = await this.createEventHandler.execute(command);
         handleResult(result, res, 201);
     }
 
     async editEvent(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { title, description, date, location, latitude, longitude, categoryId } = req.body;
-        const command = new EditEventDetails(
-            req.user!.role,
-            req.user!.userId,
-            id as UUID,
-            title,
-            description,
-            date,
-            location,
-            latitude,
-            longitude,
-            categoryId,
-        );
+        const command = EventMapper.toEditEventCommand(req);
         const result = await this.editEventDetailsHandler.execute(command);
         handleResult(result, res);
     }
 
     async deleteEvent(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const command = new DeleteEvent(req.user!.role, req.user!.userId, id as UUID);
+        const command = EventMapper.toDeleteEventCommand(req);
         const result = await this.deleteEventHandler.execute(command);
         handleResult(result, res);
     }
 
     async notifySubscribers(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { message } = req.body;
-        const command = new NotifyEventSubscribers(id as UUID, message);
+        const command = EventMapper.toNotifySubscribersCommand(req);
         const result = await this.notifyEventSubscribersHandler.execute(command);
         handleResult(result, res);
     }
 
     async addGalleryPhotos(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const command = new AddEventGalleryPhotos(req.user!.role, req.user!.userId, id as UUID, req.fileNames!);
+        const command = EventMapper.toAddGalleryPhotosCommand(req);
         const result = await this.addEventGalleryPhotosHandler.execute(command);
         handleResult(result, res);
     }
 
     async deleteGalleryPhoto(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { photoUrl } = req.body;
-        const command = new DeleteEventGalleryPhoto(req.user!.role, req.user!.userId, id as UUID, photoUrl);
+        const command = EventMapper.toDeleteGalleryPhotoCommand(req);
         const result = await this.deleteEventGalleryPhotoHandler.execute(command);
         handleResult(result, res);
     }

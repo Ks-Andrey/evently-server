@@ -1,0 +1,111 @@
+import { UUID } from 'crypto';
+import { Request } from 'express';
+
+import { NotAuthenticatedException } from '@application/common';
+import {
+    AddEventGalleryPhotos,
+    CreateEvent,
+    DeleteEvent,
+    DeleteEventGalleryPhoto,
+    EditEventDetails,
+    FindEventById,
+    FindEventSubscribers,
+    FindEvents,
+    FindOrganizerEvents,
+} from '@application/services/event';
+import { NotifyEventSubscribers } from '@application/services/notification';
+
+export class EventMapper {
+    static toFindEventsQuery(req: Request): FindEvents {
+        const { categoryId, dateFrom, dateTo, keyword } = req.query;
+        return new FindEvents(categoryId as UUID, dateFrom as string, dateTo as string, keyword as string | undefined);
+    }
+
+    static toFindEventByIdQuery(req: Request): FindEventById {
+        const { id } = req.params;
+        return new FindEventById(id as UUID);
+    }
+
+    static toFindOrganizerEventsQuery(req: Request): FindOrganizerEvents {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        return new FindOrganizerEvents(req.user.userId);
+    }
+
+    static toFindEventSubscribersQuery(req: Request): FindEventSubscribers {
+        const { id } = req.params;
+        return new FindEventSubscribers(id as UUID);
+    }
+
+    static toCreateEventCommand(req: Request): CreateEvent {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        const { categoryId, title, description, date, location, latitude, longitude } = req.body;
+        return new CreateEvent(
+            req.user.userId,
+            categoryId,
+            title,
+            description,
+            new Date(date),
+            location,
+            latitude,
+            longitude,
+        );
+    }
+
+    static toEditEventCommand(req: Request): EditEventDetails {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        const { id } = req.params;
+        const { title, description, date, location, latitude, longitude, categoryId } = req.body;
+        return new EditEventDetails(
+            req.user.role,
+            req.user.userId,
+            id as UUID,
+            title,
+            description,
+            date,
+            location,
+            latitude,
+            longitude,
+            categoryId,
+        );
+    }
+
+    static toDeleteEventCommand(req: Request): DeleteEvent {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        const { id } = req.params;
+        return new DeleteEvent(req.user.role, req.user.userId, id as UUID);
+    }
+
+    static toNotifySubscribersCommand(req: Request): NotifyEventSubscribers {
+        const { id } = req.params;
+        const { message } = req.body;
+        return new NotifyEventSubscribers(id as UUID, message);
+    }
+
+    static toAddGalleryPhotosCommand(req: Request): AddEventGalleryPhotos {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        if (!req.fileNames) {
+            throw new Error('File names are required');
+        }
+        const { id } = req.params;
+        return new AddEventGalleryPhotos(req.user.role, req.user.userId, id as UUID, req.fileNames);
+    }
+
+    static toDeleteGalleryPhotoCommand(req: Request): DeleteEventGalleryPhoto {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        const { id } = req.params;
+        const { photoUrl } = req.body;
+        return new DeleteEventGalleryPhoto(req.user.role, req.user.userId, id as UUID, photoUrl);
+    }
+}

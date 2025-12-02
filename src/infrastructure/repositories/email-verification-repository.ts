@@ -1,15 +1,17 @@
 import { UUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IEmailVerificationRepository, EmailVerification } from '@domain/identity/auth';
 import { Prisma } from '@generated/prisma/client';
-
-import { prisma } from '../utils';
 
 type EmailVerificationData = Prisma.EmailVerificationGetPayload<{}>;
 
 export class EmailVerificationRepository implements IEmailVerificationRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async findById(id: UUID): Promise<EmailVerification | null> {
-        const verificationData = await prisma.emailVerification.findUnique({
+        const client = this.unitOfWork.getClient();
+        const verificationData = await client.emailVerification.findUnique({
             where: { id },
         });
 
@@ -21,7 +23,8 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
     }
 
     async findByEmail(email: string): Promise<EmailVerification | null> {
-        const verificationData = await prisma.emailVerification.findFirst({
+        const client = this.unitOfWork.getClient();
+        const verificationData = await client.emailVerification.findFirst({
             where: { email },
             orderBy: { expiresAt: 'desc' },
         });
@@ -34,6 +37,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
     }
 
     async save(entity: EmailVerification): Promise<void> {
+        const client = this.unitOfWork.getClient();
         const verificationData = {
             id: entity.id,
             userId: entity.userId,
@@ -43,7 +47,7 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
             used: entity.isUsed,
         };
 
-        await prisma.emailVerification.upsert({
+        await client.emailVerification.upsert({
             where: { id: entity.id },
             create: verificationData,
             update: verificationData,
@@ -51,7 +55,8 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
     }
 
     async delete(id: UUID): Promise<void> {
-        await prisma.emailVerification.delete({
+        const client = this.unitOfWork.getClient();
+        await client.emailVerification.delete({
             where: { id },
         });
     }

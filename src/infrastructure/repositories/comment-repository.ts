@@ -1,17 +1,19 @@
 import { UUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { ICommentRepository, Comment, CommentUser } from '@domain/social/comment';
 import { Prisma } from '@generated/prisma/client';
-
-import { prisma } from '../utils';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };
 }>;
 
 export class CommentRepository implements ICommentRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async findById(id: UUID): Promise<Comment | null> {
-        const commentData = await prisma.comment.findUnique({
+        const client = this.unitOfWork.getClient();
+        const commentData = await client.comment.findUnique({
             where: { id },
             include: { author: true },
         });
@@ -24,6 +26,7 @@ export class CommentRepository implements ICommentRepository {
     }
 
     async save(entity: Comment): Promise<void> {
+        const client = this.unitOfWork.getClient();
         const author = entity.author;
         const commentData = {
             id: entity.id,
@@ -33,7 +36,7 @@ export class CommentRepository implements ICommentRepository {
             createdAt: entity.createdAt,
         };
 
-        await prisma.comment.upsert({
+        await client.comment.upsert({
             where: { id: entity.id },
             create: commentData,
             update: commentData,
@@ -41,7 +44,8 @@ export class CommentRepository implements ICommentRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await prisma.comment.delete({
+        const client = this.unitOfWork.getClient();
+        await client.comment.delete({
             where: { id },
         });
     }

@@ -1,12 +1,14 @@
 import { UUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IEventSubscriptionRepository } from '@domain/events/event-subscription';
 
-import { prisma } from '../utils';
-
 export class EventSubscriptionRepository implements IEventSubscriptionRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async isUserSubscribedToEvent(userId: UUID, eventId: UUID): Promise<boolean> {
-        const subscription = await prisma.eventSubscription.findUnique({
+        const client = this.unitOfWork.getClient();
+        const subscription = await client.eventSubscription.findUnique({
             where: {
                 eventId_userId: {
                     eventId,
@@ -19,7 +21,8 @@ export class EventSubscriptionRepository implements IEventSubscriptionRepository
     }
 
     async createSubscription(userId: UUID, eventId: UUID): Promise<void> {
-        await prisma.eventSubscription.create({
+        const client = this.unitOfWork.getClient();
+        await client.eventSubscription.create({
             data: {
                 eventId,
                 userId,
@@ -28,7 +31,8 @@ export class EventSubscriptionRepository implements IEventSubscriptionRepository
     }
 
     async removeSubscription(userId: UUID, eventId: UUID): Promise<void> {
-        await prisma.eventSubscription.delete({
+        const client = this.unitOfWork.getClient();
+        await client.eventSubscription.delete({
             where: {
                 eventId_userId: {
                     eventId,

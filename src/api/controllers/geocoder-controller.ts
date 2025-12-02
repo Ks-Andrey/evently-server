@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 
-import { FindCoordinatesByLocation, FindCoordinatesByLocationHandler } from '@application/services/geocoder';
+import { FindCoordinatesByLocationHandler } from '@application/services/geocoder';
 
 import { handleResult } from '../common/utils/error-handler';
+import { GeocoderMapper } from '../mappers';
 
 export class GeocoderController {
     constructor(private readonly findCoordinatesByLocationHandler: FindCoordinatesByLocationHandler) {}
 
     async getCoordinatesByLocation(req: Request, res: Response): Promise<void> {
-        const queryParams = req.query as { location: string };
-        const query = new FindCoordinatesByLocation(queryParams.location);
+        const query = GeocoderMapper.toFindCoordinatesByLocationQuery(req);
         const result = await this.findCoordinatesByLocationHandler.execute(query);
         handleResult(result, res);
     }

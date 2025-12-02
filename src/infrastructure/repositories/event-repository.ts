@@ -1,9 +1,8 @@
 import { UUID, randomUUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EventCategory, EventOrganizer, Event, EventLocation, IEventRepository } from '@domain/events/event';
-import { Prisma, PrismaClient } from '@generated/prisma/client';
-
-import { prisma } from '../utils/database/prisma-client';
+import { Prisma } from '@generated/prisma/client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {
@@ -13,14 +12,12 @@ type EventWithRelations = Prisma.EventGetPayload<{
     };
 }>;
 
-type PrismaTransactionClient = Omit<
-    PrismaClient,
-    '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
->;
-
 export class EventRepository implements IEventRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async findById(id: UUID): Promise<Event | null> {
-        const eventData = await prisma.event.findUnique({
+        const client = this.unitOfWork.getClient();
+        const eventData = await client.event.findUnique({
             where: { id },
             include: {
                 organizer: true,
@@ -37,6 +34,7 @@ export class EventRepository implements IEventRepository {
     }
 
     async save(entity: Event): Promise<void> {
+        const client = this.unitOfWork.getClient();
         const organizer = entity.organizer;
         const category = entity.category;
         const imageUrls = entity.imageUrls;
@@ -55,31 +53,31 @@ export class EventRepository implements IEventRepository {
             commentCount: entity.commentCount,
         };
 
-        await prisma.$transaction(async (tx: PrismaTransactionClient) => {
-            await tx.event.upsert({
-                where: { id: entity.id },
-                create: eventData,
-                update: eventData,
-            });
-
-            await tx.eventImage.deleteMany({
-                where: { eventId: entity.id },
-            });
-
-            if (imageUrls.length > 0) {
-                await tx.eventImage.createMany({
-                    data: imageUrls.map((url: string) => ({
-                        id: randomUUID(),
-                        eventId: entity.id,
-                        imageUrl: url,
-                    })),
-                });
-            }
+        // Use client from UoW - no nested transaction!
+        await client.event.upsert({
+            where: { id: entity.id },
+            create: eventData,
+            update: eventData,
         });
+
+        await client.eventImage.deleteMany({
+            where: { eventId: entity.id },
+        });
+
+        if (imageUrls.length > 0) {
+            await client.eventImage.createMany({
+                data: imageUrls.map((url: string) => ({
+                    id: randomUUID(),
+                    eventId: entity.id,
+                    imageUrl: url,
+                })),
+            });
+        }
     }
 
     async delete(id: UUID): Promise<void> {
-        await prisma.event.delete({
+        const client = this.unitOfWork.getClient();
+        await client.event.delete({
             where: { id },
         });
     }

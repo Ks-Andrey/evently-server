@@ -1,17 +1,14 @@
-import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 
 import {
-    CreateCategory,
     CreateCategoryHandler,
-    DeleteCategory,
     DeleteCategoryHandler,
-    EditCategory,
     EditCategoryHandler,
     FindCategoriesHandler,
 } from '@application/services/category';
 
 import { handleResult } from '../common/utils/error-handler';
+import { CategoryMapper } from '../mappers';
 
 export class CategoryController {
     constructor(
@@ -27,23 +24,19 @@ export class CategoryController {
     }
 
     async createCategory(req: Request, res: Response): Promise<void> {
-        const { name } = req.body;
-        const command = new CreateCategory(name);
+        const command = CategoryMapper.toCreateCategoryCommand(req);
         const result = await this.createCategoryHandler.execute(command);
         handleResult(result, res, 201);
     }
 
     async editCategory(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { name } = req.body;
-        const command = new EditCategory(id as UUID, name);
+        const command = CategoryMapper.toEditCategoryCommand(req);
         const result = await this.editCategoryHandler.execute(command);
         handleResult(result, res);
     }
 
     async deleteCategory(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const command = new DeleteCategory(id as UUID);
+        const command = CategoryMapper.toDeleteCategoryCommand(req);
         const result = await this.deleteCategoryHandler.execute(command);
         handleResult(result, res);
     }

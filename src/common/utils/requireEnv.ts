@@ -1,10 +1,14 @@
 import { config } from 'dotenv';
+
+import { log } from './logger';
+
 config();
 
 export function requireEnv(key: string): string {
     const value = process.env[key];
     if (!value) {
-        throw new Error(`Environment variable ${key} is required`);
+        log.error(`Environment variable ${key} is required`);
+        process.exit(1);
     }
     return value;
 }
@@ -22,7 +26,8 @@ export function getEnv(key: string, defaultValue: string | number): string | num
     if (typeof defaultValue === 'number') {
         const parsed = parseInt(value, 10);
         if (isNaN(parsed)) {
-            throw new Error(`Environment variable ${key} must be a valid number`);
+            log.error(`Environment variable ${key} is required`);
+            process.exit(1);
         }
         return parsed;
     }

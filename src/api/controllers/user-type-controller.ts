@@ -1,20 +1,15 @@
-import { UUID } from 'crypto';
 import { Request, Response } from 'express';
 
 import {
-    CreateUserType,
     CreateUserTypeHandler,
-    DeleteUserType,
     DeleteUserTypeHandler,
-    EditUserType,
     EditUserTypeHandler,
-    FindUserTypeById,
     FindUserTypeByIdHandler,
     FindUserTypesHandler,
 } from '@application/services/user-type';
-import { Roles } from '@common/constants/roles';
 
 import { handleResult } from '../common/utils/error-handler';
+import { UserTypeMapper } from '../mappers';
 
 export class UserTypeController {
     constructor(
@@ -31,30 +26,25 @@ export class UserTypeController {
     }
 
     async getUserTypeById(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const query = new FindUserTypeById(id as UUID);
+        const query = UserTypeMapper.toFindUserTypeByIdQuery(req);
         const result = await this.findUserTypeByIdHandler.execute(query);
         handleResult(result, res);
     }
 
     async createUserType(req: Request, res: Response): Promise<void> {
-        const { typeName, role } = req.body;
-        const command = new CreateUserType(typeName, role || Roles.USER);
+        const command = UserTypeMapper.toCreateUserTypeCommand(req);
         const result = await this.createUserTypeHandler.execute(command);
         handleResult(result, res, 201);
     }
 
     async editUserType(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { typeName, role } = req.body;
-        const command = new EditUserType(id as UUID, typeName, role);
+        const command = UserTypeMapper.toEditUserTypeCommand(req);
         const result = await this.editUserTypeHandler.execute(command);
         handleResult(result, res);
     }
 
     async deleteUserType(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const command = new DeleteUserType(id as UUID);
+        const command = UserTypeMapper.toDeleteUserTypeCommand(req);
         const result = await this.deleteUserTypeHandler.execute(command);
         handleResult(result, res);
     }

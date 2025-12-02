@@ -1,17 +1,19 @@
 import { UUID } from 'crypto';
 
+import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IUserRepository, User, UserTypeData } from '@domain/identity/user';
 import { Prisma } from '@generated/prisma/client';
-
-import { prisma } from '../utils';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
 }>;
 
 export class UserRepository implements IUserRepository {
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
+
     async findById(id: UUID): Promise<User | null> {
-        const userData = await prisma.user.findUnique({
+        const client = this.unitOfWork.getClient();
+        const userData = await client.user.findUnique({
             where: { id },
             include: { userType: true },
         });
@@ -24,7 +26,8 @@ export class UserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        const userData = await prisma.user.findUnique({
+        const client = this.unitOfWork.getClient();
+        const userData = await client.user.findUnique({
             where: { email },
             include: { userType: true },
         });
@@ -37,6 +40,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async save(entity: User): Promise<void> {
+        const client = this.unitOfWork.getClient();
         const userData = {
             id: entity.id,
             userTypeId: entity.userType.userTypeId,
@@ -51,7 +55,7 @@ export class UserRepository implements IUserRepository {
             imageUrl: entity.imageUrl,
         };
 
-        await prisma.user.upsert({
+        await client.user.upsert({
             where: { id: entity.id },
             create: userData,
             update: userData,
@@ -59,7 +63,8 @@ export class UserRepository implements IUserRepository {
     }
 
     async delete(id: UUID): Promise<void> {
-        await prisma.user.delete({
+        const client = this.unitOfWork.getClient();
+        await client.user.delete({
             where: { id },
         });
     }
