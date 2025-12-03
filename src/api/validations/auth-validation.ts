@@ -36,3 +36,11 @@ export const confirmEmailSchema = z.object({
         token: uuidSchema,
     }),
 });
+
+export const refreshTokensSchema = z.object({
+    body: z.object({}), // refresh token теперь в httpOnly cookie
+});
+
+export const logoutSchema = z.object({
+    body: z.object({}), // refresh token теперь в httpOnly cookie
+});

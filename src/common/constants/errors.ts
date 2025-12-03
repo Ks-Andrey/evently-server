@@ -10,6 +10,7 @@ export const ERROR_MESSAGES = {
             passwordLowercase: 'Пароль должен содержать хотя бы одну строчную букву',
             passwordNumber: 'Пароль должен содержать хотя бы одну цифру',
             passwordSpecialChar: 'Пароль должен содержать хотя бы один специальный символ',
+            refreshTokenRequired: 'Refresh token обязателен',
         },
         user: {
             usernameRequired: 'Имя пользователя обязательно',

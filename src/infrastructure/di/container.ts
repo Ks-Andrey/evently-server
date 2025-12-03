@@ -10,7 +10,12 @@ import {
     UserTypeController,
     GeocoderController,
 } from '@api/controllers';
-import { AuthenticateUserHandler, ConfirmUserEmailHandler } from '@application/services/auth';
+import {
+    AuthenticateUserHandler,
+    ConfirmUserEmailHandler,
+    RefreshTokensHandler,
+    LogoutUserHandler,
+} from '@application/services/auth';
 import {
     CreateCategoryHandler,
     EditCategoryHandler,
@@ -114,6 +119,8 @@ export interface Container {
     // Auth Handlers
     authenticateUserHandler: AuthenticateUserHandler;
     confirmUserEmailHandler: ConfirmUserEmailHandler;
+    refreshTokensHandler: RefreshTokensHandler;
+    logoutUserHandler: LogoutUserHandler;
 
     // User Handlers
     createUserHandler: CreateUserHandler;
@@ -237,6 +244,16 @@ function registerAuthHandlers(container: ContainerType): void {
                 userRepo: container.resolve('userRepository'),
                 emailVerificationRepo: container.resolve('emailVerificationRepository'),
                 unitOfWork: container.resolve('unitOfWork'),
+            }))
+            .singleton(),
+        refreshTokensHandler: asClass(RefreshTokensHandler)
+            .inject((container) => ({
+                tokenManager: container.resolve('tokenManager'),
+            }))
+            .singleton(),
+        logoutUserHandler: asClass(LogoutUserHandler)
+            .inject((container) => ({
+                tokenManager: container.resolve('tokenManager'),
             }))
             .singleton(),
     });
@@ -465,7 +482,15 @@ function registerGeocoderHandlers(container: ContainerType): void {
 
 function registerControllers(container: ContainerType): void {
     container.register({
-        authController: asClass(AuthController).singleton(),
+        authController: asClass(AuthController)
+            .inject((container) => ({
+                createUserHandler: container.resolve('createUserHandler'),
+                authenticateUserHandler: container.resolve('authenticateUserHandler'),
+                confirmUserEmailHandler: container.resolve('confirmUserEmailHandler'),
+                refreshTokensHandler: container.resolve('refreshTokensHandler'),
+                logoutUserHandler: container.resolve('logoutUserHandler'),
+            }))
+            .singleton(),
         userController: asClass(UserController).singleton(),
         eventController: asClass(EventController).singleton(),
         categoryController: asClass(CategoryController).singleton(),

@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import express, { Express, Request, Response } from 'express';
 
 import helmet from 'helmet';
@@ -16,6 +17,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
     const app = express();
 
     app.use(helmet());
+    app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 

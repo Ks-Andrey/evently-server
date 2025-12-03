@@ -39,7 +39,7 @@ export function createAppRoutes(
 
     router.use(loggerMiddleware);
 
-    router.use('/auth', createAuthRoutes(authController));
+    router.use('/auth', createAuthRoutes(authController, tokenManager));
     router.use('/users', createUserRoutes(userController, tokenManager));
     router.use('/events', createEventRoutes(eventController, tokenManager));
     router.use('/categories', createCategoryRoutes(categoryController, tokenManager));
