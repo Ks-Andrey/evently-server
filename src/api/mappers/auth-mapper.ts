@@ -1,4 +1,3 @@
-import { UUID } from 'crypto';
 import { Request } from 'express';
 
 import { AuthenticateUser, ConfirmUserEmail, RefreshTokens, LogoutUser } from '@application/services/auth';
