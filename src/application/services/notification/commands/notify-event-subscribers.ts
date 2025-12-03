@@ -8,6 +8,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { Notification, NotificationType, NotificationUser, INotificationRepository } from '@domain/social/notification';
 
+import { NotifyEventSubscribersResult } from '../dto/notify-event-subscribers-result';
 import { EventForNotificationNotFoundException } from '../exceptions';
 import { IBotManager } from '../interfaces/bot-manager';
 
@@ -26,7 +27,7 @@ export class NotifyEventSubscribersHandler {
         private readonly botManager: IBotManager,
     ) {}
 
-    execute(command: NotifyEventSubscribers): Promise<Result<boolean, ApplicationException>> {
+    execute(command: NotifyEventSubscribers): Promise<Result<NotifyEventSubscribersResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const event = await this.eventReader.findById(command.eventId);
             if (!event) throw new EventForNotificationNotFoundException();
@@ -53,7 +54,7 @@ export class NotifyEventSubscribersHandler {
                 }
             }
 
-            return true;
+            return NotifyEventSubscribersResult.create(event.id, notifications.length);
         });
     }
 }

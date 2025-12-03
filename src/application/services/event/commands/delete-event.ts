@@ -6,6 +6,7 @@ import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
 import { IEventRepository } from '@domain/events/event';
 
+import { DeleteEventResult } from '../dto/delete-event-result';
 import { EventNotFoundException, UserForEventNotFoundException } from '../exceptions';
 
 export class DeleteEvent {
@@ -22,7 +23,7 @@ export class DeleteEventHandler {
         private readonly eventRepo: IEventRepository,
     ) {}
 
-    execute(command: DeleteEvent): Promise<Result<boolean, ApplicationException>> {
+    execute(command: DeleteEvent): Promise<Result<DeleteEventResult, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userReader.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();
@@ -39,7 +40,7 @@ export class DeleteEventHandler {
 
             await this.eventRepo.delete(event.id);
 
-            return true;
+            return DeleteEventResult.create(event.id);
         });
     }
 }

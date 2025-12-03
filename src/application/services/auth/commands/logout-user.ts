@@ -3,6 +3,7 @@ import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
 
+import { LogoutResult } from '../dto/logout-result';
 import { ITokenManager } from '../interfaces/token-manager';
 
 export class LogoutUser {
@@ -16,7 +17,7 @@ export class LogoutUser {
 export class LogoutUserHandler {
     constructor(private readonly tokenManager: ITokenManager) {}
 
-    execute(command: LogoutUser): Promise<Result<boolean, ApplicationException>> {
+    execute(command: LogoutUser): Promise<Result<LogoutResult, ApplicationException>> {
         return safeAsync(async () => {
             await this.tokenManager.revokeToken(command.accessToken, 'access');
 
@@ -24,7 +25,7 @@ export class LogoutUserHandler {
                 await this.tokenManager.revokeToken(command.refreshToken, 'refresh', command.userId);
             }
 
-            return true;
+            return LogoutResult.create();
         });
     }
 }

@@ -9,6 +9,7 @@ import { EmailVerification, EmailVerificationPurpose, IEmailVerificationReposito
 import { IUserRepository, User, UserTypeData } from '@domain/identity/user';
 import { IUserTypeRepository } from '@domain/identity/user-type';
 
+import { CreateUserResult } from '../dto/create-user-result';
 import { UserAlreadyExistsException, UserTypeNotFoundException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';
 
@@ -30,7 +31,7 @@ export class CreateUserHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: CreateUser): Promise<Result<UUID, ApplicationException>> {
+    execute(command: CreateUser): Promise<Result<CreateUserResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const exists = await this.userRepo.findByEmail(command.email.trim());
             if (exists) throw new UserAlreadyExistsException();
@@ -69,7 +70,7 @@ export class CreateUserHandler {
                 purpose: verification.purpose,
             });
 
-            return user.id;
+            return CreateUserResult.create(user.id);
         });
     }
 }

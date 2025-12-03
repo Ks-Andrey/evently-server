@@ -12,6 +12,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { IUserRepository } from '@domain/identity/user';
 
+import { DeleteAvatarResult } from '../dto/delete-avatar-result';
 import { UserNotFoundException } from '../exceptions';
 
 export class DeleteUserAvatar {
@@ -28,7 +29,7 @@ export class DeleteUserAvatarHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: DeleteUserAvatar): Promise<Result<UUID, ApplicationException>> {
+    execute(command: DeleteUserAvatar): Promise<Result<DeleteAvatarResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -39,7 +40,7 @@ export class DeleteUserAvatarHandler {
 
             const avatarUrl = user.imageUrl;
             if (!avatarUrl) {
-                return user.id;
+                return DeleteAvatarResult.create(user.id);
             }
 
             const oldAvatarUrl = avatarUrl;
@@ -68,7 +69,7 @@ export class DeleteUserAvatarHandler {
                 throw error;
             }
 
-            return user.id;
+            return DeleteAvatarResult.create(user.id);
         });
     }
 }

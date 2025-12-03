@@ -5,6 +5,7 @@ import { ApplicationException, safeAsync } from '@application/common';
 import { Roles } from '@common/constants/roles';
 import { IUserTypeRepository } from '@domain/identity/user-type';
 
+import { EditUserTypeResult } from '../dto/edit-user-type-result';
 import { UserTypeNotFoundException } from '../exceptions';
 
 export class EditUserType {
@@ -18,7 +19,7 @@ export class EditUserType {
 export class EditUserTypeHandler {
     constructor(private readonly userTypeRepo: IUserTypeRepository) {}
 
-    execute(command: EditUserType): Promise<Result<UUID, ApplicationException>> {
+    execute(command: EditUserType): Promise<Result<EditUserTypeResult, ApplicationException>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();
@@ -33,7 +34,7 @@ export class EditUserTypeHandler {
 
             await this.userTypeRepo.save(userType);
 
-            return userType.userTypeId;
+            return EditUserTypeResult.create(userType.userTypeId);
         });
     }
 }

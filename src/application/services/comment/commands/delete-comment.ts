@@ -8,6 +8,7 @@ import { IEventRepository } from '@domain/events/event';
 import { IUserRepository } from '@domain/identity/user';
 import { ICommentRepository } from '@domain/social/comment';
 
+import { DeleteCommentResult } from '../dto/delete-comment-result';
 import {
     CommentNotFoundException,
     UserForCommentNotFoundException,
@@ -30,7 +31,7 @@ export class DeleteCommentHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: DeleteComment): Promise<Result<boolean, ApplicationException>> {
+    execute(command: DeleteComment): Promise<Result<DeleteCommentResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForCommentNotFoundException();
@@ -53,7 +54,7 @@ export class DeleteCommentHandler {
             await this.commentRepo.delete(comment.id);
             await this.eventRepo.save(event);
 
-            return true;
+            return DeleteCommentResult.create(comment.id);
         });
     }
 }

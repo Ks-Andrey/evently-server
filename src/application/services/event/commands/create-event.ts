@@ -7,6 +7,7 @@ import { ICategoryReader } from '@application/readers/category';
 import { IUserReader } from '@application/readers/user';
 import { Event, EventCategory, EventOrganizer, EventLocation, IEventRepository } from '@domain/events/event';
 
+import { CreateEventResult } from '../dto/create-event-result';
 import { UserForEventNotFoundException, CategoryForEventNotFoundException } from '../exceptions';
 
 export class CreateEvent {
@@ -29,7 +30,7 @@ export class CreateEventHandler {
         private readonly userReader: IUserReader,
     ) {}
 
-    execute(command: CreateEvent): Promise<Result<UUID, ApplicationException>> {
+    execute(command: CreateEvent): Promise<Result<CreateEventResult, ApplicationException>> {
         return safeAsync(async () => {
             const actor = await this.userReader.findById(command.userId);
             if (!actor) throw new UserForEventNotFoundException();
@@ -53,7 +54,7 @@ export class CreateEventHandler {
 
             await this.eventRepo.save(event);
 
-            return event.id;
+            return CreateEventResult.create(event.id);
         });
     }
 }

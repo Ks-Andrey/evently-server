@@ -7,6 +7,7 @@ import { IEventRepository } from '@domain/events/event';
 import { IEventSubscriptionRepository } from '@domain/events/event-subscription';
 import { IUserRepository } from '@domain/identity/user';
 
+import { SubscribeToEventResult } from '../dto/subscribe-to-event-result';
 import { UserNotFoundException, EventForUserNotFoundException, UserAlreadySubscribedException } from '../exceptions';
 
 export class SubscribeUserToEvent {
@@ -24,7 +25,7 @@ export class SubscribeUserToEventHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: SubscribeUserToEvent): Promise<Result<boolean, ApplicationException>> {
+    execute(command: SubscribeUserToEvent): Promise<Result<SubscribeToEventResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -43,7 +44,7 @@ export class SubscribeUserToEventHandler {
             await this.eventRepo.save(event);
             await this.userRepo.save(user);
 
-            return true;
+            return SubscribeToEventResult.create(user.id, event.id);
         });
     }
 }

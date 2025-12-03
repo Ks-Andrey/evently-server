@@ -12,6 +12,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { IEventRepository } from '@domain/events/event';
 
+import { AddGalleryPhotosResult } from '../dto/add-gallery-photos-result';
 import { EventNotFoundException } from '../exceptions';
 
 export class AddEventGalleryPhotos {
@@ -30,7 +31,7 @@ export class AddEventGalleryPhotosHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: AddEventGalleryPhotos): Promise<Result<UUID, ApplicationException>> {
+    execute(command: AddEventGalleryPhotos): Promise<Result<AddGalleryPhotosResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventNotFoundException();
@@ -106,7 +107,7 @@ export class AddEventGalleryPhotosHandler {
                 throw error;
             }
 
-            return event.id;
+            return AddGalleryPhotosResult.create(event.id, command.fileNames.length);
         });
     }
 }

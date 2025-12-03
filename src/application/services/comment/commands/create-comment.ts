@@ -8,6 +8,7 @@ import { IEventRepository } from '@domain/events/event';
 import { IUserRepository } from '@domain/identity/user';
 import { Comment, CommentUser, ICommentRepository } from '@domain/social/comment';
 
+import { CreateCommentResult } from '../dto/create-comment-result';
 import { UserForCommentNotFoundException, EventForCommentNotFoundException } from '../exceptions';
 
 export class CreateComment {
@@ -26,7 +27,7 @@ export class CreateCommentHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: CreateComment): Promise<Result<UUID, ApplicationException>> {
+    execute(command: CreateComment): Promise<Result<CreateCommentResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserForCommentNotFoundException();
@@ -44,7 +45,7 @@ export class CreateCommentHandler {
             await this.commentRepo.save(comment);
             await this.eventRepo.save(event);
 
-            return comment.id;
+            return CreateCommentResult.create(comment.id);
         });
     }
 }

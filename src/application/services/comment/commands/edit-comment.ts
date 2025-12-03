@@ -6,6 +6,7 @@ import { Roles } from '@common/constants/roles';
 import { IUserRepository } from '@domain/identity/user';
 import { ICommentRepository } from '@domain/social/comment';
 
+import { EditCommentResult } from '../dto/edit-comment-result';
 import { CommentNotFoundException, UserForCommentNotFoundException } from '../exceptions';
 
 export class EditComment {
@@ -23,7 +24,7 @@ export class EditCommentHandler {
         private readonly commentRepo: ICommentRepository,
     ) {}
 
-    execute(command: EditComment): Promise<Result<UUID, ApplicationException>> {
+    execute(command: EditComment): Promise<Result<EditCommentResult, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userRepo.findById(command.userId);
             if (!requestUser) throw new UserForCommentNotFoundException();
@@ -45,7 +46,7 @@ export class EditCommentHandler {
             comment.edit(command.newText);
             await this.commentRepo.save(comment);
 
-            return comment.id;
+            return EditCommentResult.create(comment.id);
         });
     }
 }

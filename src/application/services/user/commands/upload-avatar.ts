@@ -13,6 +13,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { IUserRepository } from '@domain/identity/user';
 
+import { UploadAvatarResult } from '../dto/upload-avatar-result';
 import { UserNotFoundException } from '../exceptions';
 
 export class UploadUserAvatar {
@@ -30,7 +31,7 @@ export class UploadUserAvatarHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: UploadUserAvatar): Promise<Result<UUID, ApplicationException>> {
+    execute(command: UploadUserAvatar): Promise<Result<UploadAvatarResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -101,7 +102,7 @@ export class UploadUserAvatarHandler {
                 throw error;
             }
 
-            return user.id;
+            return UploadAvatarResult.create(user.id);
         });
     }
 }

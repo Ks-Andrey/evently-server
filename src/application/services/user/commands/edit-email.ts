@@ -9,6 +9,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EmailVerification, IEmailVerificationRepository, EmailVerificationPurpose } from '@domain/identity/auth';
 import { IUserRepository } from '@domain/identity/user';
 
+import { EditUserEmailResult } from '../dto/edit-user-email-result';
 import { UserNotFoundException, EmailVerificationForUserAlreadyRequestedException } from '../exceptions';
 import { IEmailManager } from '../interfaces/email-manager';
 
@@ -29,7 +30,7 @@ export class EditUserEmailHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: EditUserEmail): Promise<Result<UUID, ApplicationException>> {
+    execute(command: EditUserEmail): Promise<Result<EditUserEmailResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -62,7 +63,7 @@ export class EditUserEmailHandler {
                 purpose: verification.purpose,
             });
 
-            return user.id;
+            return EditUserEmailResult.create(user.id);
         });
     }
 }

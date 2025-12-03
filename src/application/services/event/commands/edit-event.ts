@@ -7,6 +7,7 @@ import { IUserReader } from '@application/readers/user';
 import { Roles } from '@common/constants/roles';
 import { EventCategory, EventLocation, IEventRepository } from '@domain/events/event';
 
+import { EditEventResult } from '../dto/edit-event-result';
 import {
     EventNotFoundException,
     UserForEventNotFoundException,
@@ -35,7 +36,7 @@ export class EditEventDetailsHandler {
         private readonly categoryRepo: ICategoryReader,
     ) {}
 
-    execute(command: EditEventDetails): Promise<Result<UUID, ApplicationException>> {
+    execute(command: EditEventDetails): Promise<Result<EditEventResult, ApplicationException>> {
         return safeAsync(async () => {
             const requestUser = await this.userReader.findById(command.userId);
             if (!requestUser) throw new UserForEventNotFoundException();
@@ -64,7 +65,7 @@ export class EditEventDetailsHandler {
 
             await this.eventRepo.save(event);
 
-            return event.id;
+            return EditEventResult.create(event.id);
         });
     }
 }

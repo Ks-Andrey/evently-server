@@ -1,8 +1,9 @@
 import { Result } from 'true-myth';
 
 import { ApplicationException, NotAuthenticatedException, safeAsync } from '@application/common';
-import { Tokens, UserJwtPayload } from '@common/types/auth';
+import { UserJwtPayload } from '@common/types/auth';
 
+import { RefreshTokensResult } from '../dto/refresh-tokens-result';
 import { ITokenManager } from '../interfaces/token-manager';
 
 export class RefreshTokens {
@@ -12,7 +13,7 @@ export class RefreshTokens {
 export class RefreshTokensHandler {
     constructor(private readonly tokenManager: ITokenManager) {}
 
-    execute(command: RefreshTokens): Promise<Result<Tokens, ApplicationException>> {
+    execute(command: RefreshTokens): Promise<Result<RefreshTokensResult, ApplicationException>> {
         return safeAsync(async () => {
             const payload = await this.tokenManager.verifyToken(command.refreshToken, 'refresh');
             if (!payload) throw new NotAuthenticatedException();
@@ -24,7 +25,8 @@ export class RefreshTokensHandler {
                 role: payload.role,
             };
 
-            return await this.tokenManager.issueTokens(userPayload);
+            const tokens = await this.tokenManager.issueTokens(userPayload);
+            return RefreshTokensResult.create(tokens);
         });
     }
 }

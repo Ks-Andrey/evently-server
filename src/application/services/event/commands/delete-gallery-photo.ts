@@ -12,6 +12,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { IEventRepository } from '@domain/events/event';
 
+import { DeleteGalleryPhotoResult } from '../dto/delete-gallery-photo-result';
 import { EventNotFoundException } from '../exceptions';
 
 export class DeleteEventGalleryPhoto {
@@ -30,7 +31,7 @@ export class DeleteEventGalleryPhotoHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: DeleteEventGalleryPhoto): Promise<Result<UUID, ApplicationException>> {
+    execute(command: DeleteEventGalleryPhoto): Promise<Result<DeleteGalleryPhotoResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const event = await this.eventRepo.findById(command.eventId);
             if (!event) throw new EventNotFoundException();
@@ -71,7 +72,7 @@ export class DeleteEventGalleryPhotoHandler {
                 throw error;
             }
 
-            return event.id;
+            return DeleteGalleryPhotoResult.create(event.id);
         });
     }
 }

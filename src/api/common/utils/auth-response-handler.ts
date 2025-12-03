@@ -2,12 +2,15 @@ import { Response } from 'express';
 import { Result } from 'true-myth';
 
 import { ApplicationException } from '@application/common';
-import { Tokens } from '@common/types/auth';
+import { AuthenticateUserResult, LogoutResult, RefreshTokensResult } from '@application/services/auth';
 
 import { setRefreshTokenCookie, clearRefreshTokenCookie } from './cookie-helper';
 import { handleResult } from './error-handler';
 
-export function handleAuthResult(result: Result<Tokens, ApplicationException>, res: Response): void {
+export function handleAuthResult(
+    result: Result<AuthenticateUserResult | RefreshTokensResult, ApplicationException>,
+    res: Response,
+): void {
     if (result.isErr) {
         handleResult(result, res);
         return;
@@ -18,7 +21,7 @@ export function handleAuthResult(result: Result<Tokens, ApplicationException>, r
     res.json({ accessToken: tokens.accessToken });
 }
 
-export function handleLogoutResult(result: Result<boolean, ApplicationException>, res: Response): void {
+export function handleLogoutResult(result: Result<LogoutResult, ApplicationException>, res: Response): void {
     if (result.isErr) {
         handleResult(result, res);
         return;

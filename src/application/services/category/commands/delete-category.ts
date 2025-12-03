@@ -5,6 +5,7 @@ import { ApplicationException, safeAsync } from '@application/common';
 import { IEventReader } from '@application/readers/event';
 import { ICategoryRepository } from '@domain/events/category';
 
+import { DeleteCategoryResult } from '../dto/delete-category-result';
 import { CategoryInUseException, CategoryNotFoundException } from '../exceptions';
 
 export class DeleteCategory {
@@ -17,7 +18,7 @@ export class DeleteCategoryHandler {
         private readonly eventReader: IEventReader,
     ) {}
 
-    execute(command: DeleteCategory): Promise<Result<boolean, ApplicationException>> {
+    execute(command: DeleteCategory): Promise<Result<DeleteCategoryResult, ApplicationException>> {
         return safeAsync(async () => {
             const category = await this.categoryRepo.findById(command.categoryId);
             if (!category) throw new CategoryNotFoundException();
@@ -27,7 +28,7 @@ export class DeleteCategoryHandler {
 
             await this.categoryRepo.delete(category.categoryId);
 
-            return true;
+            return DeleteCategoryResult.create(category.categoryId);
         });
     }
 }

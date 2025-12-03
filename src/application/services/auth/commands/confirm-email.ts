@@ -6,6 +6,7 @@ import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/identity/auth';
 import { IUserRepository } from '@domain/identity/user';
 
+import { ConfirmEmailResult } from '../dto/confirm-email-result';
 import { EmailVerificationNotFoundException, UserForAuthNotFoundException } from '../exceptions';
 
 export class ConfirmUserEmail {
@@ -19,7 +20,7 @@ export class ConfirmUserEmailHandler {
         private readonly unitOfWork: IUnitOfWork,
     ) {}
 
-    execute(command: ConfirmUserEmail): Promise<Result<UUID, ApplicationException>> {
+    execute(command: ConfirmUserEmail): Promise<Result<ConfirmEmailResult, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
             const verification = await this.emailVerificationRepo.findById(command.token);
             if (!verification) throw new EmailVerificationNotFoundException();
@@ -40,7 +41,7 @@ export class ConfirmUserEmailHandler {
             await this.userRepo.save(user);
             await this.emailVerificationRepo.save(verification);
 
-            return user.id;
+            return ConfirmEmailResult.create(user.id);
         });
     }
 }

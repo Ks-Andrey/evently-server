@@ -5,6 +5,7 @@ import { ApplicationException, safeAsync } from '@application/common';
 import { IUserReader } from '@application/readers/user';
 import { IUserTypeRepository } from '@domain/identity/user-type';
 
+import { DeleteUserTypeResult } from '../dto/delete-user-type-result';
 import { UserTypeNotFoundException, UserTypeInUseException } from '../exceptions';
 
 export class DeleteUserType {
@@ -17,7 +18,7 @@ export class DeleteUserTypeHandler {
         private readonly userReader: IUserReader,
     ) {}
 
-    execute(command: DeleteUserType): Promise<Result<boolean, ApplicationException>> {
+    execute(command: DeleteUserType): Promise<Result<DeleteUserTypeResult, ApplicationException>> {
         return safeAsync(async () => {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();
@@ -30,7 +31,7 @@ export class DeleteUserTypeHandler {
 
             await this.userTypeRepo.delete(userType.userTypeId);
 
-            return true;
+            return DeleteUserTypeResult.create(userType.userTypeId);
         });
     }
 }

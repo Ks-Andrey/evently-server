@@ -5,6 +5,7 @@ import { safeAsync, AccessDeniedException, ApplicationException } from '@applica
 import { Roles } from '@common/constants/roles';
 import { IUserRepository } from '@domain/identity/user';
 
+import { EditUserPasswordResult } from '../dto/edit-user-password-result';
 import { UserNotFoundException } from '../exceptions';
 
 export class EditUserPassword {
@@ -19,7 +20,7 @@ export class EditUserPassword {
 export class EditUserPasswordHandler {
     constructor(readonly userRepo: IUserRepository) {}
 
-    execute(command: EditUserPassword): Promise<Result<UUID, ApplicationException>> {
+    execute(command: EditUserPassword): Promise<Result<EditUserPasswordResult, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findById(command.userId);
             if (!user) throw new UserNotFoundException();
@@ -32,7 +33,7 @@ export class EditUserPasswordHandler {
 
             await this.userRepo.save(user);
 
-            return user.id;
+            return EditUserPasswordResult.create(user.id);
         });
     }
 }

@@ -1,9 +1,10 @@
 import { Result } from 'true-myth';
 
 import { ApplicationException, safeAsync } from '@application/common';
-import { Tokens, UserJwtPayload } from '@common/types/auth';
+import { UserJwtPayload } from '@common/types/auth';
 import { IUserRepository } from '@domain/identity/user';
 
+import { AuthenticateUserResult } from '../dto/authenticate-user-result';
 import { InvalidCredentialsException } from '../exceptions';
 import { ITokenManager } from '../interfaces/token-manager';
 
@@ -20,7 +21,7 @@ export class AuthenticateUserHandler {
         private readonly tokenManager: ITokenManager,
     ) {}
 
-    execute(command: AuthenticateUser): Promise<Result<Tokens, ApplicationException>> {
+    execute(command: AuthenticateUser): Promise<Result<AuthenticateUserResult, ApplicationException>> {
         return safeAsync(async () => {
             const user = await this.userRepo.findByEmail(command.email.trim());
             if (!user) throw new InvalidCredentialsException();
@@ -32,7 +33,8 @@ export class AuthenticateUserHandler {
                 role: user.userType.role,
             };
 
-            return this.tokenManager.issueTokens(payload);
+            const tokens = await this.tokenManager.issueTokens(payload);
+            return AuthenticateUserResult.create(tokens);
         });
     }
 }
