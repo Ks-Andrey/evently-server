@@ -15,7 +15,7 @@ export function createAuthRoutes(authController: AuthController, tokenManager: I
         authController.register(req, res),
     );
     router.post('/login', authRateLimiter, validate(loginSchema), (req, res) => authController.login(req, res));
-    router.get('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));
+    router.post('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));
     router.post('/refresh', validate(refreshTokensSchema), (req, res) => authController.refreshTokens(req, res));
     router.post('/logout', authMiddleware(tokenManager), validate(logoutSchema), (req, res) =>
         authController.logout(req, res),

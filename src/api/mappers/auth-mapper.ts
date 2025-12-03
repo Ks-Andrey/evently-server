@@ -18,8 +18,8 @@ export class AuthMapper {
     }
 
     static toConfirmEmailCommand(req: Request): ConfirmUserEmail {
-        const { token } = req.query;
-        return new ConfirmUserEmail(token as UUID);
+        const { token } = req.body;
+        return new ConfirmUserEmail(token);
     }
 
     static toRefreshTokensCommand(req: Request): RefreshTokens {

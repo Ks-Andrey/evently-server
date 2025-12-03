@@ -10,7 +10,7 @@ export class EmailManager implements IEmailManager {
     async sendEmailVerification(params: SendEmailVerificationParams): Promise<void> {
         const { to, token } = params;
 
-        const verificationUrl = `${FRONTEND_URL}/api/auth/confirm-email?token=${token}`;
+        const verificationUrl = `${FRONTEND_URL}/confirm-email?token=${token}`;
         const subject = 'Подтвердите ваш email';
         const body = this.getEmailTemplate(verificationUrl);
 
