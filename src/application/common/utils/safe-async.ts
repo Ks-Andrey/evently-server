@@ -19,6 +19,6 @@ export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T, Appl
             return Result.err(new ApplicationException(error.message, ApplicationErrorCodes.BUSINESS_RULE_VIOLATION));
         }
 
-        return Result.err(new UnknownException(getErrorMessage(error) || undefined));
+        return Result.err(new UnknownException(getErrorMessage(error)));
     }
 }

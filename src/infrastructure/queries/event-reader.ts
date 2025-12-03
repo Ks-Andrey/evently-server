@@ -30,7 +30,7 @@ export class EventReader implements IEventReader {
         });
 
         return subscriptions.map((sub) =>
-            EventUserDTO.create(sub.user.id as UUID, sub.user.username, sub.user.imageUrl || undefined),
+            EventUserDTO.create(sub.user.id as UUID, sub.user.username, sub.user.imageUrl ?? undefined),
         );
     }
 
@@ -137,7 +137,7 @@ export class EventReader implements IEventReader {
         const organizerDTO = EventOrganizerDTO.create(
             eventData.organizer.id as UUID,
             eventData.organizer.username,
-            eventData.organizer.personalData || undefined,
+            eventData.organizer.personalData ?? undefined,
         );
 
         const categoryDTO = EventCategoryDTO.create(

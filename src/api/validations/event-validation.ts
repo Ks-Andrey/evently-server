@@ -102,8 +102,8 @@ export const editEventSchema = z
     .refine(
         (data) => {
             const { location, latitude, longitude } = data.body;
-            if (location !== undefined) {
-                return latitude !== undefined && longitude !== undefined;
+            if (location) {
+                return latitude && longitude;
             }
             return true;
         },

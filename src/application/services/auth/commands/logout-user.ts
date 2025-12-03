@@ -21,7 +21,7 @@ export class LogoutUserHandler {
         return safeAsync(async () => {
             await this.tokenManager.revokeToken(command.accessToken, 'access');
 
-            if (command.refreshToken) {
+            if (command.refreshToken !== undefined) {
                 await this.tokenManager.revokeToken(command.refreshToken, 'refresh', command.userId);
             }
 

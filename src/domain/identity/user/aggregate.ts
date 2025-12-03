@@ -32,8 +32,9 @@ export class User {
         private _emailVerified: boolean,
         private _passwordHash: string,
         private _subscriptionCount: number,
-        private _personalData?: string,
         private _isBlocked: boolean = false,
+        private readonly _telegramId?: string,
+        private _personalData?: string,
         private _pendingEmail?: string,
         private _imageUrl?: string,
     ) {}
@@ -44,10 +45,11 @@ export class User {
         username: string,
         email: string,
         passwordHash: string,
-        personalData?: string,
         isBlocked: boolean = false,
         subscriptionCount: number = 0,
         emailVerified: boolean = false,
+        telegramId?: string,
+        personalData?: string,
         pendingEmail?: string,
         imageUrl?: string,
     ): User {
@@ -66,8 +68,9 @@ export class User {
             emailVerified,
             passwordHash,
             subscriptionCount,
-            personalData?.trim(),
             isBlocked,
+            telegramId?.trim(),
+            personalData?.trim(),
             pendingEmail?.trim(),
             imageUrl?.trim(),
         );
@@ -79,10 +82,13 @@ export class User {
         username: string,
         email: string,
         password: string,
-        personalData?: string,
         isBlocked: boolean = false,
         subscriptionCount: number = 0,
         emailVerified: boolean = false,
+        telegramId?: string,
+        personalData?: string,
+        pendingEmail?: string,
+        imageUrl?: string,
     ): Promise<User> {
         User.ensureValidId(id);
         User.ensureValidUserType(userType);
@@ -101,10 +107,11 @@ export class User {
             emailVerified,
             passwordHash,
             subscriptionCount,
-            personalData?.trim(),
             isBlocked,
-            undefined,
-            undefined,
+            telegramId?.trim(),
+            personalData?.trim(),
+            pendingEmail?.trim(),
+            imageUrl?.trim(),
         );
     }
 
@@ -195,6 +202,10 @@ export class User {
         return this._imageUrl;
     }
 
+    get telegramId(): string | undefined {
+        return this._telegramId;
+    }
+
     incrementSubscriptionCount(): void {
         this._subscriptionCount += 1;
     }
@@ -260,7 +271,7 @@ export class User {
         this._username = newName.trim();
     }
 
-    changeUserData(newUserData: string | undefined): void {
+    changeUserData(newUserData?: string): void {
         this._personalData = newUserData?.trim();
     }
 
@@ -279,8 +290,8 @@ export class User {
         }
     }
 
-    changeAvatar(imageUrl: string | undefined): void {
-        if (imageUrl !== undefined && (!imageUrl || imageUrl.trim().length === 0)) {
+    changeAvatar(imageUrl?: string): void {
+        if (imageUrl && (!imageUrl || imageUrl.trim().length === 0)) {
             throw new AvatarUrlCannotBeEmptyException();
         }
         this._imageUrl = imageUrl?.trim();

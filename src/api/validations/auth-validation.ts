@@ -21,6 +21,7 @@ export const registerSchema = z.object({
             .max(100, ERROR_MESSAGES.api.auth.usernameTooLong),
         email: z.string().email(ERROR_MESSAGES.api.auth.emailInvalid),
         password: strongPasswordSchema,
+        telegramId: z.string().optional(),
     }),
 });
 

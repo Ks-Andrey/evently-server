@@ -11,8 +11,9 @@ export class UserDTO {
         readonly emailVerified: boolean,
         readonly passwordHash: string,
         readonly subscriptionCount: number,
-        readonly personalData?: string,
         readonly isBlocked: boolean = false,
+        readonly telegramId?: string,
+        readonly personalData?: string,
         readonly pendingEmail?: string,
         readonly avatarUrl?: string,
     ) {}
@@ -25,8 +26,9 @@ export class UserDTO {
         emailVerified: boolean,
         passwordHash: string,
         subscriptionCount: number,
-        personalData?: string,
         isBlocked: boolean = false,
+        telegramId?: string,
+        personalData?: string,
         pendingEmail?: string,
         avatarUrl?: string,
     ): UserDTO {
@@ -38,8 +40,9 @@ export class UserDTO {
             emailVerified,
             passwordHash,
             subscriptionCount,
-            personalData,
             isBlocked,
+            telegramId,
+            personalData,
             pendingEmail,
             avatarUrl,
         );

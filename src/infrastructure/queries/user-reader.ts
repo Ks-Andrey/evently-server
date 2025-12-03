@@ -73,10 +73,11 @@ export class UserReader implements IUserReader {
             userData.emailVerified,
             userData.passwordHash,
             userData.subscriptionCount,
-            userData.personalData || undefined,
             userData.isBlocked,
-            userData.pendingEmail || undefined,
-            userData.imageUrl || undefined,
+            userData.telegramId ?? undefined,
+            userData.personalData ?? undefined,
+            userData.pendingEmail ?? undefined,
+            userData.imageUrl ?? undefined,
         );
     }
 }

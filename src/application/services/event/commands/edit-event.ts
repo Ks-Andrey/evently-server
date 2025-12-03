@@ -55,7 +55,7 @@ export class EditEventDetailsHandler {
 
             event.updateDetails(command.title, command.description, command.date, eventLocation);
 
-            if (command.categoryId) {
+            if (command.categoryId !== undefined) {
                 const category = await this.categoryRepo.findById(command.categoryId);
                 if (!category) throw new CategoryForEventNotFoundException();
 

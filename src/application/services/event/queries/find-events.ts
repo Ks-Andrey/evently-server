@@ -22,7 +22,7 @@ export class FindEventsHandler {
                 categoryId: query.categoryId,
                 dateFrom: query.dateFrom ? new Date(query.dateFrom) : undefined,
                 dateTo: query.dateTo ? new Date(query.dateTo) : undefined,
-                keyword: query.keyword?.trim() || undefined,
+                keyword: query.keyword?.trim(),
             };
 
             return await this.eventReader.findWithFilters(filters);

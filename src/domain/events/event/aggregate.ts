@@ -125,24 +125,21 @@ export class Event {
     }
 
     updateDetails(title?: string, description?: string, date?: Date, location?: EventLocation): void {
-        if (title !== undefined) {
+        if (title) {
             Event.ensureValidTitle(title);
             this._title = title.trim();
         }
 
-        if (description !== undefined) {
+        if (description) {
             Event.ensureValidDescription(description);
             this._description = description.trim();
         }
 
-        if (location !== undefined) {
-            if (!location) {
-                throw new EventLocationCannotBeEmptyException();
-            }
+        if (location) {
             this._location = location;
         }
 
-        if (date !== undefined) {
+        if (date) {
             Event.ensureValidEventDate(date);
             this._date = date;
         }

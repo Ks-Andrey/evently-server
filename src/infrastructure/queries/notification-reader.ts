@@ -24,7 +24,7 @@ export class NotificationReader implements INotificationReader {
         const userDTO = NotificationUserDTO.create(
             notificationData.user.id as UUID,
             notificationData.user.username,
-            notificationData.user.imageUrl || undefined,
+            notificationData.user.imageUrl ?? undefined,
         );
 
         return NotificationDTO.create(

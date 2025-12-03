@@ -36,6 +36,7 @@ model User {
   isBlocked         Boolean  @default(false)
   pendingEmail      String?
   imageUrl          String?
+  telegramId        String?  @unique
 
   userType          UserType            @relation(fields: [userTypeId], references: [userTypeId], onDelete: Restrict)
   events            Event[]              @relation("EventOrganizer")

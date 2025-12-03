@@ -28,8 +28,12 @@ export class EditUserHandler {
                 throw new AccessDeniedException();
             }
 
-            command.personalData && user.changeUserData(command.personalData);
-            command.username && user.changeUsername(command.username);
+            if (command.personalData !== undefined) {
+                user.changeUserData(command.personalData);
+            }
+            if (command.username !== undefined) {
+                user.changeUsername(command.username);
+            }
 
             await this.userRepo.save(user);
 

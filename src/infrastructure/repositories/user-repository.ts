@@ -54,6 +54,7 @@ export class UserRepository implements IUserRepository {
             isBlocked: entity.isBlocked,
             pendingEmail: entity.pendingEmail,
             imageUrl: entity.imageUrl,
+            telegramId: entity.telegramId,
         };
 
         await client.user.upsert({
@@ -83,10 +84,11 @@ export class UserRepository implements IUserRepository {
             userData.username,
             userData.email,
             userData.passwordHash,
-            userData.personalData ?? undefined,
             userData.isBlocked,
             userData.subscriptionCount,
             userData.emailVerified,
+            userData.telegramId ?? undefined,
+            userData.personalData ?? undefined,
             userData.pendingEmail ?? undefined,
             userData.imageUrl ?? undefined,
         );

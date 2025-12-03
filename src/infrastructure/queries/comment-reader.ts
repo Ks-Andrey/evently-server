@@ -42,7 +42,7 @@ export class CommentReader implements ICommentReader {
         const authorDTO = CommentUserDTO.create(
             commentData.author.id as UUID,
             commentData.author.username,
-            commentData.author.imageUrl || undefined,
+            commentData.author.imageUrl ?? undefined,
         );
 
         return CommentDTO.create(

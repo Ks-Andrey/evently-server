@@ -21,6 +21,7 @@ export class CreateUser {
         readonly username: string,
         readonly email: string,
         readonly password: string,
+        readonly telegramId?: string,
     ) {}
 }
 
@@ -49,17 +50,16 @@ export class CreateUserHandler {
                 command.username,
                 command.email.trim(),
                 command.password,
-                undefined,
                 false,
                 0,
+                false,
+                command.telegramId?.trim(),
             );
 
-            // В dev режиме автоматически верифицируем email
             if (IS_DEV_MODE) {
                 user.markEmailVerified();
                 log.debug('Email auto-verified in dev mode', { userId: user.id, email: user.email });
             } else {
-                // В production отправляем email с подтверждением
                 const verification = EmailVerification.create(
                     v4() as UUID,
                     user.id,

@@ -8,8 +8,8 @@ import { getRefreshTokenFromCookie } from '../common/utils/cookie-helper';
 
 export class AuthMapper {
     static toRegisterCommand(req: Request): CreateUser {
-        const { userTypeId, username, email, password } = req.body;
-        return new CreateUser(userTypeId, username, email, password);
+        const { userTypeId, username, email, password, telegramId } = req.body;
+        return new CreateUser(userTypeId, username, email, password, telegramId);
     }
 
     static toLoginCommand(req: Request): AuthenticateUser {

@@ -86,7 +86,7 @@ export class EventRepository implements IEventRepository {
         const organizer = EventOrganizer.create(
             eventData.organizer.id as UUID,
             eventData.organizer.username,
-            eventData.organizer.personalData || undefined,
+            eventData.organizer.personalData ?? undefined,
         );
         const category = EventCategory.create(eventData.category.categoryId as UUID, eventData.category.categoryName);
         const location = EventLocation.create(eventData.location, eventData.longitude, eventData.latitude);
