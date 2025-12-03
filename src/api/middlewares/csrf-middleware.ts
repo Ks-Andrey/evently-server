@@ -3,9 +3,15 @@ import { Request, Response, NextFunction } from 'express';
 import { createErrorResponse } from '@api/common/utils/error-handler';
 import { CsrfInvalidOriginException, CsrfOriginRequiredException } from '@application/common';
 
-import { ALLOWED_ORIGINS } from '@common/config/app';
+import { ALLOWED_ORIGINS, IS_DEV_MODE } from '@common/config/app';
+import { log } from '@common/utils/logger';
 
 export function csrfProtection(req: Request, res: Response, next: NextFunction): void {
+    if (IS_DEV_MODE) {
+        log.debug('CSRF protection skipped in dev mode');
+        return next();
+    }
+
     const method = req.method;
 
     if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {

@@ -4,11 +4,11 @@ import express, { Express, Request, Response } from 'express';
 import helmet from 'helmet';
 
 import { createErrorResponse } from '@api/common';
-// import { csrfProtection } from '@api/middlewares/csrf-middleware';
+import { csrfProtection } from '@api/middlewares/csrf-middleware';
 import { createAppRoutes } from '@api/routes';
 import { RouteNotFoundException } from '@application/common';
 
-import { PORT, ALLOWED_ORIGINS, SHUTDOWN_TIMEOUT, NODE_ENV } from '@common/config/app';
+import { PORT, ALLOWED_ORIGINS, SHUTDOWN_TIMEOUT, IS_DEV_MODE, NODE_ENV } from '@common/config/app';
 import { log } from '@common/utils/logger';
 import { getAppDependencies, createDIContainer } from '@infrastructure/di';
 import { disconnectPrisma, disconnectRedis, checkDatabase, checkRedis } from '@infrastructure/utils';
@@ -36,7 +36,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         next();
     });
 
-    // app.use(csrfProtection);
+    app.use(csrfProtection);
 
     const appRoutes = createAppRoutes(
         controllers.authController,
@@ -85,7 +85,13 @@ async function startServer() {
 
         const server = app.listen(PORT, () => {
             log.info(`Server is running on port ${PORT}`);
-            log.info(`Environment: ${NODE_ENV || 'development'}`);
+            log.info(`Environment: ${NODE_ENV}`);
+
+            if (IS_DEV_MODE) {
+                log.warn('⚠️  DEV MODE: Security checks disabled (CSRF, Rate Limiting)');
+                log.warn('⚠️  This is intended for testing through Postman/Insomnia');
+                log.warn('⚠️  DO NOT use this configuration in production!');
+            }
         });
 
         const shutdown = async (signal: string) => {

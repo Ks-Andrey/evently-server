@@ -1,7 +1,7 @@
 import winston from 'winston';
 
 import { getErrorMessage } from './error';
-import { NODE_ENV } from '../config/app';
+import { IS_PROD_MODE } from '../config/app';
 import { LOG_DIR, LOG_LEVEL } from '../config/logger';
 
 const { combine, timestamp, errors, json, printf, colorize } = winston.format;
@@ -42,10 +42,8 @@ const prettyConsoleFormat = printf(({ level, message, timestamp, stack, ...metad
     return output;
 });
 
-const logLevel = LOG_LEVEL || (NODE_ENV === 'production' ? 'info' : 'debug');
-
 export const logger = winston.createLogger({
-    level: logLevel,
+    level: LOG_LEVEL,
     format: combine(errors({ stack: true }), timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), json()),
     defaultMeta: { service: 'server' },
     transports: [
@@ -63,7 +61,7 @@ export const logger = winston.createLogger({
     rejectionHandlers: [new winston.transports.File({ filename: 'logs/rejections.log' })],
 });
 
-if (NODE_ENV !== 'production') {
+if (!IS_PROD_MODE) {
     logger.add(
         new winston.transports.Console({
             format: combine(colorize(), timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), prettyConsoleFormat),
