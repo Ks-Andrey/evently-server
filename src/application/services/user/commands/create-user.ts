@@ -32,7 +32,7 @@ export class CreateUserHandler {
 
     execute(command: CreateUser): Promise<Result<UUID, ApplicationException>> {
         return executeInTransaction(this.unitOfWork, async () => {
-            const exists = await this.userRepo.findByEmail(command.email);
+            const exists = await this.userRepo.findByEmail(command.email.trim());
             if (exists) throw new UserAlreadyExistsException();
 
             const userType = await this.userTypeRepo.findById(command.userTypeId);
@@ -44,7 +44,7 @@ export class CreateUserHandler {
                 userId,
                 UserTypeData.create(command.userTypeId, userType.typeName, userType.role),
                 command.username,
-                command.email,
+                command.email.trim(),
                 command.password,
                 undefined,
                 false,

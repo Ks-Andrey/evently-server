@@ -2,7 +2,7 @@ import { UUID, randomUUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { EventCategory, EventOrganizer, Event, EventLocation, IEventRepository } from '@domain/events/event';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type EventWithRelations = Prisma.EventGetPayload<{
     include: {

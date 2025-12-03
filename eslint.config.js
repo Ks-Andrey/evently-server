@@ -5,6 +5,19 @@ import importPlugin from 'eslint-plugin-import';
 
 export default [
     {
+        ignores: [
+            'node_modules',
+            'dist',
+            'build',
+            'coverage',
+            '.vscode',
+            '.idea',
+            '*.d.ts',
+            'prisma/**',
+            'generated/**',
+        ],
+    },
+    {
         files: ['**/*.ts'],
         languageOptions: {
             parser: tsParser,
@@ -14,7 +27,6 @@ export default [
                 project: './tsconfig.json',
             },
         },
-        ignores: ['node_modules', 'dist', 'build', 'coverage', '.vscode', '.idea', '*.d.ts'],
         plugins: {
             '@typescript-eslint': tsPlugin,
             prettier: prettierPlugin,

@@ -14,7 +14,7 @@ export class FindUserByNameHandler {
 
     async execute(query: FindUserByName): Promise<Result<UserDTO, ApplicationException>> {
         return safeAsync(async () => {
-            const user = await this.userReader.findByUsername(query.username);
+            const user = await this.userReader.findByUsername(query.username.trim());
             if (!user) throw new UserNotFoundException();
             return user;
         });

@@ -22,7 +22,7 @@ export class AuthenticateUserHandler {
 
     execute(command: AuthenticateUser): Promise<Result<Tokens, ApplicationException>> {
         return safeAsync(async () => {
-            const user = await this.userRepo.findByEmail(command.email.trim().toLowerCase());
+            const user = await this.userRepo.findByEmail(command.email.trim());
             if (!user) throw new InvalidCredentialsException();
 
             await user.ensureValidPassword(command.password);

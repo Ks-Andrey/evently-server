@@ -32,7 +32,7 @@ export const loginSchema = z.object({
 });
 
 export const confirmEmailSchema = z.object({
-    body: z.object({
+    query: z.object({
         token: uuidSchema,
     }),
 });

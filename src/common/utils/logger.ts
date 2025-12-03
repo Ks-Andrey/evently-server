@@ -6,12 +6,40 @@ import { LOG_DIR, LOG_LEVEL } from '../config/logger';
 
 const { combine, timestamp, errors, json, printf, colorize } = winston.format;
 
-const consoleFormat = printf(({ level, message, timestamp, ...metadata }) => {
-    let msg = `${timestamp} [${level}]: ${message}`;
-    if (Object.keys(metadata).length > 0) {
-        msg += ` ${JSON.stringify(metadata)}`;
+const prettyConsoleFormat = printf(({ level, message, timestamp, stack, ...metadata }) => {
+    const colors = {
+        error: '\x1b[31m',
+        warn: '\x1b[33m',
+        info: '\x1b[36m',
+        debug: '\x1b[35m',
+        reset: '\x1b[0m',
+    };
+
+    let output = `${timestamp} [${level}]: ${message}`;
+
+    const metaKeys = Object.keys(metadata);
+    if (metaKeys.length > 0) {
+        const filteredMeta = { ...metadata };
+        delete filteredMeta.service;
+
+        if (Object.keys(filteredMeta).length > 0) {
+            output += '\n  ' + JSON.stringify(filteredMeta, null, 2).split('\n').join('\n  ');
+        }
     }
-    return msg;
+
+    if (stack && typeof stack === 'string') {
+        output += '\n\n' + colors.error + 'Stack Trace:' + colors.reset;
+        const stackLines = stack.split('\n');
+        stackLines.forEach((line: string, index: number) => {
+            if (index === 0) {
+                output += '\n  ' + colors.error + line + colors.reset;
+            } else {
+                output += '\n  ' + line.replace(/^\s+at\s+/, '  → ');
+            }
+        });
+    }
+
+    return output;
 });
 
 const logLevel = LOG_LEVEL || (NODE_ENV === 'production' ? 'info' : 'debug');
@@ -38,7 +66,7 @@ export const logger = winston.createLogger({
 if (NODE_ENV !== 'production') {
     logger.add(
         new winston.transports.Console({
-            format: combine(colorize(), timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), consoleFormat),
+            format: combine(colorize(), timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), prettyConsoleFormat),
         }),
     );
 } else {

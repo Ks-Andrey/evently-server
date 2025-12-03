@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 
 import { INotificationReader, NotificationDTO, NotificationUserDTO } from '@application/readers/notification';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
 

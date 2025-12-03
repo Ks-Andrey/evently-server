@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IUserRepository, User, UserTypeData } from '@domain/identity/user';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type UserWithType = Prisma.UserGetPayload<{
     include: { userType: true };
@@ -27,8 +27,9 @@ export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
         const client = this.unitOfWork.getClient();
-        const userData = await client.user.findUnique({
-            where: { email },
+        const normalizedEmail = email.trim();
+        const userData = await client.user.findFirst({
+            where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
             include: { userType: true },
         });
 

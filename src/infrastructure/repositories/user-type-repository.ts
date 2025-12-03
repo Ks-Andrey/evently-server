@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { UserType, IUserTypeRepository } from '@domain/identity/user-type';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type UserTypeData = Prisma.UserTypeGetPayload<{}>;
 
@@ -24,8 +24,9 @@ export class UserTypeRepository implements IUserTypeRepository {
 
     async findByName(name: string): Promise<UserType | null> {
         const client = this.unitOfWork.getClient();
-        const userTypeData = await client.userType.findUnique({
-            where: { typeName: name },
+        const normalizedName = name.trim();
+        const userTypeData = await client.userType.findFirst({
+            where: { typeName: { equals: normalizedName, mode: 'insensitive' } },
         });
 
         if (!userTypeData) {

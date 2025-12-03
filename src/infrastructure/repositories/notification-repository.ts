@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { Notification, INotificationRepository, NotificationUser } from '@domain/social/notification';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type NotificationWithUser = Prisma.NotificationGetPayload<{
     include: { user: true };

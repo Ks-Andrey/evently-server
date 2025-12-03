@@ -1,12 +1,7 @@
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { PrismaClient } from '@generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 
-import { prisma } from './prisma-client';
-
-type PrismaTransactionClient = Omit<
-    PrismaClient,
-    '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
->;
+import { prisma, PrismaTransactionClient } from './prisma-client';
 
 export class PrismaUnitOfWork implements IUnitOfWork {
     private transactionClient: PrismaTransactionClient | null = null;

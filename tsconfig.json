@@ -2,14 +2,14 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@generated/*": ["src/generated/*"],
             "@common/*": ["src/common/*"],
             "@domain/*": ["src/domain/*"],
             "@application/*": ["src/application/*"],
             "@api/*": ["src/api/*"],
-            "@infrastructure/*": ["src/infrastructure/*"]
+            "@infrastructure/*": ["src/infrastructure/*"],
+            "@prisma/*": ["generated/prisma/*"]
         },
-        "rootDir": "./src",
+        "rootDirs": ["src", "generated"],
         "outDir": "./dist",
         "target": "es2020",
         "module": "ES2020",
@@ -19,5 +19,5 @@
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true
     },
-    "exclude": ["prisma.config.ts"]
+    "exclude": ["prisma/*"]
 }

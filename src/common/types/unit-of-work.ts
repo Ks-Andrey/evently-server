@@ -1,9 +1,5 @@
-import { PrismaClient } from '@generated/prisma/client';
-
-type PrismaTransactionClient = Omit<
-    PrismaClient,
-    '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
->;
+import { PrismaTransactionClient } from '@infrastructure/utils';
+import { PrismaClient } from '@prisma/client';
 
 export interface IUnitOfWork {
     getClient(): PrismaTransactionClient | PrismaClient;

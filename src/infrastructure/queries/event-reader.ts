@@ -9,7 +9,7 @@ import {
     EventUserDTO,
     EventLocationDTO,
 } from '@application/readers/event';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
 

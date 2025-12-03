@@ -2,18 +2,23 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 import { DATABASE_URL } from '@common/config/database';
 import { log } from '@common/utils/logger';
-import { PrismaClient } from '@generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const adapter = new PrismaPg({ connectionString: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
+export type PrismaTransactionClient = Omit<
+    PrismaClient,
+    '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
+
 (async () => {
     try {
         await prisma.$connect();
-        log.info('Successfully connected to the database');
+        log.info('Successfully connected to PostgreSQL database');
     } catch (error) {
-        log.error('Failed to connect to the database', { error });
-
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Failed to connect to PostgreSQL database', err);
         process.exit(1);
     }
 })();
@@ -21,9 +26,10 @@ const prisma = new PrismaClient({ adapter });
 export const disconnectPrisma = async () => {
     try {
         await prisma.$disconnect();
-        log.info('Successfully disconnected from the database');
+        log.info('Disconnected from PostgreSQL database');
     } catch (error) {
-        log.error('Failed to disconnect from the database', { error });
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Failed to disconnect from PostgreSQL database', err);
     }
 };
 
@@ -32,7 +38,8 @@ export const checkDatabase = async (): Promise<boolean> => {
         await prisma.$queryRaw`SELECT 1`;
         return true;
     } catch (error) {
-        log.error('Database health check failed', { error });
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('PostgreSQL health check failed', err);
         return false;
     }
 };

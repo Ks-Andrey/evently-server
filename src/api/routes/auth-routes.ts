@@ -12,7 +12,7 @@ export function createAuthRoutes(authController: AuthController): Router {
         authController.register(req, res),
     );
     router.post('/login', authRateLimiter, validate(loginSchema), (req, res) => authController.login(req, res));
-    router.post('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));
+    router.get('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));
 
     return router;
 }

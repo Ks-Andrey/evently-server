@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 
 import { ICategoryReader, CategoryDTO } from '@application/readers/category';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
 
@@ -27,8 +27,9 @@ export class CategoryReader implements ICategoryReader {
     }
 
     async findByName(name: string): Promise<CategoryDTO | null> {
-        const categoryData = await prisma.category.findUnique({
-            where: { categoryName: name },
+        const normalizedName = name.trim();
+        const categoryData = await prisma.category.findFirst({
+            where: { categoryName: { equals: normalizedName, mode: 'insensitive' } },
         });
 
         if (!categoryData) {

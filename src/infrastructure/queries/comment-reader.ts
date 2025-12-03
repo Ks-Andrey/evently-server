@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 
 import { ICommentReader, CommentDTO, CommentUserDTO } from '@application/readers/comment';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
 

@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { Request } from 'express';
 
 import { AuthenticateUser, ConfirmUserEmail } from '@application/services/auth';
@@ -15,7 +16,7 @@ export class AuthMapper {
     }
 
     static toConfirmEmailCommand(req: Request): ConfirmUserEmail {
-        const { token } = req.body;
-        return new ConfirmUserEmail(token);
+        const { token } = req.query;
+        return new ConfirmUserEmail(token as UUID);
     }
 }

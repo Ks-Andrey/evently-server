@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 
 import { IUserReader, UserDTO, UserEventDTO, UserTypeDTO } from '@application/readers/user';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
 
@@ -24,8 +24,9 @@ export class UserReader implements IUserReader {
     }
 
     async findByUsername(username: string): Promise<UserDTO | null> {
-        const userData = await prisma.user.findUnique({
-            where: { username },
+        const normalizedUsername = username.trim();
+        const userData = await prisma.user.findFirst({
+            where: { username: { equals: normalizedUsername, mode: 'insensitive' } },
             include: { userType: true },
         });
 

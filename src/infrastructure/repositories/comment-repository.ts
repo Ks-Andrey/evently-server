@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { ICommentRepository, Comment, CommentUser } from '@domain/social/comment';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type CommentWithAuthor = Prisma.CommentGetPayload<{
     include: { author: true };

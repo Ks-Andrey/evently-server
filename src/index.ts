@@ -3,7 +3,7 @@ import express, { Express, Request, Response } from 'express';
 import helmet from 'helmet';
 
 import { createErrorResponse } from '@api/common';
-import { csrfProtection } from '@api/middlewares/csrf-middleware';
+// import { csrfProtection } from '@api/middlewares/csrf-middleware';
 import { createAppRoutes } from '@api/routes';
 import { RouteNotFoundException } from '@application/common';
 
@@ -34,7 +34,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         next();
     });
 
-    app.use(csrfProtection);
+    // app.use(csrfProtection);
 
     const appRoutes = createAppRoutes(
         controllers.authController,
@@ -95,6 +95,7 @@ async function startServer() {
                 await disconnectPrisma();
                 await disconnectRedis();
 
+                log.info('Graceful shutdown completed');
                 process.exit(0);
             });
 
@@ -107,16 +108,18 @@ async function startServer() {
         process.on('SIGTERM', () => shutdown('SIGTERM'));
         process.on('SIGINT', () => shutdown('SIGINT'));
 
-        process.on('unhandledRejection', (reason, promise) => {
-            log.error('Unhandled Rejection at:', { promise, reason });
+        process.on('unhandledRejection', (reason) => {
+            const error = reason instanceof Error ? reason : new Error(String(reason));
+            log.error('Unhandled Promise Rejection', error);
         });
 
         process.on('uncaughtException', (error) => {
-            log.error('Uncaught Exception:', { error });
+            log.error('Uncaught Exception', error);
             process.exit(1);
         });
     } catch (error) {
-        log.error('Failed to start server', { error });
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Failed to start server', err);
         process.exit(1);
     }
 }

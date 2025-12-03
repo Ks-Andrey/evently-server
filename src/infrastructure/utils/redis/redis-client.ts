@@ -6,7 +6,8 @@ import { log } from '@common/utils/logger';
 const redisClient: RedisClientType = createClient({ url: redisUrl });
 
 redisClient.on('error', (err) => {
-    log.error('Redis Client Error', { error: err });
+    const error = err instanceof Error ? err : new Error(String(err));
+    log.error('Redis Client Error', error);
 });
 
 (async () => {
@@ -14,8 +15,8 @@ redisClient.on('error', (err) => {
         await redisClient.connect();
         log.info('Successfully connected to Redis');
     } catch (error) {
-        log.error('Failed to connect to Redis', { error });
-
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Failed to connect to Redis', err);
         process.exit(1);
     }
 })();
@@ -23,9 +24,10 @@ redisClient.on('error', (err) => {
 export const disconnectRedis = async () => {
     try {
         await redisClient.quit();
-        log.info('Successfully disconnected from Redis');
+        log.info('Disconnected from Redis');
     } catch (error) {
-        log.error('Failed to disconnect from Redis', { error });
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Failed to disconnect from Redis', err);
     }
 };
 
@@ -34,7 +36,8 @@ export const checkRedis = async (): Promise<boolean> => {
         await redisClient.ping();
         return true;
     } catch (error) {
-        log.error('Redis health check failed', { error });
+        const err = error instanceof Error ? error : new Error(String(error));
+        log.error('Redis health check failed', err);
         return false;
     }
 };

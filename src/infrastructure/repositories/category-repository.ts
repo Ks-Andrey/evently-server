@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { ICategoryRepository, Category } from '@domain/events/category';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type CategoryData = Prisma.CategoryGetPayload<{}>;
 

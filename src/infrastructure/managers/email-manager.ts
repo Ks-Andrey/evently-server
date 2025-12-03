@@ -10,7 +10,7 @@ export class EmailManager implements IEmailManager {
     async sendEmailVerification(params: SendEmailVerificationParams): Promise<void> {
         const { to, token } = params;
 
-        const verificationUrl = `${FRONTEND_URL}/confirm-email?token=${token}`;
+        const verificationUrl = `${FRONTEND_URL}/api/auth/confirm-email?token=${token}`;
         const subject = 'Подтвердите ваш email';
         const body = this.getEmailTemplate(verificationUrl);
 
@@ -21,19 +21,31 @@ export class EmailManager implements IEmailManager {
                 html: body,
             });
 
-            log.info('Email verification sent', {
-                to,
-                verificationUrl,
+            log.info('Email verification sent successfully', {
+                recipient: to,
             });
         } catch (error: unknown) {
-            log.error('Error sending email', {
-                to,
-                error: log.formatError(error),
-            });
+            const errorMessage = getErrorMessage(error);
+
+            // Специальная обработка для rate limiting от SMTP сервера
+            if (errorMessage.includes('454') || errorMessage.includes('Try again later')) {
+                log.error('Email rate limit exceeded', {
+                    recipient: to,
+                    provider: 'Yandex SMTP',
+                    reason: 'Rate limiting or temporary block',
+                    suggestion: 'Wait a few minutes before retrying',
+                    originalError: errorMessage,
+                });
+            } else {
+                log.error('Failed to send email', {
+                    recipient: to,
+                    originalError: errorMessage,
+                });
+            }
 
             throw new EmailSendException({
                 to,
-                error: getErrorMessage(error),
+                error: errorMessage,
             });
         }
     }

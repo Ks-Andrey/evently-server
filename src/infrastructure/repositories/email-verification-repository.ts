@@ -2,7 +2,7 @@ import { UUID } from 'crypto';
 
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { IEmailVerificationRepository, EmailVerification } from '@domain/identity/auth';
-import { Prisma } from '@generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 type EmailVerificationData = Prisma.EmailVerificationGetPayload<{}>;
 
@@ -24,8 +24,9 @@ export class EmailVerificationRepository implements IEmailVerificationRepository
 
     async findByEmail(email: string): Promise<EmailVerification | null> {
         const client = this.unitOfWork.getClient();
+        const normalizedEmail = email.trim();
         const verificationData = await client.emailVerification.findFirst({
-            where: { email },
+            where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
             orderBy: { expiresAt: 'desc' },
         });
 
