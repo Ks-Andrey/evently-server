@@ -34,3 +34,30 @@ export const authMiddleware = (tokenManager: ITokenManager) => {
         }
     };
 };
+
+export const optionalAuthMiddleware = (tokenManager: ITokenManager) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        const header = req.headers.authorization;
+
+        if (!header || !header.startsWith('Bearer ')) {
+            // Если токена нет, просто продолжаем без авторизации
+            return next();
+        }
+
+        const token = header.split(' ')[1];
+
+        try {
+            const user = await tokenManager.verifyToken(token, 'access');
+            if (user) {
+                req.user = user;
+                log.debug('User optionally authenticated', { userId: user.userId, role: user.role });
+            }
+        } catch (error: unknown) {
+            log.debug('Optional authentication failed, continuing without user', {
+                error: log.formatError(error),
+            });
+        }
+
+        next();
+    };
+};

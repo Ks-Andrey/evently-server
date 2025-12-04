@@ -6,4 +6,5 @@ export * from './comment-routes';
 export * from './notification-routes';
 export * from './user-type-routes';
 export * from './geocoder-routes';
+export * from './statistics-routes';
 export * from './app-routes';

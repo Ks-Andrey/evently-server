@@ -4,3 +4,4 @@ export * from './category-reader';
 export * from './comment-reader';
 export * from './notification-reader';
 export * from './user-type-reader';
+export * from './statistics-reader';

@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { ITokenManager } from '@application/services/auth';
 
 import { AuthController } from '../controllers/auth-controller';
-import { authMiddleware } from '../middlewares/auth-middleware';
+import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth-middleware';
 import { authRateLimiter } from '../middlewares/rate-limit-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import { registerSchema, loginSchema, confirmEmailSchema, refreshTokensSchema, logoutSchema } from '../validations';
@@ -11,8 +11,12 @@ import { registerSchema, loginSchema, confirmEmailSchema, refreshTokensSchema, l
 export function createAuthRoutes(authController: AuthController, tokenManager: ITokenManager): Router {
     const router = Router();
 
-    router.post('/register', authRateLimiter, validate(registerSchema), (req, res) =>
-        authController.register(req, res),
+    router.post(
+        '/register',
+        authRateLimiter,
+        optionalAuthMiddleware(tokenManager),
+        validate(registerSchema),
+        (req, res) => authController.register(req, res),
     );
     router.post('/login', authRateLimiter, validate(loginSchema), (req, res) => authController.login(req, res));
     router.post('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));

@@ -58,6 +58,7 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         controllers.notificationController,
         controllers.userTypeController,
         controllers.geocoderController,
+        controllers.statisticsController,
         controllers.tokenManager,
     );
 

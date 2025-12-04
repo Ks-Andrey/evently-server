@@ -2,9 +2,10 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { ApplicationException, executeInTransaction } from '@application/common';
+import { AccessDeniedException, ApplicationException, executeInTransaction } from '@application/common';
 import { IS_DEV_MODE } from '@common/config/app';
 import { EMAIL_VERIFICATION_TTL } from '@common/constants/email-verification';
+import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
 import { EmailVerification, EmailVerificationPurpose, IEmailVerificationRepository } from '@domain/identity/auth';
@@ -22,6 +23,7 @@ export class CreateUser {
         readonly email: string,
         readonly password: string,
         readonly telegramId?: string,
+        readonly currentUserRole?: Roles,
     ) {}
 }
 
@@ -41,6 +43,11 @@ export class CreateUserHandler {
 
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();
+
+            // Проверка прав на создание администратора
+            if (userType.role === Roles.ADMIN && command.currentUserRole !== Roles.ADMIN) {
+                throw new AccessDeniedException();
+            }
 
             const userId = v4() as UUID;
 

@@ -9,6 +9,7 @@ import {
     NotificationController,
     UserTypeController,
     GeocoderController,
+    StatisticsController,
 } from '@api/controllers';
 import {
     AuthenticateUserHandler,
@@ -44,6 +45,11 @@ import {
 import { FindCoordinatesByLocationHandler } from '@application/services/geocoder';
 import { NotifyEventSubscribersHandler, FindUserNotificationsHandler } from '@application/services/notification';
 import {
+    GetUserStatisticsHandler,
+    GetEventStatisticsHandler,
+    GetSystemStatisticsHandler,
+} from '@application/services/statistics';
+import {
     CreateUserHandler,
     EditUserHandler,
     EditUserEmailHandler,
@@ -75,6 +81,7 @@ import {
     CommentReader,
     NotificationReader,
     UserTypeReader,
+    StatisticsReader,
 } from '@infrastructure/queries';
 import {
     UserRepository,
@@ -98,6 +105,7 @@ export interface Container {
     commentReader: CommentReader;
     notificationReader: NotificationReader;
     userTypeReader: UserTypeReader;
+    statisticsReader: StatisticsReader;
 
     // Repositories
     userRepository: UserRepository;
@@ -178,6 +186,11 @@ export interface Container {
     // Geocoder Handlers
     findCoordinatesByLocationHandler: FindCoordinatesByLocationHandler;
 
+    // Statistics Handlers
+    getUserStatisticsHandler: GetUserStatisticsHandler;
+    getEventStatisticsHandler: GetEventStatisticsHandler;
+    getSystemStatisticsHandler: GetSystemStatisticsHandler;
+
     // Controllers
     authController: AuthController;
     userController: UserController;
@@ -187,6 +200,7 @@ export interface Container {
     notificationController: NotificationController;
     userTypeController: UserTypeController;
     geocoderController: GeocoderController;
+    statisticsController: StatisticsController;
 }
 
 type ContainerType = AwilixContainer<Container>;
@@ -205,6 +219,7 @@ function registerReaders(container: ContainerType): void {
         commentReader: asClass(CommentReader).singleton(),
         notificationReader: asClass(NotificationReader).singleton(),
         userTypeReader: asClass(UserTypeReader).singleton(),
+        statisticsReader: asClass(StatisticsReader).singleton(),
     });
 }
 
@@ -480,6 +495,14 @@ function registerGeocoderHandlers(container: ContainerType): void {
     });
 }
 
+function registerStatisticsHandlers(container: ContainerType): void {
+    container.register({
+        getUserStatisticsHandler: asClass(GetUserStatisticsHandler).singleton(),
+        getEventStatisticsHandler: asClass(GetEventStatisticsHandler).singleton(),
+        getSystemStatisticsHandler: asClass(GetSystemStatisticsHandler).singleton(),
+    });
+}
+
 function registerControllers(container: ContainerType): void {
     container.register({
         authController: asClass(AuthController)
@@ -502,6 +525,13 @@ function registerControllers(container: ContainerType): void {
                 findCoordinatesByLocationHandler: container.resolve('findCoordinatesByLocationHandler'),
             }))
             .singleton(),
+        statisticsController: asClass(StatisticsController)
+            .inject((container) => ({
+                getUserStatisticsHandler: container.resolve('getUserStatisticsHandler'),
+                getEventStatisticsHandler: container.resolve('getEventStatisticsHandler'),
+                getSystemStatisticsHandler: container.resolve('getSystemStatisticsHandler'),
+            }))
+            .singleton(),
     });
 }
 
@@ -522,6 +552,7 @@ export function createDIContainer() {
     registerNotificationHandlers(container);
     registerUserTypeHandlers(container);
     registerGeocoderHandlers(container);
+    registerStatisticsHandlers(container);
     registerControllers(container);
 
     return container;
@@ -537,6 +568,7 @@ export interface AppDependencies {
     notificationController: NotificationController;
     userTypeController: UserTypeController;
     geocoderController: GeocoderController;
+    statisticsController: StatisticsController;
 }
 
 export function getAppDependencies(container: ReturnType<typeof createDIContainer>): AppDependencies {
@@ -550,5 +582,6 @@ export function getAppDependencies(container: ReturnType<typeof createDIContaine
         notificationController: container.resolve('notificationController'),
         userTypeController: container.resolve('userTypeController'),
         geocoderController: container.resolve('geocoderController'),
+        statisticsController: container.resolve('statisticsController'),
     };
 }
