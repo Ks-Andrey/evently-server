@@ -44,7 +44,6 @@ export class CreateUserHandler {
             const userType = await this.userTypeRepo.findById(command.userTypeId);
             if (!userType) throw new UserTypeNotFoundException();
 
-            // Проверка прав на создание администратора
             if (userType.role === Roles.ADMIN && command.currentUserRole !== Roles.ADMIN) {
                 throw new AccessDeniedException();
             }

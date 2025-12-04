@@ -1,11 +1,8 @@
-import {
-    SystemStatisticsDTO,
-    UserStatisticsDTO,
-    EventStatisticsDTO,
-    IStatisticsReader,
-} from '@application/readers/statistics';
+import { SystemStatisticsDTO, IStatisticsReader } from '@application/readers/statistics';
 import { Roles } from '@common/constants/roles';
 
+import { EventStatisticsDTO } from '../../application/readers/statistics/dto/event-statistics-dto';
+import { UserStatisticsDTO } from '../../application/readers/statistics/dto/user-statistics-dto';
 import { prisma } from '../utils';
 
 export class StatisticsReader implements IStatisticsReader {
