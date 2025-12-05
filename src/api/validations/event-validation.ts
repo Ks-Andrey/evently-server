@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { ERROR_MESSAGES } from '@common/constants/errors';
 
+import { dateQuerySchema, paginationQuerySchema, searchQuerySchema } from './common-schemas';
+
 const uuidSchema = z.string().uuid();
 
 const dateSchema = z
@@ -16,29 +18,11 @@ const dateSchema = z
     .optional();
 
 export const getEventsSchema = z.object({
-    query: z.object({
+    query: paginationQuerySchema.extend({
         categoryId: uuidSchema.optional(),
-        dateFrom: z
-            .string()
-            .refine(
-                (val) => {
-                    const date = new Date(val);
-                    return !isNaN(date.getTime());
-                },
-                { message: ERROR_MESSAGES.api.event.dateInvalid },
-            )
-            .optional(),
-        dateTo: z
-            .string()
-            .refine(
-                (val) => {
-                    const date = new Date(val);
-                    return !isNaN(date.getTime());
-                },
-                { message: ERROR_MESSAGES.api.event.dateInvalid },
-            )
-            .optional(),
-        keyword: z.string().optional(),
+        dateFrom: dateQuerySchema,
+        dateTo: dateQuerySchema,
+        keyword: searchQuerySchema,
     }),
 });
 
@@ -51,6 +35,17 @@ export const getEventByIdSchema = z.object({
 export const getEventSubscribersSchema = z.object({
     params: z.object({
         id: uuidSchema,
+    }),
+    query: paginationQuerySchema.extend({
+        search: searchQuerySchema,
+    }),
+});
+
+export const getOrganizerEventsSchema = z.object({
+    query: paginationQuerySchema.extend({
+        dateFrom: dateQuerySchema,
+        dateTo: dateQuerySchema,
+        keyword: searchQuerySchema,
     }),
 });
 

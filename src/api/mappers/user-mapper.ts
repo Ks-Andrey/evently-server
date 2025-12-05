@@ -9,6 +9,7 @@ import {
     EditUser,
     EditUserEmail,
     EditUserPassword,
+    FindAllUsers,
     FindUserByEmail,
     FindUserById,
     FindUserByName,
@@ -18,6 +19,8 @@ import {
     UnsubscribeUserFromEvent,
     UploadUserAvatar,
 } from '@application/services/user';
+
+import { parsePaginationParams } from '../common/utils/pagination';
 
 export class UserMapper {
     static toFindUserByIdQuery(req: Request): FindUserById {
@@ -42,16 +45,26 @@ export class UserMapper {
         return new FindUserByEmail(email);
     }
 
+    static toFindAllUsersQuery(req: Request): FindAllUsers {
+        const pagination = parsePaginationParams(req);
+        const search = req.query.search as string;
+        return new FindAllUsers(pagination, search);
+    }
+
     static toFindMySubscriptionsQuery(req: Request): FindUserSubscriptions {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        return new FindUserSubscriptions(req.user.userId);
+        const pagination = parsePaginationParams(req);
+        const search = req.query.search as string;
+        return new FindUserSubscriptions(req.user.userId, pagination, search);
     }
 
     static toFindUserSubscriptionsQuery(req: Request): FindUserSubscriptions {
         const { id } = req.params;
-        return new FindUserSubscriptions(id as UUID);
+        const pagination = parsePaginationParams(req);
+        const search = req.query.search as string;
+        return new FindUserSubscriptions(id as UUID, pagination, search);
     }
 
     static toEditMeCommand(req: Request): EditUser {

@@ -4,3 +4,4 @@ export * from '../services/file/exceptions';
 export * from './utils/safe-async';
 export * from './utils/transaction';
 export * from './interfaces/file-storage-manager';
+export * from './types/pagination';

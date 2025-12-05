@@ -4,6 +4,8 @@ import { ITokenManager } from '@application/services/auth';
 
 import { NotificationController } from '../controllers/notification-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
+import { validate } from '../middlewares/validation-middleware';
+import { getUserNotificationsSchema } from '../validations';
 
 export function createNotificationRoutes(
     notificationController: NotificationController,
@@ -13,7 +15,9 @@ export function createNotificationRoutes(
     const auth = authMiddleware(tokenManager);
 
     // Защищенные маршруты
-    router.get('/me', auth, (req, res) => notificationController.getUserNotifications(req, res));
+    router.get('/me', auth, validate(getUserNotificationsSchema), (req, res) =>
+        notificationController.getUserNotifications(req, res),
+    );
 
     return router;
 }

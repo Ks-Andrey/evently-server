@@ -1,14 +1,24 @@
 import { Result } from 'true-myth';
 
-import { ApplicationException, safeAsync } from '@application/common';
+import { ApplicationException, PaginationParams, PaginationResult, safeAsync } from '@application/common';
 import { CommentDTO, ICommentReader } from '@application/readers/comment';
+
+export class FindAllComments {
+    constructor(
+        readonly pagination: PaginationParams,
+        readonly dateFrom?: string,
+        readonly dateTo?: string,
+    ) {}
+}
 
 export class FindAllCommentsHandler {
     constructor(private readonly commentReader: ICommentReader) {}
 
-    execute(): Promise<Result<CommentDTO[], ApplicationException>> {
+    execute(query: FindAllComments): Promise<Result<PaginationResult<CommentDTO>, ApplicationException>> {
         return safeAsync(async () => {
-            return await this.commentReader.findAll();
+            const dateFrom = query.dateFrom ? new Date(query.dateFrom) : undefined;
+            const dateTo = query.dateTo ? new Date(query.dateTo) : undefined;
+            return await this.commentReader.findAll(query.pagination, dateFrom, dateTo);
         });
     }
 }

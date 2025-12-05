@@ -25,7 +25,8 @@ export class CommentController {
     ) {}
 
     async getAllComments(req: Request, res: Response): Promise<void> {
-        const result = await this.findAllCommentsHandler.execute();
+        const query = CommentMapper.toFindAllCommentsQuery(req);
+        const result = await this.findAllCommentsHandler.execute(query);
         handleResult(result, res);
     }
 

@@ -15,10 +15,13 @@ import {
 } from '@application/services/event';
 import { NotifyEventSubscribers } from '@application/services/notification';
 
+import { parsePaginationParams } from '../common/utils/pagination';
+
 export class EventMapper {
     static toFindEventsQuery(req: Request): FindEvents {
+        const pagination = parsePaginationParams(req);
         const { categoryId, dateFrom, dateTo, keyword } = req.query;
-        return new FindEvents(categoryId as UUID, dateFrom as string, dateTo as string, keyword as string | undefined);
+        return new FindEvents(pagination, categoryId as UUID, dateFrom as string, dateTo as string, keyword as string);
     }
 
     static toFindEventByIdQuery(req: Request): FindEventById {
@@ -30,12 +33,22 @@ export class EventMapper {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        return new FindOrganizerEvents(req.user.userId);
+        const pagination = parsePaginationParams(req);
+        const { dateFrom, dateTo, keyword } = req.query;
+        return new FindOrganizerEvents(
+            req.user.userId,
+            pagination,
+            dateFrom as string,
+            dateTo as string,
+            keyword as string,
+        );
     }
 
     static toFindEventSubscribersQuery(req: Request): FindEventSubscribers {
         const { id } = req.params;
-        return new FindEventSubscribers(id as UUID);
+        const pagination = parsePaginationParams(req);
+        const search = req.query.search as string;
+        return new FindEventSubscribers(id as UUID, pagination, search);
     }
 
     static toCreateEventCommand(req: Request): CreateEvent {

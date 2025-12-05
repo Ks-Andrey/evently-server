@@ -8,6 +8,7 @@ import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import {
+    getAllCommentsSchema,
     getCommentByIdSchema,
     getCommentsByEventSchema,
     getCommentsByUserSchema,
@@ -22,7 +23,7 @@ export function createCommentRoutes(commentController: CommentController, tokenM
     const adminOrUser = roleMiddleware([Roles.ADMIN, Roles.USER]);
 
     // Публичные маршруты
-    router.get('/', (req, res) => commentController.getAllComments(req, res));
+    router.get('/', validate(getAllCommentsSchema), (req, res) => commentController.getAllComments(req, res));
     router.get('/event/:eventId', validate(getCommentsByEventSchema), (req, res) =>
         commentController.getCommentsByEvent(req, res),
     );

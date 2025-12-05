@@ -5,3 +5,4 @@ export * from './category-validation';
 export * from './comment-validation';
 export * from './user-type-validation';
 export * from './geocoder-validation';
+export * from './notification-validation';

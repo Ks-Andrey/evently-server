@@ -9,6 +9,7 @@ import { uploadAvatar } from '../middlewares/file-upload-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import {
+    getAllUsersSchema,
     getUserByIdSchema,
     getUserByNameSchema,
     getUserByEmailSchema,
@@ -20,6 +21,7 @@ import {
     subscribeToEventSchema,
     unsubscribeFromEventSchema,
     getUserSubscriptionsSchema,
+    getMySubscriptionsSchema,
     editMeSchema,
 } from '../validations';
 
@@ -38,7 +40,9 @@ export function createUserRoutes(userController: UserController, tokenManager: I
 
     // Защищенные маршруты
     router.get('/me', auth, (req, res) => userController.getCurrentUser(req, res));
-    router.get('/me/subscriptions', auth, (req, res) => userController.getMySubscriptions(req, res));
+    router.get('/me/subscriptions', auth, validate(getMySubscriptionsSchema), (req, res) =>
+        userController.getMySubscriptions(req, res),
+    );
     router.put('/me', auth, validate(editMeSchema), (req, res) => userController.editUser(req, res));
     router.put('/me/email', auth, validate(editEmailSchema), (req, res) => userController.editEmail(req, res));
     router.put('/me/password', auth, validate(editPasswordSchema), (req, res) => userController.editPassword(req, res));
@@ -52,7 +56,7 @@ export function createUserRoutes(userController: UserController, tokenManager: I
     );
 
     // Админские маршруты
-    router.get('/', auth, adminOnly, (req, res) => userController.getAllUsers(req, res));
+    router.get('/', auth, adminOnly, validate(getAllUsersSchema), (req, res) => userController.getAllUsers(req, res));
     router.put('/:id', auth, adminOnly, validate(editUserSchema), (req, res) => userController.editUser(req, res));
     router.delete('/:id', auth, adminOnly, validate(deleteUserSchema), (req, res) =>
         userController.deleteUser(req, res),

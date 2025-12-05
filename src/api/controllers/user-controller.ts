@@ -38,8 +38,9 @@ export class UserController {
         private readonly deleteUserAvatarHandler: DeleteUserAvatarHandler,
     ) {}
 
-    async getAllUsers(_req: Request, res: Response): Promise<void> {
-        const result = await this.findAllUsersHandler.execute();
+    async getAllUsers(req: Request, res: Response): Promise<void> {
+        const query = UserMapper.toFindAllUsersQuery(req);
+        const result = await this.findAllUsersHandler.execute(query);
         handleResult(result, res);
     }
 

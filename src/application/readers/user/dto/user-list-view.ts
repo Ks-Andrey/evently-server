@@ -18,7 +18,7 @@ export class UserListView {
         userType: string,
         subscriptionCount: number,
         isBlocked: boolean = false,
-        avatarUrl: string | undefined,
+        avatarUrl?: string,
     ): UserListView {
         return new UserListView(id, username, email, userType, subscriptionCount, isBlocked, avatarUrl);
     }

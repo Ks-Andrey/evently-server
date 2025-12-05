@@ -1,5 +1,6 @@
 import { UUID } from 'crypto';
 
+import { PaginationParams, PaginationResult, createPaginationResult } from '@application/common';
 import { INotificationReader, NotificationDTO, NotificationUserDTO } from '@application/readers/notification';
 import { Prisma } from '@prisma/client';
 
@@ -10,14 +11,42 @@ type NotificationWithUser = Prisma.NotificationGetPayload<{
 }>;
 
 export class NotificationReader implements INotificationReader {
-    async findByUserId(userId: UUID): Promise<NotificationDTO[]> {
-        const notificationsData = await prisma.notification.findMany({
-            where: { userId },
-            include: { user: true },
-            orderBy: { createdAt: 'desc' },
-        });
+    async findByUserId(
+        userId: UUID,
+        pagination: PaginationParams,
+        dateFrom?: Date,
+        dateTo?: Date,
+    ): Promise<PaginationResult<NotificationDTO>> {
+        const page = pagination.page;
+        const pageSize = pagination.pageSize;
+        const skip = (page - 1) * pageSize;
 
-        return notificationsData.map((notificationData) => this.toNotificationDTO(notificationData));
+        const where: Prisma.NotificationWhereInput = {
+            userId,
+            ...(dateFrom || dateTo
+                ? {
+                      createdAt: {
+                          ...(dateFrom ? { gte: dateFrom } : {}),
+                          ...(dateTo ? { lte: dateTo } : {}),
+                      },
+                  }
+                : {}),
+        };
+
+        const [notificationsData, total] = await Promise.all([
+            prisma.notification.findMany({
+                where,
+                include: { user: true },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+            }),
+            prisma.notification.count({ where }),
+        ]);
+
+        const data = notificationsData.map((notificationData) => this.toNotificationDTO(notificationData));
+
+        return createPaginationResult(data, total, page, pageSize);
     }
 
     private toNotificationDTO(notificationData: NotificationWithUser): NotificationDTO {

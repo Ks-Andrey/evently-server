@@ -34,7 +34,7 @@ export class NotifyEventSubscribersHandler {
 
             const subscribers = await this.eventReader.findEventUsers(event.id);
 
-            const notifications = subscribers.map((subscriber) =>
+            const notifications = subscribers.data.map((subscriber) =>
                 Notification.create(
                     v4() as UUID,
                     event.id,

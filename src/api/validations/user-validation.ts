@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { ERROR_MESSAGES } from '@common/constants/errors';
 
+import { paginationQuerySchema, searchQuerySchema } from './common-schemas';
+
 const uuidSchema = z.string().uuid();
 
 export const getUserByIdSchema = z.object({
@@ -77,8 +79,23 @@ export const unsubscribeFromEventSchema = z.object({
     }),
 });
 
+export const getAllUsersSchema = z.object({
+    query: paginationQuerySchema.extend({
+        search: searchQuerySchema,
+    }),
+});
+
 export const getUserSubscriptionsSchema = z.object({
     params: z.object({
         id: uuidSchema,
+    }),
+    query: paginationQuerySchema.extend({
+        search: searchQuerySchema,
+    }),
+});
+
+export const getMySubscriptionsSchema = z.object({
+    query: paginationQuerySchema.extend({
+        search: searchQuerySchema,
     }),
 });

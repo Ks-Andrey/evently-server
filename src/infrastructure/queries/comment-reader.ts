@@ -1,5 +1,6 @@
 import { UUID } from 'crypto';
 
+import { PaginationParams, PaginationResult, createPaginationResult } from '@application/common';
 import { ICommentReader, CommentDTO, CommentUserDTO } from '@application/readers/comment';
 import { Prisma } from '@prisma/client';
 
@@ -10,12 +11,36 @@ type CommentWithAuthor = Prisma.CommentGetPayload<{
 }>;
 
 export class CommentReader implements ICommentReader {
-    async findAll(): Promise<CommentDTO[]> {
-        const commentsData = await prisma.comment.findMany({
-            include: { author: true },
-        });
+    async findAll(pagination: PaginationParams, dateFrom?: Date, dateTo?: Date): Promise<PaginationResult<CommentDTO>> {
+        const page = pagination.page;
+        const pageSize = pagination.pageSize;
+        const skip = (page - 1) * pageSize;
 
-        return commentsData.map((commentData) => this.toCommentDTO(commentData));
+        const where: Prisma.CommentWhereInput = {};
+        if (dateFrom || dateTo) {
+            where.createdAt = {};
+            if (dateFrom) {
+                where.createdAt.gte = dateFrom;
+            }
+            if (dateTo) {
+                where.createdAt.lte = dateTo;
+            }
+        }
+
+        const [commentsData, total] = await Promise.all([
+            prisma.comment.findMany({
+                where,
+                include: { author: true },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+            }),
+            prisma.comment.count({ where }),
+        ]);
+
+        const data = commentsData.map((commentData) => this.toCommentDTO(commentData));
+
+        return createPaginationResult(data, total, page, pageSize);
     }
 
     async findById(commentId: UUID): Promise<CommentDTO | null> {
@@ -31,24 +56,78 @@ export class CommentReader implements ICommentReader {
         return this.toCommentDTO(commentData);
     }
 
-    async findCommentsByEventId(eventId: UUID): Promise<CommentDTO[]> {
-        const commentsData = await prisma.comment.findMany({
-            where: { eventId },
-            include: { author: true },
-            orderBy: { createdAt: 'desc' },
-        });
+    async findCommentsByEventId(
+        eventId: UUID,
+        pagination: PaginationParams,
+        dateFrom?: Date,
+        dateTo?: Date,
+    ): Promise<PaginationResult<CommentDTO>> {
+        const page = pagination.page;
+        const pageSize = pagination.pageSize;
+        const skip = (page - 1) * pageSize;
 
-        return commentsData.map((commentData) => this.toCommentDTO(commentData));
+        const where: Prisma.CommentWhereInput = { eventId };
+        if (dateFrom || dateTo) {
+            where.createdAt = {};
+            if (dateFrom) {
+                where.createdAt.gte = dateFrom;
+            }
+            if (dateTo) {
+                where.createdAt.lte = dateTo;
+            }
+        }
+
+        const [commentsData, total] = await Promise.all([
+            prisma.comment.findMany({
+                where,
+                include: { author: true },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+            }),
+            prisma.comment.count({ where }),
+        ]);
+
+        const data = commentsData.map((commentData) => this.toCommentDTO(commentData));
+
+        return createPaginationResult(data, total, page, pageSize);
     }
 
-    async findAllCommentsByUserId(userId: UUID): Promise<CommentDTO[]> {
-        const commentsData = await prisma.comment.findMany({
-            where: { authorId: userId },
-            include: { author: true },
-            orderBy: { createdAt: 'desc' },
-        });
+    async findAllCommentsByUserId(
+        userId: UUID,
+        pagination: PaginationParams,
+        dateFrom?: Date,
+        dateTo?: Date,
+    ): Promise<PaginationResult<CommentDTO>> {
+        const page = pagination.page;
+        const pageSize = pagination.pageSize;
+        const skip = (page - 1) * pageSize;
 
-        return commentsData.map((commentData) => this.toCommentDTO(commentData));
+        const where: Prisma.CommentWhereInput = { authorId: userId };
+        if (dateFrom || dateTo) {
+            where.createdAt = {};
+            if (dateFrom) {
+                where.createdAt.gte = dateFrom;
+            }
+            if (dateTo) {
+                where.createdAt.lte = dateTo;
+            }
+        }
+
+        const [commentsData, total] = await Promise.all([
+            prisma.comment.findMany({
+                where,
+                include: { author: true },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+            }),
+            prisma.comment.count({ where }),
+        ]);
+
+        const data = commentsData.map((commentData) => this.toCommentDTO(commentData));
+
+        return createPaginationResult(data, total, page, pageSize);
     }
 
     private toCommentDTO(commentData: CommentWithAuthor): CommentDTO {

@@ -12,6 +12,7 @@ import {
     getEventsSchema,
     getEventByIdSchema,
     getEventSubscribersSchema,
+    getOrganizerEventsSchema,
     createEventSchema,
     editEventSchema,
     deleteEventSchema,
@@ -34,7 +35,9 @@ export function createEventRoutes(eventController: EventController, tokenManager
     );
 
     // Защищенные маршруты для организаторов
-    router.get('/organizer/my', auth, organizerOnly, (req, res) => eventController.getOrganizerEvents(req, res));
+    router.get('/organizer/my', auth, organizerOnly, validate(getOrganizerEventsSchema), (req, res) =>
+        eventController.getOrganizerEvents(req, res),
+    );
     router.post('/', auth, organizerOnly, validate(createEventSchema), (req, res) =>
         eventController.createEvent(req, res),
     );

@@ -6,24 +6,37 @@ import {
     CreateComment,
     DeleteComment,
     EditComment,
+    FindAllComments,
     FindCommentById,
     FindCommentsByEvent,
     FindCommentsByUser,
 } from '@application/services/comment';
+
+import { parsePaginationParams } from '../common/utils/pagination';
 
 export class CommentMapper {
     static toFindCommentByIdQuery(req: Request): FindCommentById {
         const { id } = req.params;
         return new FindCommentById(id as UUID);
     }
+    static toFindAllCommentsQuery(req: Request): FindAllComments {
+        const pagination = parsePaginationParams(req);
+        const { dateFrom, dateTo } = req.query;
+        return new FindAllComments(pagination, dateFrom as string, dateTo as string);
+    }
+
     static toFindCommentsByEventQuery(req: Request): FindCommentsByEvent {
         const { eventId } = req.params;
-        return new FindCommentsByEvent(eventId as UUID);
+        const pagination = parsePaginationParams(req);
+        const { dateFrom, dateTo } = req.query;
+        return new FindCommentsByEvent(eventId as UUID, pagination, dateFrom as string, dateTo as string);
     }
 
     static toFindCommentsByUserQuery(req: Request): FindCommentsByUser {
         const { userId } = req.params;
-        return new FindCommentsByUser(userId as UUID);
+        const pagination = parsePaginationParams(req);
+        const { dateFrom, dateTo } = req.query;
+        return new FindCommentsByUser(userId as UUID, pagination, dateFrom as string, dateTo as string);
     }
 
     static toCreateCommentCommand(req: Request): CreateComment {
