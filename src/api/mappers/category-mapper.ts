@@ -1,9 +1,13 @@
 import { UUID } from 'crypto';
 import { Request } from 'express';
 
-import { CreateCategory, DeleteCategory, EditCategory } from '@application/services/category';
+import { CreateCategory, DeleteCategory, EditCategory, FindCategoryById } from '@application/services/category';
 
 export class CategoryMapper {
+    static toFindCategoryByIdQuery(req: Request): FindCategoryById {
+        const { id } = req.params;
+        return new FindCategoryById(id as UUID);
+    }
     static toCreateCategoryCommand(req: Request): CreateCategory {
         const { name } = req.body;
         return new CreateCategory(name);

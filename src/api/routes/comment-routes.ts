@@ -8,6 +8,7 @@ import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import {
+    getCommentByIdSchema,
     getCommentsByEventSchema,
     getCommentsByUserSchema,
     createCommentSchema,
@@ -28,6 +29,7 @@ export function createCommentRoutes(commentController: CommentController, tokenM
     router.get('/user/:userId', validate(getCommentsByUserSchema), (req, res) =>
         commentController.getCommentsByUser(req, res),
     );
+    router.get('/:id', validate(getCommentByIdSchema), (req, res) => commentController.getCommentById(req, res));
 
     // Защищенные маршруты
     router.post('/', auth, validate(createCommentSchema), (req, res) => commentController.createComment(req, res));

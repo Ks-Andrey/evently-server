@@ -38,10 +38,6 @@ export const confirmEmailSchema = z.object({
     }),
 });
 
-export const refreshTokensSchema = z.object({
-    body: z.object({}), // refresh token теперь в httpOnly cookie
-});
-
 export const logoutSchema = z.object({
     body: z.object({}), // refresh token теперь в httpOnly cookie
 });

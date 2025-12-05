@@ -18,6 +18,19 @@ export class CommentReader implements ICommentReader {
         return commentsData.map((commentData) => this.toCommentDTO(commentData));
     }
 
+    async findById(commentId: UUID): Promise<CommentDTO | null> {
+        const commentData = await prisma.comment.findUnique({
+            where: { id: commentId },
+            include: { author: true },
+        });
+
+        if (!commentData) {
+            return null;
+        }
+
+        return this.toCommentDTO(commentData);
+    }
+
     async findCommentsByEventId(eventId: UUID): Promise<CommentDTO[]> {
         const commentsData = await prisma.comment.findMany({
             where: { eventId },
@@ -45,12 +58,6 @@ export class CommentReader implements ICommentReader {
             commentData.author.imageUrl ?? undefined,
         );
 
-        return CommentDTO.create(
-            commentData.id as UUID,
-            commentData.eventId as UUID,
-            authorDTO,
-            commentData.text,
-            commentData.createdAt,
-        );
+        return CommentDTO.create(commentData.id as UUID, authorDTO, commentData.text, commentData.createdAt);
     }
 }

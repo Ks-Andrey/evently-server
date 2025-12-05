@@ -24,7 +24,7 @@ export class DeleteUserTypeHandler {
             if (!userType) throw new UserTypeNotFoundException();
 
             const allUsers = await this.userReader.findAll();
-            const usersWithThisType = allUsers.filter((user) => user.userType.userTypeId === command.userTypeId);
+            const usersWithThisType = allUsers.filter((user) => user.userType.id === command.userTypeId);
             if (usersWithThisType.length > 0) {
                 throw new UserTypeInUseException();
             }

@@ -4,12 +4,12 @@ import { Roles } from '@common/constants/roles';
 
 export class UserTypeDTO {
     private constructor(
-        readonly userTypeId: UUID,
-        readonly typeName: string,
+        readonly id: UUID,
+        readonly name: string,
         readonly role: Roles,
     ) {}
 
-    static create(userTypeId: UUID, typeName: string, role: Roles): UserTypeDTO {
-        return new UserTypeDTO(userTypeId, typeName, role);
+    static create(id: UUID, name: string, role: Roles): UserTypeDTO {
+        return new UserTypeDTO(id, name, role);
     }
 }

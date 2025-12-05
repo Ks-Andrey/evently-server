@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
 
-import { IUserReader, UserDTO, UserEventDTO, UserTypeDTO } from '@application/readers/user';
+import { IUserReader, UserDTO, UserEventDTO, UserListView, UserTypeDTO } from '@application/readers/user';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
@@ -58,6 +58,14 @@ export class UserReader implements IUserReader {
         return usersData.map((userData) => this.toUserDTO(userData));
     }
 
+    async findAllViews(): Promise<UserListView[]> {
+        const usersData = await prisma.user.findMany({
+            include: { userType: true },
+        });
+
+        return usersData.map((userData) => this.toUserListView(userData));
+    }
+
     private toUserDTO(userData: UserWithType): UserDTO {
         const userTypeDTO = UserTypeDTO.create(
             userData.userType.userTypeId as UUID,
@@ -77,6 +85,18 @@ export class UserReader implements IUserReader {
             userData.telegramId ?? undefined,
             userData.personalData ?? undefined,
             userData.pendingEmail ?? undefined,
+            userData.imageUrl ?? undefined,
+        );
+    }
+
+    private toUserListView(userData: UserWithType): UserListView {
+        return UserListView.create(
+            userData.id as UUID,
+            userData.username,
+            userData.email,
+            userData.userType.typeName,
+            userData.subscriptionCount,
+            userData.isBlocked,
             userData.imageUrl ?? undefined,
         );
     }

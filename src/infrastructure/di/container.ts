@@ -22,12 +22,14 @@ import {
     EditCategoryHandler,
     DeleteCategoryHandler,
     FindCategoriesHandler,
+    FindCategoryByIdHandler,
 } from '@application/services/category';
 import {
     CreateCommentHandler,
     EditCommentHandler,
     DeleteCommentHandler,
     FindAllCommentsHandler,
+    FindCommentByIdHandler,
     FindCommentsByEventHandler,
     FindCommentsByUserHandler,
 } from '@application/services/comment';
@@ -163,12 +165,14 @@ export interface Container {
     editCategoryHandler: EditCategoryHandler;
     deleteCategoryHandler: DeleteCategoryHandler;
     findCategoriesHandler: FindCategoriesHandler;
+    findCategoryByIdHandler: FindCategoryByIdHandler;
 
     // Comment Handlers
     createCommentHandler: CreateCommentHandler;
     editCommentHandler: EditCommentHandler;
     deleteCommentHandler: DeleteCommentHandler;
     findAllCommentsHandler: FindAllCommentsHandler;
+    findCommentByIdHandler: FindCommentByIdHandler;
     findCommentsByEventHandler: FindCommentsByEventHandler;
     findCommentsByUserHandler: FindCommentsByUserHandler;
 
@@ -414,6 +418,7 @@ function registerCategoryHandlers(container: ContainerType): void {
             }))
             .singleton(),
         findCategoriesHandler: asClass(FindCategoriesHandler).singleton(),
+        findCategoryByIdHandler: asClass(FindCategoryByIdHandler).singleton(),
     });
 }
 
@@ -442,6 +447,7 @@ function registerCommentHandlers(container: ContainerType): void {
             }))
             .singleton(),
         findAllCommentsHandler: asClass(FindAllCommentsHandler).singleton(),
+        findCommentByIdHandler: asClass(FindCommentByIdHandler).singleton(),
         findCommentsByEventHandler: asClass(FindCommentsByEventHandler).singleton(),
         findCommentsByUserHandler: asClass(FindCommentsByUserHandler).singleton(),
     });

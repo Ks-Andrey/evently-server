@@ -5,6 +5,7 @@ import {
     DeleteCommentHandler,
     EditCommentHandler,
     FindAllCommentsHandler,
+    FindCommentByIdHandler,
     FindCommentsByEventHandler,
     FindCommentsByUserHandler,
 } from '@application/services/comment';
@@ -15,6 +16,7 @@ import { CommentMapper } from '../mappers';
 export class CommentController {
     constructor(
         private readonly findAllCommentsHandler: FindAllCommentsHandler,
+        private readonly findCommentByIdHandler: FindCommentByIdHandler,
         private readonly findCommentsByEventHandler: FindCommentsByEventHandler,
         private readonly findCommentsByUserHandler: FindCommentsByUserHandler,
         private readonly createCommentHandler: CreateCommentHandler,
@@ -24,6 +26,12 @@ export class CommentController {
 
     async getAllComments(req: Request, res: Response): Promise<void> {
         const result = await this.findAllCommentsHandler.execute();
+        handleResult(result, res);
+    }
+
+    async getCommentById(req: Request, res: Response): Promise<void> {
+        const query = CommentMapper.toFindCommentByIdQuery(req);
+        const result = await this.findCommentByIdHandler.execute(query);
         handleResult(result, res);
     }
 

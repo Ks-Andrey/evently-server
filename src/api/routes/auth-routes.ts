@@ -6,7 +6,7 @@ import { AuthController } from '../controllers/auth-controller';
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth-middleware';
 import { authRateLimiter } from '../middlewares/rate-limit-middleware';
 import { validate } from '../middlewares/validation-middleware';
-import { registerSchema, loginSchema, confirmEmailSchema, refreshTokensSchema, logoutSchema } from '../validations';
+import { registerSchema, loginSchema, confirmEmailSchema, logoutSchema } from '../validations';
 
 export function createAuthRoutes(authController: AuthController, tokenManager: ITokenManager): Router {
     const router = Router();
@@ -20,7 +20,7 @@ export function createAuthRoutes(authController: AuthController, tokenManager: I
     );
     router.post('/login', authRateLimiter, validate(loginSchema), (req, res) => authController.login(req, res));
     router.post('/confirm-email', validate(confirmEmailSchema), (req, res) => authController.confirmEmail(req, res));
-    router.post('/refresh', validate(refreshTokensSchema), (req, res) => authController.refreshTokens(req, res));
+    router.post('/refresh', (req, res) => authController.refreshTokens(req, res));
     router.post('/logout', authMiddleware(tokenManager), validate(logoutSchema), (req, res) =>
         authController.logout(req, res),
     );

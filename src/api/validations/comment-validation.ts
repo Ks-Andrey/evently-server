@@ -4,6 +4,12 @@ import { ERROR_MESSAGES } from '@common/constants/errors';
 
 const uuidSchema = z.string().uuid();
 
+export const getCommentByIdSchema = z.object({
+    params: z.object({
+        id: uuidSchema,
+    }),
+});
+
 export const getCommentsByEventSchema = z.object({
     params: z.object({
         eventId: uuidSchema,

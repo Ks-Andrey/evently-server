@@ -6,11 +6,16 @@ import {
     CreateComment,
     DeleteComment,
     EditComment,
+    FindCommentById,
     FindCommentsByEvent,
     FindCommentsByUser,
 } from '@application/services/comment';
 
 export class CommentMapper {
+    static toFindCommentByIdQuery(req: Request): FindCommentById {
+        const { id } = req.params;
+        return new FindCommentById(id as UUID);
+    }
     static toFindCommentsByEventQuery(req: Request): FindCommentsByEvent {
         const { eventId } = req.params;
         return new FindCommentsByEvent(eventId as UUID);

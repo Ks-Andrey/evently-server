@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Request } from 'express';
 
-import { NotAuthenticatedException } from '@application/common';
+import { InvalidInputException, NotAuthenticatedException } from '@application/common';
 import {
     CreateUser,
     DeleteUser,
@@ -21,8 +21,8 @@ import {
 
 export class UserMapper {
     static toFindUserByIdQuery(req: Request): FindUserById {
-        const { userId } = req.params;
-        return new FindUserById(userId as UUID);
+        const { id } = req.params;
+        return new FindUserById(id as UUID);
     }
 
     static toFindCurrentUserQuery(req: Request): FindUserById {
@@ -42,38 +42,49 @@ export class UserMapper {
         return new FindUserByEmail(email);
     }
 
-    static toFindUserSubscriptionsQuery(req: Request): FindUserSubscriptions {
+    static toFindMySubscriptionsQuery(req: Request): FindUserSubscriptions {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
         return new FindUserSubscriptions(req.user.userId);
     }
 
+    static toFindUserSubscriptionsQuery(req: Request): FindUserSubscriptions {
+        const { id } = req.params;
+        return new FindUserSubscriptions(id as UUID);
+    }
+
+    static toEditMeCommand(req: Request): EditUser {
+        if (!req.user) {
+            throw new NotAuthenticatedException();
+        }
+        const { username, personalData } = req.body;
+        return new EditUser(req.user.role, req.user.userId, username, personalData);
+    }
+
     static toEditUserCommand(req: Request): EditUser {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        const { username, personalData, userId } = req.body;
-        const targetUserId = userId ?? req.user.userId;
-        return new EditUser(req.user.role, targetUserId, username, personalData);
+        const { username, personalData } = req.body;
+        const { id } = req.params;
+        return new EditUser(req.user.role, id as UUID, username, personalData);
     }
 
     static toEditUserEmailCommand(req: Request): EditUserEmail {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        const { password, newEmail, userId } = req.body;
-        const targetUserId = userId ?? req.user.userId;
-        return new EditUserEmail(req.user.role, targetUserId, password, newEmail);
+        const { password, newEmail } = req.body;
+        return new EditUserEmail(req.user.role, req.user.userId, password, newEmail);
     }
 
     static toEditUserPasswordCommand(req: Request): EditUserPassword {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        const { oldPassword, newPassword, userId } = req.body;
-        const targetUserId = userId ?? req.user.userId;
-        return new EditUserPassword(req.user.role, targetUserId, oldPassword, newPassword);
+        const { oldPassword, newPassword } = req.body;
+        return new EditUserPassword(req.user.role, req.user.userId, oldPassword, newPassword);
     }
 
     static toDeleteUserCommand(req: Request): DeleteUser {
@@ -110,20 +121,16 @@ export class UserMapper {
             throw new NotAuthenticatedException();
         }
         if (!req.fileName) {
-            throw new Error('File name is required');
+            throw new InvalidInputException();
         }
-        const { userId } = req.body;
-        const targetUserId = userId ?? req.user.userId;
-        return new UploadUserAvatar(req.user.role, targetUserId, req.fileName);
+        return new UploadUserAvatar(req.user.role, req.user.userId, req.fileName);
     }
 
     static toDeleteAvatarCommand(req: Request): DeleteUserAvatar {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        const { userId } = req.body;
-        const targetUserId = userId ?? req.user.userId;
-        return new DeleteUserAvatar(req.user.role, targetUserId);
+        return new DeleteUserAvatar(req.user.role, req.user.userId);
     }
 
     static toCreateUserCommand(req: Request): CreateUser {

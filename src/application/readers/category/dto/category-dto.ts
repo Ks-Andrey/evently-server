@@ -2,11 +2,11 @@ import { UUID } from 'crypto';
 
 export class CategoryDTO {
     private constructor(
-        readonly categoryId: UUID,
-        readonly categoryName: string,
+        readonly id: UUID,
+        readonly name: string,
     ) {}
 
-    static create(categoryId: UUID, categoryName: string): CategoryDTO {
-        return new CategoryDTO(categoryId, categoryName);
+    static create(id: UUID, name: string): CategoryDTO {
+        return new CategoryDTO(id, name);
     }
 }

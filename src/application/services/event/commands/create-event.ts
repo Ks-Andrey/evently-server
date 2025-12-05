@@ -39,7 +39,7 @@ export class CreateEventHandler {
             if (!category) throw new CategoryForEventNotFoundException();
 
             const organizer = EventOrganizer.create(actor.id, actor.username, actor.personalData);
-            const eventCategory = EventCategory.create(category.categoryId, category.categoryName);
+            const eventCategory = EventCategory.create(category.id, category.name);
             const eventLocation = EventLocation.create(command.location, command.longitude, command.latitude);
 
             const event = Event.create(

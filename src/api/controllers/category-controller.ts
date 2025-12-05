@@ -5,6 +5,7 @@ import {
     DeleteCategoryHandler,
     EditCategoryHandler,
     FindCategoriesHandler,
+    FindCategoryByIdHandler,
 } from '@application/services/category';
 
 import { handleResult } from '../common/utils/error-handler';
@@ -13,6 +14,7 @@ import { CategoryMapper } from '../mappers';
 export class CategoryController {
     constructor(
         private readonly findCategoriesHandler: FindCategoriesHandler,
+        private readonly findCategoryByIdHandler: FindCategoryByIdHandler,
         private readonly createCategoryHandler: CreateCategoryHandler,
         private readonly editCategoryHandler: EditCategoryHandler,
         private readonly deleteCategoryHandler: DeleteCategoryHandler,
@@ -20,6 +22,12 @@ export class CategoryController {
 
     async getCategories(req: Request, res: Response): Promise<void> {
         const result = await this.findCategoriesHandler.execute();
+        handleResult(result, res);
+    }
+
+    async getCategoryById(req: Request, res: Response): Promise<void> {
+        const query = CategoryMapper.toFindCategoryByIdQuery(req);
+        const result = await this.findCategoryByIdHandler.execute(query);
         handleResult(result, res);
     }
 

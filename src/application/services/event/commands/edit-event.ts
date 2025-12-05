@@ -59,7 +59,7 @@ export class EditEventDetailsHandler {
                 const category = await this.categoryRepo.findById(command.categoryId);
                 if (!category) throw new CategoryForEventNotFoundException();
 
-                const categoryEntity = EventCategory.create(category.categoryId, category.categoryName);
+                const categoryEntity = EventCategory.create(category.id, category.name);
                 event.changeCategory(categoryEntity);
             }
 

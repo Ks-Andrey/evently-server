@@ -38,7 +38,7 @@ export class NotifyEventSubscribersHandler {
                 Notification.create(
                     v4() as UUID,
                     event.id,
-                    NotificationUser.create(subscriber.id, subscriber.subscriberName),
+                    NotificationUser.create(subscriber.id, subscriber.name),
                     command.message,
                     NotificationType.EVENT_UPDATED,
                 ),

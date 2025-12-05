@@ -67,9 +67,21 @@ export class UserController {
         handleResult(result, res);
     }
 
+    async getMySubscriptions(req: Request, res: Response): Promise<void> {
+        const query = UserMapper.toFindMySubscriptionsQuery(req);
+        const result = await this.findUserSubscriptionsHandler.execute(query);
+        handleResult(result, res);
+    }
+
     async getUserSubscriptions(req: Request, res: Response): Promise<void> {
         const query = UserMapper.toFindUserSubscriptionsQuery(req);
         const result = await this.findUserSubscriptionsHandler.execute(query);
+        handleResult(result, res);
+    }
+
+    async editMe(req: Request, res: Response): Promise<void> {
+        const command = UserMapper.toEditMeCommand(req);
+        const result = await this.editUserHandler.execute(command);
         handleResult(result, res);
     }
 

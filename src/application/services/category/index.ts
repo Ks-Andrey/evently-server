@@ -9,3 +9,4 @@ export * from './dto/edit-category-result';
 export * from './dto/delete-category-result';
 
 export * from './queries/find-categories';
+export * from './queries/find-category-by-id';
