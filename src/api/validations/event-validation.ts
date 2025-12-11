@@ -52,11 +52,11 @@ export const getOrganizerEventsSchema = z.object({
 export const createEventSchema = z.object({
     body: z.object({
         categoryId: uuidSchema,
-        title: z
+        title: z.string().min(1, ERROR_MESSAGES.api.event.titleRequired).max(60, ERROR_MESSAGES.api.event.titleTooLong),
+        description: z
             .string()
-            .min(1, ERROR_MESSAGES.api.event.titleRequired)
-            .max(200, ERROR_MESSAGES.api.event.titleTooLong),
-        description: z.string().min(1, ERROR_MESSAGES.api.event.descriptionRequired),
+            .min(1, ERROR_MESSAGES.api.event.descriptionRequired)
+            .max(2000, ERROR_MESSAGES.api.event.descriptionTooLong),
         date: z.string().refine(
             (val) => {
                 const date = new Date(val);
@@ -85,8 +85,8 @@ export const editEventSchema = z
             id: uuidSchema,
         }),
         body: z.object({
-            title: z.string().min(1).max(200).optional(),
-            description: z.string().optional(),
+            title: z.string().min(1).max(60, ERROR_MESSAGES.api.event.titleTooLong).optional(),
+            description: z.string().min(1).max(2000, ERROR_MESSAGES.api.event.descriptionTooLong).optional(),
             date: dateSchema.optional(),
             location: z.string().min(1).max(200).optional(),
             latitude: z.number().min(-90).max(90).optional(),
@@ -119,7 +119,10 @@ export const notifySubscribersSchema = z.object({
         id: uuidSchema,
     }),
     body: z.object({
-        message: z.string().min(1, ERROR_MESSAGES.api.event.messageRequired),
+        message: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.event.messageRequired)
+            .max(500, ERROR_MESSAGES.api.event.messageTooLong),
     }),
 });
 

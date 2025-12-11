@@ -10,7 +10,10 @@ export const ERROR_MESSAGES = {
             passwordLowercase: 'Пароль должен содержать хотя бы одну строчную букву',
             passwordNumber: 'Пароль должен содержать хотя бы одну цифру',
             passwordSpecialChar: 'Пароль должен содержать хотя бы один специальный символ',
+            passwordMaxLength: 'Пароль слишком длинный (максимум 128 символов)',
             refreshTokenRequired: 'Refresh token обязателен',
+            telegramIdInvalid: 'Неверный формат Telegram ID (должен содержать только цифры)',
+            telegramIdTooLong: 'Telegram ID слишком длинный (максимум 20 символов)',
         },
         user: {
             usernameRequired: 'Имя пользователя обязательно',
@@ -18,11 +21,13 @@ export const ERROR_MESSAGES = {
             passwordRequired: 'Пароль обязателен',
             oldPasswordRequired: 'Старый пароль обязателен',
             newPasswordMinLength: 'Новый пароль должен содержать минимум 8 символов',
+            newPasswordMaxLength: 'Новый пароль слишком длинный (максимум 128 символов)',
         },
         event: {
             titleRequired: 'Название события обязательно',
-            titleTooLong: 'Название события слишком длинное (максимум 200 символов)',
+            titleTooLong: 'Название события слишком длинное (максимум 60 символов)',
             descriptionRequired: 'Описание события обязательно',
+            descriptionTooLong: 'Описание события слишком длинное (максимум 2000 символов)',
             locationRequired: 'Местоположение обязательно',
             locationTooLong: 'Местоположение слишком длинное (максимум 200 символов)',
             dateInvalid: 'Неверный формат даты',
@@ -30,6 +35,7 @@ export const ERROR_MESSAGES = {
             longitudeOutOfRange: 'Долгота должна быть в диапазоне от -180 до 180',
             locationRequiresCoordinates: 'Если указано местоположение, необходимо указать широту и долготу',
             messageRequired: 'Сообщение обязательно',
+            messageTooLong: 'Сообщение слишком длинное (максимум 500 символов)',
             photoUrlInvalid: 'Неверный формат URL фотографии',
         },
         category: {
@@ -46,6 +52,7 @@ export const ERROR_MESSAGES = {
         },
         geocoder: {
             locationRequired: 'Местоположение не может быть пустым',
+            locationTooLong: 'Местоположение слишком длинное (максимум 200 символов)',
         },
     },
     domain: {

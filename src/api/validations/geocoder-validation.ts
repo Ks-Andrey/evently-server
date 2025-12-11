@@ -4,6 +4,9 @@ import { ERROR_MESSAGES } from '@common/constants/errors';
 
 export const getCoordinatesByLocationSchema = z.object({
     query: z.object({
-        location: z.string().min(1, ERROR_MESSAGES.api.geocoder.locationRequired),
+        location: z
+            .string()
+            .min(1, ERROR_MESSAGES.api.geocoder.locationRequired)
+            .max(200, ERROR_MESSAGES.api.geocoder.locationTooLong),
     }),
 });

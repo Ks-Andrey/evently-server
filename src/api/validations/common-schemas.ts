@@ -32,4 +32,4 @@ export const dateQuerySchema = z
     )
     .optional();
 
-export const searchQuerySchema = z.string().optional();
+export const searchQuerySchema = z.string().max(200).optional();

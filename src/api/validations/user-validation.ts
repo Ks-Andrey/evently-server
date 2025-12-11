@@ -27,14 +27,14 @@ export const getUserByEmailSchema = z.object({
 export const editMeSchema = z.object({
     body: z.object({
         username: z.string().min(1).max(100).optional(),
-        personalData: z.string().optional(),
+        personalData: z.string().max(1000).optional(),
     }),
 });
 
 export const editUserSchema = z.object({
     body: z.object({
         username: z.string().min(1).max(100).optional(),
-        personalData: z.string().optional(),
+        personalData: z.string().max(1000).optional(),
     }),
     params: z.object({
         id: uuidSchema,
@@ -51,7 +51,10 @@ export const editEmailSchema = z.object({
 export const editPasswordSchema = z.object({
     body: z.object({
         oldPassword: z.string().min(1, ERROR_MESSAGES.api.user.oldPasswordRequired),
-        newPassword: z.string().min(8, ERROR_MESSAGES.api.user.newPasswordMinLength),
+        newPassword: z
+            .string()
+            .min(8, ERROR_MESSAGES.api.user.newPasswordMinLength)
+            .max(128, ERROR_MESSAGES.api.user.newPasswordMaxLength),
     }),
 });
 
