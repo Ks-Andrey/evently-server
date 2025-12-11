@@ -21,7 +21,8 @@ export class UserTypeController {
     ) {}
 
     async getUserTypes(req: Request, res: Response): Promise<void> {
-        const result = await this.findUserTypesHandler.execute();
+        const query = UserTypeMapper.toFindUserTypesQuery(req);
+        const result = await this.findUserTypesHandler.execute(query);
         handleResult(result, res);
     }
 

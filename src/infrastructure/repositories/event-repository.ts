@@ -87,9 +87,11 @@ export class EventRepository implements IEventRepository {
             eventData.organizer.id as UUID,
             eventData.organizer.username,
             eventData.organizer.personalData ?? undefined,
+            eventData.organizer.imageUrl ?? undefined,
         );
         const category = EventCategory.create(eventData.category.categoryId as UUID, eventData.category.categoryName);
         const location = EventLocation.create(eventData.location, eventData.longitude, eventData.latitude);
+        const imagesUrls = eventData.images.map((image) => image.imageUrl);
 
         return Event.create(
             eventData.id as UUID,
@@ -99,6 +101,9 @@ export class EventRepository implements IEventRepository {
             eventData.description,
             eventData.date,
             location,
+            eventData.subscriberCount,
+            eventData.commentCount,
+            imagesUrls,
         );
     }
 }

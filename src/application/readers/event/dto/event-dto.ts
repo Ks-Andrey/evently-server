@@ -15,6 +15,8 @@ export class EventDTO {
         readonly location: EventLocationDTO,
         readonly subscriberCount: number,
         readonly commentCount: number,
+        readonly imageUrls: string[],
+        readonly isSubscribed: boolean,
     ) {}
 
     static create(
@@ -27,7 +29,21 @@ export class EventDTO {
         location: EventLocationDTO,
         subscriberCount: number,
         commentCount: number,
+        imageUrls: string[],
+        isSubscribed: boolean,
     ): EventDTO {
-        return new EventDTO(id, organizer, category, title, description, date, location, subscriberCount, commentCount);
+        return new EventDTO(
+            id,
+            organizer,
+            category,
+            title,
+            description,
+            date,
+            location,
+            subscriberCount,
+            commentCount,
+            imageUrls,
+            isSubscribed,
+        );
     }
 }

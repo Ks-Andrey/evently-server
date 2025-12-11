@@ -4,7 +4,7 @@ import { ITokenManager } from '@application/services/auth';
 import { Roles } from '@common/constants/roles';
 
 import { EventController } from '../controllers/event-controller';
-import { authMiddleware } from '../middlewares/auth-middleware';
+import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth-middleware';
 import { uploadGalleryImages } from '../middlewares/file-upload-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
@@ -24,12 +24,15 @@ import {
 export function createEventRoutes(eventController: EventController, tokenManager: ITokenManager): Router {
     const router = Router();
     const auth = authMiddleware(tokenManager);
+    const optionalAuth = optionalAuthMiddleware(tokenManager);
     const organizerOnly = roleMiddleware([Roles.ORGANIZER]);
     const organizerOrAdmin = roleMiddleware([Roles.ORGANIZER, Roles.ADMIN]);
 
-    // Публичные маршруты
-    router.get('/', validate(getEventsSchema), (req, res) => eventController.getEvents(req, res));
-    router.get('/:id', validate(getEventByIdSchema), (req, res) => eventController.getEventById(req, res));
+    // Публичные маршруты (с опциональной аутентификацией для передачи userId)
+    router.get('/', optionalAuth, validate(getEventsSchema), (req, res) => eventController.getEvents(req, res));
+    router.get('/:id', optionalAuth, validate(getEventByIdSchema), (req, res) =>
+        eventController.getEventById(req, res),
+    );
     router.get('/:id/subscribers', validate(getEventSubscribersSchema), (req, res) =>
         eventController.getEventSubscribers(req, res),
     );

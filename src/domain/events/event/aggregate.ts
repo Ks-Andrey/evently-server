@@ -47,6 +47,7 @@ export class Event {
         location: EventLocation,
         subscriberCount: number = 0,
         commentCount: number = 0,
+        imageUrl: string[] = [],
     ) {
         if (!id) {
             throw new EventIdCannotBeEmptyException();
@@ -80,7 +81,7 @@ export class Event {
             location,
             subscriberCount,
             commentCount,
-            [],
+            imageUrl,
         );
     }
 

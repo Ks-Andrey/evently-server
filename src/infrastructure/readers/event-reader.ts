@@ -18,6 +18,7 @@ type EventWithRelations = Prisma.EventGetPayload<{
     include: {
         organizer: true;
         category: true;
+        images: true;
     };
 }>;
 
@@ -59,12 +60,13 @@ export class EventReader implements IEventReader {
         return createPaginationResult(data, total, page, pageSize);
     }
 
-    async findById(eventId: UUID): Promise<EventDTO | null> {
+    async findById(eventId: UUID, userId?: UUID): Promise<EventDTO | null> {
         const eventData = await prisma.event.findUnique({
             where: { id: eventId },
             include: {
                 organizer: true,
                 category: true,
+                images: true,
             },
         });
 
@@ -72,18 +74,28 @@ export class EventReader implements IEventReader {
             return null;
         }
 
-        return this.toEventDTO(eventData);
+        const isSubscribed = userId ? await this.checkSubscription(eventId, userId) : false;
+
+        return this.toEventDTO(eventData, isSubscribed);
     }
 
-    async findAll(): Promise<EventDTO[]> {
+    async findAll(userId?: UUID): Promise<EventDTO[]> {
         const eventsData = await prisma.event.findMany({
             include: {
                 organizer: true,
                 category: true,
+                images: true,
             },
         });
 
-        return eventsData.map((eventData) => this.toEventDTO(eventData));
+        const subscriptionMap = userId
+            ? await this.getSubscriptionMap(
+                  userId,
+                  eventsData.map((e) => e.id as UUID),
+              )
+            : new Map<string, boolean>();
+
+        return eventsData.map((eventData) => this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false));
     }
 
     async findByOrganizer(
@@ -92,6 +104,7 @@ export class EventReader implements IEventReader {
         dateFrom?: Date,
         dateTo?: Date,
         keyword?: string,
+        userId?: UUID,
     ): Promise<PaginationResult<EventDTO>> {
         const page = pagination?.page ?? 1;
         const pageSize = pagination?.pageSize ?? 10;
@@ -124,6 +137,7 @@ export class EventReader implements IEventReader {
                 include: {
                     organizer: true,
                     category: true,
+                    images: true,
                 },
                 skip,
                 take: pageSize,
@@ -132,24 +146,45 @@ export class EventReader implements IEventReader {
             prisma.event.count({ where }),
         ]);
 
-        const data = eventsData.map((eventData) => this.toEventDTO(eventData));
+        const subscriptionMap = userId
+            ? await this.getSubscriptionMap(
+                  userId,
+                  eventsData.map((e) => e.id as UUID),
+              )
+            : new Map<string, boolean>();
+
+        const data = eventsData.map((eventData) =>
+            this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false),
+        );
 
         return createPaginationResult(data, total, page, pageSize);
     }
 
-    async findByCategory(categoryId: UUID): Promise<EventDTO[]> {
+    async findByCategory(categoryId: UUID, userId?: UUID): Promise<EventDTO[]> {
         const eventsData = await prisma.event.findMany({
             where: { categoryId },
             include: {
                 organizer: true,
                 category: true,
+                images: true,
             },
         });
 
-        return eventsData.map((eventData) => this.toEventDTO(eventData));
+        const subscriptionMap = userId
+            ? await this.getSubscriptionMap(
+                  userId,
+                  eventsData.map((e) => e.id as UUID),
+              )
+            : new Map<string, boolean>();
+
+        return eventsData.map((eventData) => this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false));
     }
 
-    async findWithFilters(filters: EventFilters, pagination: PaginationParams): Promise<PaginationResult<EventDTO>> {
+    async findWithFilters(
+        filters: EventFilters,
+        pagination: PaginationParams,
+        userId?: UUID,
+    ): Promise<PaginationResult<EventDTO>> {
         const page = pagination.page;
         const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
@@ -196,6 +231,7 @@ export class EventReader implements IEventReader {
                 include: {
                     organizer: true,
                     category: true,
+                    images: true,
                 },
                 skip,
                 take: pageSize,
@@ -204,12 +240,60 @@ export class EventReader implements IEventReader {
             prisma.event.count({ where }),
         ]);
 
-        const data = eventsData.map((eventData) => this.toEventDTO(eventData));
+        const subscriptionMap = userId
+            ? await this.getSubscriptionMap(
+                  userId,
+                  eventsData.map((e) => e.id as UUID),
+              )
+            : new Map<string, boolean>();
+
+        const data = eventsData.map((eventData) =>
+            this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false),
+        );
 
         return createPaginationResult(data, total, page, pageSize);
     }
 
-    private toEventDTO(eventData: EventWithRelations): EventDTO {
+    private async getSubscriptionMap(userId: UUID, eventIds: UUID[]): Promise<Map<string, boolean>> {
+        if (eventIds.length === 0) {
+            return new Map<string, boolean>();
+        }
+
+        const subscriptions = await prisma.eventSubscription.findMany({
+            where: {
+                userId,
+                eventId: { in: eventIds },
+            },
+            select: {
+                eventId: true,
+            },
+        });
+
+        const subscriptionMap = new Map<string, boolean>();
+        for (const eventId of eventIds) {
+            subscriptionMap.set(
+                eventId,
+                subscriptions.some((sub) => sub.eventId === eventId),
+            );
+        }
+
+        return subscriptionMap;
+    }
+
+    private async checkSubscription(eventId: UUID, userId: UUID): Promise<boolean> {
+        const subscription = await prisma.eventSubscription.findUnique({
+            where: {
+                eventId_userId: {
+                    eventId,
+                    userId,
+                },
+            },
+        });
+
+        return !!subscription;
+    }
+
+    private toEventDTO(eventData: EventWithRelations, isSubscribed: boolean): EventDTO {
         const organizerDTO = EventOrganizerDTO.create(
             eventData.organizer.id as UUID,
             eventData.organizer.username,
@@ -222,6 +306,7 @@ export class EventReader implements IEventReader {
         );
 
         const locationDTO = EventLocationDTO.create(eventData.location, eventData.latitude, eventData.longitude);
+        const imagesUrls = eventData.images.map((image) => image.imageUrl);
 
         return EventDTO.create(
             eventData.id as UUID,
@@ -233,6 +318,8 @@ export class EventReader implements IEventReader {
             locationDTO,
             eventData.subscriberCount,
             eventData.commentCount,
+            imagesUrls,
+            isSubscribed,
         );
     }
 }

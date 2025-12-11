@@ -11,6 +11,7 @@ export class FindOrganizerEvents {
         readonly dateFrom?: string,
         readonly dateTo?: string,
         readonly keyword?: string,
+        readonly userId?: UUID,
     ) {}
 }
 
@@ -27,6 +28,7 @@ export class FindOrganizerEventsHandler {
                 dateFrom,
                 dateTo,
                 query.keyword?.trim(),
+                query.userId,
             );
         });
     }

@@ -5,9 +5,10 @@ export class EventOrganizerDTO {
         readonly id: UUID,
         readonly username: string,
         readonly personalData?: string,
+        readonly avatarUrl?: string,
     ) {}
 
-    static create(id: UUID, username: string, personalData?: string): EventOrganizerDTO {
-        return new EventOrganizerDTO(id, username, personalData);
+    static create(id: UUID, username: string, personalData?: string, avatarUrl?: string): EventOrganizerDTO {
+        return new EventOrganizerDTO(id, username, personalData, avatarUrl);
     }
 }

@@ -104,6 +104,12 @@ export class OrganizerPersonalDataCannotBeEmptyException extends DomainException
     }
 }
 
+export class OrganizerAvatarCannotBeEmptyException extends DomainException {
+    constructor() {
+        super(ERROR_MESSAGES.domain.event.organizerAvatarCannotBeEmpty);
+    }
+}
+
 export class EventAlreadyStartedException extends DomainException {
     constructor() {
         super(ERROR_MESSAGES.domain.event.eventAlreadyStarted);

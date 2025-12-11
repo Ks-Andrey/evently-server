@@ -11,6 +11,7 @@ export class FindEvents {
         readonly dateFrom?: string,
         readonly dateTo?: string,
         readonly keyword?: string,
+        readonly userId?: UUID,
     ) {}
 }
 
@@ -26,7 +27,7 @@ export class FindEventsHandler {
                 keyword: query.keyword?.trim(),
             };
 
-            return await this.eventReader.findWithFilters(filters, query.pagination);
+            return await this.eventReader.findWithFilters(filters, query.pagination, query.userId);
         });
     }
 }

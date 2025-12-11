@@ -21,12 +21,19 @@ export class EventMapper {
     static toFindEventsQuery(req: Request): FindEvents {
         const pagination = parsePaginationParams(req);
         const { categoryId, dateFrom, dateTo, keyword } = req.query;
-        return new FindEvents(pagination, categoryId as UUID, dateFrom as string, dateTo as string, keyword as string);
+        return new FindEvents(
+            pagination,
+            categoryId as UUID,
+            dateFrom as string,
+            dateTo as string,
+            keyword as string,
+            req.user?.userId,
+        );
     }
 
     static toFindEventByIdQuery(req: Request): FindEventById {
         const { id } = req.params;
-        return new FindEventById(id as UUID);
+        return new FindEventById(id as UUID, req.user?.userId);
     }
 
     static toFindOrganizerEventsQuery(req: Request): FindOrganizerEvents {
@@ -41,6 +48,7 @@ export class EventMapper {
             dateFrom as string,
             dateTo as string,
             keyword as string,
+            req.user.userId,
         );
     }
 

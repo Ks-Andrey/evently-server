@@ -4,7 +4,7 @@ import { ITokenManager } from '@application/services/auth';
 import { Roles } from '@common/constants/roles';
 
 import { UserTypeController } from '../controllers/user-type-controller';
-import { authMiddleware } from '../middlewares/auth-middleware';
+import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import { getUserTypeByIdSchema, createUserTypeSchema, editUserTypeSchema, deleteUserTypeSchema } from '../validations';
@@ -12,10 +12,11 @@ import { getUserTypeByIdSchema, createUserTypeSchema, editUserTypeSchema, delete
 export function createUserTypeRoutes(userTypeController: UserTypeController, tokenManager: ITokenManager): Router {
     const router = Router();
     const auth = authMiddleware(tokenManager);
+    const optionalAuth = optionalAuthMiddleware(tokenManager);
     const adminOnly = roleMiddleware([Roles.ADMIN]);
 
-    // Публичные маршруты
-    router.get('/', (req, res) => userTypeController.getUserTypes(req, res));
+    // Публичные маршруты (с опциональной аутентификацией для передачи userId)
+    router.get('/', optionalAuth, (req, res) => userTypeController.getUserTypes(req, res));
     router.get('/:id', validate(getUserTypeByIdSchema), (req, res) => userTypeController.getUserTypeById(req, res));
 
     // Админские маршруты

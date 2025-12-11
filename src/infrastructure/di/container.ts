@@ -84,7 +84,7 @@ import {
     NotificationReader,
     UserTypeReader,
     StatisticsReader,
-} from '@infrastructure/queries';
+} from '@infrastructure/readers';
 import {
     UserRepository,
     EventRepository,

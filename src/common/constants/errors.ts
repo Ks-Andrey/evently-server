@@ -115,6 +115,7 @@ export const ERROR_MESSAGES = {
             organizerIdCannotBeEmpty: 'Идентификатор организатора не может быть пустым',
             organizerUsernameCannotBeEmpty: 'Имя пользователя организатора не может быть пустым',
             organizerPersonalDataCannotBeEmpty: 'Персональные данные организатора не могут быть пустыми',
+            organizerAvatarCannotBeEmpty: 'Аватар огранизатора не может быть пустыми',
             eventAlreadyStarted: 'Нельзя подписаться на событие, которое уже началось',
             eventSubscriberIdCannotBeEmpty: 'Идентификатор подписчика не может быть пустым',
             eventSubscriberNameCannotBeEmpty: 'Имя подписчика не может быть пустым',
