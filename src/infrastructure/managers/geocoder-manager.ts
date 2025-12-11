@@ -6,7 +6,69 @@ import { YANDEX_API_KEY } from '@common/config/geocoder';
 import { Coordinates } from '@common/types/coordinates';
 import { log } from '@common/utils/logger';
 
-import { YandexGeocoderResponse } from '../utils/geocoder/types';
+interface YandexGeocoderResponse {
+    response: {
+        GeoObjectCollection: {
+            metaDataProperty: {
+                GeocoderResponseMetaData: {
+                    request: string;
+                    results: string;
+                    found: string;
+                };
+            };
+            featureMember: Array<{
+                GeoObject: {
+                    metaDataProperty: {
+                        GeocoderMetaData: {
+                            precision: string;
+                            text: string;
+                            kind: string;
+                            Address: {
+                                country_code: string;
+                                formatted: string;
+                                Components: Array<{
+                                    kind: string;
+                                    name: string;
+                                }>;
+                            };
+                            AddressDetails: {
+                                Country: {
+                                    AddressLine: string;
+                                    CountryNameCode: string;
+                                    CountryName: string;
+                                    AdministrativeArea?: {
+                                        AdministrativeAreaName: string;
+                                        Locality?: {
+                                            LocalityName: string;
+                                            Thoroughfare?: {
+                                                ThoroughfareName: string;
+                                                Premise?: {
+                                                    PremiseNumber: string;
+                                                };
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                    name: string;
+                    description: string;
+                    boundedBy: {
+                        Envelope: {
+                            lowerCorner: string;
+                            upperCorner: string;
+                        };
+                    };
+                    uri: string;
+                    Point: {
+                        pos: string;
+                    };
+                };
+            }>;
+        };
+    };
+}
 
 export class GeocoderManager implements IGeocoderManager {
     async findCoordinatesByLocation(location: string): Promise<Coordinates | null> {

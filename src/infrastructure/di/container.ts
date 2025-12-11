@@ -414,7 +414,6 @@ function registerCategoryHandlers(container: ContainerType): void {
         deleteCategoryHandler: asClass(DeleteCategoryHandler)
             .inject((container) => ({
                 categoryRepo: container.resolve('categoryRepository'),
-                eventReader: container.resolve('eventReader'),
             }))
             .singleton(),
         findCategoriesHandler: asClass(FindCategoriesHandler).singleton(),

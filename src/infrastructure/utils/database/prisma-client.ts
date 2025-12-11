@@ -43,5 +43,4 @@ export const checkDatabase = async (): Promise<boolean> => {
         return false;
     }
 };
-
 export { prisma };

@@ -81,7 +81,7 @@ model Event {
   commentCount    Int      @default(0)
 
   organizer       User              @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: Cascade)
-  category        Category          @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
+  category        Category          @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
   images          EventImage[]
   comments        Comment[]
   notifications   Notification[]

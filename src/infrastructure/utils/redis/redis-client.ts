@@ -41,5 +41,4 @@ export const checkRedis = async (): Promise<boolean> => {
         return false;
     }
 };
-
 export { redisClient };
