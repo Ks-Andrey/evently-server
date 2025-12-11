@@ -2,6 +2,8 @@ import { UUID } from 'crypto';
 
 import { PaginationParams, PaginationResult, createPaginationResult } from '@application/common';
 import { IUserReader, UserDTO, UserEventDTO, UserListView, UserTypeDTO } from '@application/readers/user';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
+import { getImageUrl } from '@common/utils/image-url';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
@@ -132,7 +134,7 @@ export class UserReader implements IUserReader {
             userData.telegramId ?? undefined,
             userData.personalData ?? undefined,
             userData.pendingEmail ?? undefined,
-            userData.imageUrl ?? undefined,
+            userData.imageUrl ? getImageUrl(userData.imageUrl, UPLOAD_DIRECTORIES.AVATARS) : undefined,
         );
     }
 
@@ -144,7 +146,7 @@ export class UserReader implements IUserReader {
             userData.userType.typeName,
             userData.subscriptionCount,
             userData.isBlocked,
-            userData.imageUrl ?? undefined,
+            userData.imageUrl ? getImageUrl(userData.imageUrl, UPLOAD_DIRECTORIES.AVATARS) : undefined,
         );
     }
 }

@@ -7,6 +7,7 @@ import {
     IFileStorageManager,
     executeInTransaction,
 } from '@application/common';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
@@ -49,7 +50,7 @@ export class DeleteUserAvatarHandler {
                 user.changeAvatar(undefined);
                 await this.userRepo.save(user);
 
-                await this.fileStorageManager.delete(oldAvatarUrl);
+                await this.fileStorageManager.delete(oldAvatarUrl, UPLOAD_DIRECTORIES.AVATARS);
             } catch (error) {
                 log.error('Error deleting avatar, starting rollback', {
                     userId: command.userId,

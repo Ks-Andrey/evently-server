@@ -20,6 +20,6 @@ export const emailClient = nodemailer.createTransport({
     } catch (error) {
         const err = error instanceof Error ? error : new Error(String(error));
         log.error(`Failed to connect to SMTP server (${SMTP_HOST}:${SMTP_PORT})`, err);
-        process.exit(1);
+        // process.exit(1);
     }
 })();

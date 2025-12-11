@@ -2,6 +2,8 @@ import { UUID } from 'crypto';
 
 import { PaginationParams, PaginationResult, createPaginationResult } from '@application/common';
 import { ICommentReader, CommentDTO, CommentUserDTO } from '@application/readers/comment';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
+import { getImageUrl } from '@common/utils/image-url';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
@@ -134,7 +136,9 @@ export class CommentReader implements ICommentReader {
         const authorDTO = CommentUserDTO.create(
             commentData.author.id as UUID,
             commentData.author.username,
-            commentData.author.imageUrl ?? undefined,
+            commentData.author.imageUrl
+                ? getImageUrl(commentData.author.imageUrl, UPLOAD_DIRECTORIES.AVATARS)
+                : undefined,
         );
 
         return CommentDTO.create(commentData.id as UUID, authorDTO, commentData.text, commentData.createdAt);

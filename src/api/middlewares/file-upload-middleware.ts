@@ -1,6 +1,5 @@
-import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
-import multer, { FileFilterCallback, Multer } from 'multer';
+import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import sharp from 'sharp';
 
@@ -12,7 +11,6 @@ import {
     FileProcessingException,
 } from '@application/services/file';
 
-import { TEMP_UPLOADS_DIR } from '@common/config/app';
 import {
     FILE_SIZE_LIMITS,
     ALLOWED_MIME_TYPES,
@@ -23,117 +21,109 @@ import {
 
 import { createErrorResponse } from '../common';
 
-const tempStoragePath = path.join(process.cwd(), TEMP_UPLOADS_DIR);
+const memoryStorage = multer.memoryStorage();
 
-function createStorage() {
-    return multer.diskStorage({
-        destination: (_req, _file, cb) => cb(null, tempStoragePath),
-        filename: (req: Request, file: Express.Multer.File, cb) => {
-            const fileId = randomUUID();
-            const ext = path.extname(file.originalname).toLowerCase();
-            const fileName = `${fileId}${ext}`;
-            req.fileName = fileName;
-            cb(null, fileName);
-        },
-    });
-}
-
-async function validateImageDimensions(
+function checkMimeAndExt(
     file: Express.Multer.File,
-    maxWidth: number,
-    maxHeight: number,
+    allowedTypes: string[],
+    allowedExts: string[],
     cb: FileFilterCallback,
 ) {
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    if (!allowedTypes.includes(file.mimetype)) {
+        return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
+    }
+
+    if (!allowedExts.includes(ext)) {
+        return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
+    }
+
+    return cb(null, true);
+}
+
+function avatarFileFilter(_: Request, file: Express.Multer.File, cb: FileFilterCallback) {
+    return checkMimeAndExt(file, ALLOWED_MIME_TYPES.AVATAR, allowedExtensions.AVATAR, cb);
+}
+
+function galleryFileFilter(_: Request, file: Express.Multer.File, cb: FileFilterCallback) {
+    return checkMimeAndExt(file, ALLOWED_MIME_TYPES.GALLERY, allowedExtensions.GALLERY, cb);
+}
+
+export const uploadAvatar = multer({
+    storage: memoryStorage,
+    fileFilter: avatarFileFilter,
+    limits: { fileSize: FILE_SIZE_LIMITS.AVATAR_MAX_SIZE },
+}).single('file');
+
+export const uploadGalleryImages = multer({
+    storage: memoryStorage,
+    fileFilter: galleryFileFilter,
+    limits: { fileSize: FILE_SIZE_LIMITS.GALLERY_IMAGE_MAX_SIZE },
+}).array('files', GALLERY_MAX_PHOTOS);
+
+export async function validateAvatarDimensions(req: Request, res: Response, next: NextFunction) {
     try {
-        const metadata = await sharp(file.path).metadata();
-        const { width, height } = metadata;
-
-        if (width && width > maxWidth) {
-            return cb(new ImageWidthExceededException({ width, maxWidth }));
-        }
-        if (height && height > maxHeight) {
-            return cb(new ImageHeightExceededException({ height, maxHeight }));
+        if (!req.file || !req.file.buffer) {
+            throw new FileProcessingException();
         }
 
-        cb(null, true);
-    } catch {
-        cb(new FileProcessingException({ fileName: file.originalname }));
+        const { width, height } = await sharp(req.file.buffer).metadata();
+
+        if (!width || !height) throw new FileProcessingException({ fileName: req.file.originalname });
+
+        if (width > IMAGE_DIMENSIONS.AVATAR_MAX_WIDTH) {
+            throw new ImageWidthExceededException({
+                width,
+                maxWidth: IMAGE_DIMENSIONS.AVATAR_MAX_WIDTH,
+            });
+        }
+
+        if (height > IMAGE_DIMENSIONS.AVATAR_MAX_HEIGHT) {
+            throw new ImageHeightExceededException({
+                height,
+                maxHeight: IMAGE_DIMENSIONS.AVATAR_MAX_HEIGHT,
+            });
+        }
+
+        next();
+    } catch (err) {
+        const error = createErrorResponse(err);
+        return res.status(error.status).json(error);
     }
 }
 
-function avatarFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
-    const ext = path.extname(file.originalname).toLowerCase();
+export async function validateGalleryDimensions(req: Request, res: Response, next: NextFunction) {
+    try {
+        if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+            throw new FileProcessingException();
+        }
 
-    if (!ALLOWED_MIME_TYPES.AVATAR.some((type) => type === file.mimetype)) {
-        return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
+        for (const file of req.files as Express.Multer.File[]) {
+            const { width, height } = await sharp(file.buffer).metadata();
+
+            if (!width || !height) {
+                throw new FileProcessingException({ fileName: file.originalname });
+            }
+
+            if (width > IMAGE_DIMENSIONS.GALLERY_MAX_WIDTH) {
+                throw new ImageWidthExceededException({
+                    width,
+                    maxWidth: IMAGE_DIMENSIONS.GALLERY_MAX_WIDTH,
+                });
+            }
+
+            if (height > IMAGE_DIMENSIONS.GALLERY_MAX_HEIGHT) {
+                throw new ImageHeightExceededException({
+                    height,
+                    maxHeight: IMAGE_DIMENSIONS.GALLERY_MAX_HEIGHT,
+                });
+            }
+        }
+
+        next();
+    } catch (err) {
+        const error = createErrorResponse(err);
+        return res.status(error.status).json(error);
     }
-    if (!allowedExtensions.AVATAR.some((extension) => extension === ext)) {
-        return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
-    }
-
-    validateImageDimensions(file, IMAGE_DIMENSIONS.AVATAR_MAX_WIDTH, IMAGE_DIMENSIONS.AVATAR_MAX_HEIGHT, cb);
 }
-
-function galleryFileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
-    const ext = path.extname(file.originalname).toLowerCase();
-
-    if (!ALLOWED_MIME_TYPES.GALLERY.some((type) => type === file.mimetype)) {
-        return cb(new InvalidFileTypeException({ fileName: file.originalname, mimeType: file.mimetype }));
-    }
-    if (!allowedExtensions.GALLERY.some((extension) => extension === ext)) {
-        return cb(new InvalidFileExtensionException({ fileName: file.originalname, extension: ext }));
-    }
-
-    validateImageDimensions(file, IMAGE_DIMENSIONS.GALLERY_MAX_WIDTH, IMAGE_DIMENSIONS.GALLERY_MAX_HEIGHT, cb);
-}
-
-function createMulterMiddleware(multerInstance: ReturnType<Multer['single']>) {
-    return (req: Request, res: Response, next: NextFunction) => {
-        multerInstance(req, res, (err: unknown) => {
-            if (err) {
-                const errorResponse = createErrorResponse(err);
-                return res.status(errorResponse.status).json(errorResponse);
-            }
-            if (!req.file) {
-                const errorResponse = createErrorResponse(new FileProcessingException());
-                return res.status(errorResponse.status).json(errorResponse);
-            }
-            next();
-        });
-    };
-}
-
-function createMulterArrayMiddleware(multerInstance: ReturnType<Multer['array']>) {
-    return (req: Request, res: Response, next: NextFunction) => {
-        multerInstance(req, res, (err: unknown) => {
-            if (err) {
-                const errorResponse = createErrorResponse(err);
-                return res.status(errorResponse.status).json(errorResponse);
-            }
-            if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
-                const errorResponse = createErrorResponse(new FileProcessingException());
-                return res.status(errorResponse.status).json(errorResponse);
-            }
-            if (Array.isArray(req.files)) {
-                req.fileNames = req.files.map((file) => file.filename);
-            }
-            next();
-        });
-    };
-}
-
-export const uploadAvatar = createMulterMiddleware(
-    multer({
-        storage: createStorage(),
-        fileFilter: avatarFileFilter,
-        limits: { fileSize: FILE_SIZE_LIMITS.AVATAR_MAX_SIZE },
-    }).single('file'),
-);
-
-export const uploadGalleryImages = createMulterArrayMiddleware(
-    multer({
-        storage: createStorage(),
-        fileFilter: galleryFileFilter,
-        limits: { fileSize: FILE_SIZE_LIMITS.GALLERY_IMAGE_MAX_SIZE },
-    }).array('files', GALLERY_MAX_PHOTOS),
-);

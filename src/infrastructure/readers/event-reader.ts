@@ -10,6 +10,8 @@ import {
     EventUserDTO,
     EventLocationDTO,
 } from '@application/readers/event';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
+import { getImageUrl } from '@common/utils/image-url';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
@@ -54,7 +56,11 @@ export class EventReader implements IEventReader {
         ]);
 
         const data = subscriptions.map((sub) =>
-            EventUserDTO.create(sub.user.id as UUID, sub.user.username, sub.user.imageUrl ?? undefined),
+            EventUserDTO.create(
+                sub.user.id as UUID,
+                sub.user.username,
+                sub.user.imageUrl ? getImageUrl(sub.user.imageUrl, UPLOAD_DIRECTORIES.AVATARS) : undefined,
+            ),
         );
 
         return createPaginationResult(data, total, page, pageSize);
@@ -298,6 +304,9 @@ export class EventReader implements IEventReader {
             eventData.organizer.id as UUID,
             eventData.organizer.username,
             eventData.organizer.personalData ?? undefined,
+            eventData.organizer.imageUrl
+                ? getImageUrl(eventData.organizer.imageUrl, UPLOAD_DIRECTORIES.AVATARS)
+                : undefined,
         );
 
         const categoryDTO = EventCategoryDTO.create(
@@ -306,7 +315,7 @@ export class EventReader implements IEventReader {
         );
 
         const locationDTO = EventLocationDTO.create(eventData.location, eventData.latitude, eventData.longitude);
-        const imagesUrls = eventData.images.map((image) => image.imageUrl);
+        const imagesUrls = eventData.images.map((image) => getImageUrl(image.imageUrl, UPLOAD_DIRECTORIES.EVENTS));
 
         return EventDTO.create(
             eventData.id as UUID,

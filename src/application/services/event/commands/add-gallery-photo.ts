@@ -7,9 +7,9 @@ import {
     ApplicationException,
     executeInTransaction,
 } from '@application/common';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
-import { log } from '@common/utils/logger';
 import { IEventRepository } from '@domain/events/event';
 
 import { AddGalleryPhotosResult } from '../dto/add-gallery-photos-result';
@@ -20,7 +20,7 @@ export class AddEventGalleryPhotos {
         readonly role: Roles,
         readonly userId: UUID,
         readonly eventId: UUID,
-        readonly fileNames: string[],
+        readonly files: MemoryUploadedFile[],
     ) {}
 }
 
@@ -40,74 +40,14 @@ export class AddEventGalleryPhotosHandler {
                 throw new AccessDeniedException();
             }
 
-            const oldImageUrls = [...event.imageUrls];
-            const movedFiles: string[] = [];
-            let modelUpdated = false;
+            event.addPhotos(command.files.map((file) => file.originalname));
+            await this.eventRepo.save(event);
 
-            try {
-                for (const fileName of command.fileNames) {
-                    await this.fileStorageManager.moveTo(fileName, 'events');
-                    movedFiles.push(fileName);
-                }
-
-                event.addPhotos(command.fileNames);
-                await this.eventRepo.save(event);
-                modelUpdated = true;
-
-                for (const fileName of command.fileNames) {
-                    await this.fileStorageManager.delete(fileName);
-                }
-            } catch (error) {
-                log.error('Error adding gallery photos, starting rollback', {
-                    eventId: command.eventId,
-                    userId: command.userId,
-                    fileNames: command.fileNames,
-                    movedFiles,
-                    error: log.formatError(error),
-                });
-
-                for (const fileName of movedFiles) {
-                    try {
-                        await this.fileStorageManager.delete(fileName);
-                    } catch (rollbackErr) {
-                        log.error('Failed to delete moved file during rollback', {
-                            fileName,
-                            error: log.formatError(rollbackErr),
-                        });
-                    }
-                }
-
-                for (const fileName of command.fileNames) {
-                    try {
-                        await this.fileStorageManager.delete(fileName);
-                    } catch (rollbackErr) {
-                        log.error('Failed to delete temp file during rollback', {
-                            fileName,
-                            error: log.formatError(rollbackErr),
-                        });
-                    }
-                }
-
-                if (modelUpdated) {
-                    try {
-                        const currentUrls = event.imageUrls;
-                        for (const url of currentUrls) {
-                            if (!oldImageUrls.includes(url)) {
-                                event.removePhoto(url);
-                            }
-                        }
-                    } catch (rollbackErr) {
-                        log.error('Failed to rollback gallery photos in model', {
-                            eventId: command.eventId,
-                            error: log.formatError(rollbackErr),
-                        });
-                    }
-                }
-
-                throw error;
+            for (const file of command.files) {
+                await this.fileStorageManager.save(file.buffer, file.originalname, UPLOAD_DIRECTORIES.EVENTS);
             }
 
-            return AddGalleryPhotosResult.create(event.id, command.fileNames.length);
+            return AddGalleryPhotosResult.create(event.id, command.files.length);
         });
     }
 }

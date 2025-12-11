@@ -33,3 +33,6 @@ generated/prisma/
 src/generated/prisma/
 
 init/
+
+events/
+avatars/

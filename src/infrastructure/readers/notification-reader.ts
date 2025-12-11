@@ -2,6 +2,8 @@ import { UUID } from 'crypto';
 
 import { PaginationParams, PaginationResult, createPaginationResult } from '@application/common';
 import { INotificationReader, NotificationDTO, NotificationUserDTO } from '@application/readers/notification';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
+import { getImageUrl } from '@common/utils/image-url';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '../utils';
@@ -53,7 +55,9 @@ export class NotificationReader implements INotificationReader {
         const userDTO = NotificationUserDTO.create(
             notificationData.user.id as UUID,
             notificationData.user.username,
-            notificationData.user.imageUrl ?? undefined,
+            notificationData.user.imageUrl
+                ? getImageUrl(notificationData.user.imageUrl, UPLOAD_DIRECTORIES.AVATARS)
+                : undefined,
         );
 
         return NotificationDTO.create(

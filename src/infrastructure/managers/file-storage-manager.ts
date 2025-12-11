@@ -1,12 +1,10 @@
 import { promises } from 'fs';
-import { join, dirname } from 'path';
+import { join } from 'path';
 
 import {
     FileStorageAccessDeniedException,
     FileStorageDeleteException,
-    FileStorageFileNotFoundException,
     FileStorageIoException,
-    FileStorageMoveException,
 } from '@application/common';
 import { IFileStorageManager } from '@application/common';
 import { getErrorMessage, isError } from '@common/utils/error';
@@ -19,33 +17,25 @@ export class FileStorageManager implements IFileStorageManager {
         this.basePath = basePath;
     }
 
-    async moveTo(filePath: string, directory: string): Promise<void> {
-        const sourcePath = join(this.basePath, filePath);
-        const targetDir = join(this.basePath, directory);
-        const targetPath = join(targetDir, this.getFileName(filePath));
+    async save(buffer: Buffer, fileName: string, dirname: string): Promise<void> {
+        const targetDir = join(this.basePath, dirname);
+        const targetPath = join(targetDir, fileName);
 
         try {
             await promises.mkdir(targetDir, { recursive: true });
-            await promises.rename(sourcePath, targetPath);
+            await promises.writeFile(targetPath, buffer);
         } catch (error: unknown) {
-            log.error('Error moving file', {
-                sourcePath,
+            log.error('Error saving file', {
                 targetPath,
+                dirname,
                 error: log.formatError(error),
             });
 
             if (isError(error)) {
                 const errorMessage = error.message;
-                if (errorMessage.includes('ENOENT')) {
-                    throw new FileStorageFileNotFoundException({
-                        filePath: sourcePath,
-                        message: errorMessage,
-                    });
-                }
-
                 if (errorMessage.includes('EACCES') || errorMessage.includes('permission')) {
                     throw new FileStorageAccessDeniedException({
-                        filePath: sourcePath,
+                        filePath: targetPath,
                         message: errorMessage,
                     });
                 }
@@ -56,28 +46,24 @@ export class FileStorageManager implements IFileStorageManager {
                     errorMessage.includes('EEXIST')
                 ) {
                     throw new FileStorageIoException({
-                        filePath: sourcePath,
+                        filePath: targetPath,
                         message: errorMessage,
                     });
                 }
             }
 
-            throw new FileStorageMoveException({
-                filePath: sourcePath,
-                targetPath,
-                error: getErrorMessage(error),
+            throw new FileStorageIoException({
+                filePath: targetPath,
+                message: getErrorMessage(error),
             });
         }
     }
 
-    async delete(filePath: string): Promise<void> {
-        const fullPath = join(this.basePath, filePath);
+    async delete(fileName: string, dirname: string): Promise<void> {
+        const fullPath = join(this.basePath, dirname, fileName);
 
         try {
             await promises.unlink(fullPath);
-
-            const parentDir = dirname(fullPath);
-            await promises.rmdir(parentDir);
         } catch (error: unknown) {
             log.error('Error deleting file', {
                 filePath: fullPath,
@@ -87,10 +73,7 @@ export class FileStorageManager implements IFileStorageManager {
             if (isError(error)) {
                 const errorMessage = error.message;
                 if (errorMessage.includes('ENOENT')) {
-                    throw new FileStorageFileNotFoundException({
-                        filePath: fullPath,
-                        message: errorMessage,
-                    });
+                    return;
                 }
 
                 if (errorMessage.includes('EACCES') || errorMessage.includes('permission')) {
@@ -99,11 +82,6 @@ export class FileStorageManager implements IFileStorageManager {
                         message: errorMessage,
                     });
                 }
-
-                if (errorMessage.includes('ENOTEMPTY') || errorMessage.includes('EBUSY')) {
-                    // Игнорируем ошибки при удалении директории, если она не пуста
-                    return;
-                }
             }
 
             throw new FileStorageDeleteException({
@@ -111,10 +89,5 @@ export class FileStorageManager implements IFileStorageManager {
                 error: getErrorMessage(error),
             });
         }
-    }
-
-    private getFileName(filePath: string): string {
-        const parts = filePath.split(/[/\\]/);
-        return parts[parts.length - 1];
     }
 }

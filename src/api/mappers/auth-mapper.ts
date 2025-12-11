@@ -1,5 +1,6 @@
 import { Request } from 'express';
 
+import { NotAuthenticatedException } from '@application/common';
 import { AuthenticateUser, ConfirmUserEmail, RefreshTokens, LogoutUser } from '@application/services/auth';
 import { CreateUser } from '@application/services/user';
 
@@ -25,7 +26,7 @@ export class AuthMapper {
     static toRefreshTokensCommand(req: Request): RefreshTokens {
         const refreshToken = getRefreshTokenFromCookie(req);
         if (!refreshToken) {
-            throw new Error('Refresh token not found in cookies');
+            throw new NotAuthenticatedException();
         }
         return new RefreshTokens(refreshToken);
     }

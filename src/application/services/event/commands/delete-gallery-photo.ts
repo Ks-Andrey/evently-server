@@ -7,6 +7,7 @@ import {
     ApplicationException,
     executeInTransaction,
 } from '@application/common';
+import { UPLOAD_DIRECTORIES } from '@common/constants/file-upload';
 import { Roles } from '@common/constants/roles';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
@@ -48,7 +49,7 @@ export class DeleteEventGalleryPhotoHandler {
                 await this.eventRepo.save(event);
                 modelUpdated = true;
 
-                await this.fileStorageManager.delete(photoUrl);
+                await this.fileStorageManager.delete(photoUrl, UPLOAD_DIRECTORIES.EVENTS);
             } catch (error) {
                 log.error('Error deleting gallery photo, starting rollback', {
                     eventId: command.eventId,

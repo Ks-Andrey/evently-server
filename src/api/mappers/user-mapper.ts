@@ -133,10 +133,10 @@ export class UserMapper {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        if (!req.fileName) {
+        if (!req.file) {
             throw new InvalidInputException();
         }
-        return new UploadUserAvatar(req.user.role, req.user.userId, req.fileName);
+        return new UploadUserAvatar(req.user.role, req.user.userId, req.file);
     }
 
     static toDeleteAvatarCommand(req: Request): DeleteUserAvatar {

@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 import { Request } from 'express';
 
-import { NotAuthenticatedException } from '@application/common';
+import { InvalidInputException, NotAuthenticatedException } from '@application/common';
 import {
     AddEventGalleryPhotos,
     CreateEvent,
@@ -88,7 +88,7 @@ export class EventMapper {
             id as UUID,
             title,
             description,
-            date,
+            date ? new Date(date) : undefined,
             location,
             latitude,
             longitude,
@@ -114,11 +114,11 @@ export class EventMapper {
         if (!req.user) {
             throw new NotAuthenticatedException();
         }
-        if (!req.fileNames) {
-            throw new Error('File names are required');
+        if (!req.files || !Array.isArray(req.files)) {
+            throw new InvalidInputException();
         }
         const { id } = req.params;
-        return new AddEventGalleryPhotos(req.user.role, req.user.userId, id as UUID, req.fileNames);
+        return new AddEventGalleryPhotos(req.user.role, req.user.userId, id as UUID, req.files);
     }
 
     static toDeleteGalleryPhotoCommand(req: Request): DeleteEventGalleryPhoto {

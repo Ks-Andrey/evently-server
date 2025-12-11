@@ -1,11 +1,18 @@
 import { UserJwtPayload } from '@common/types/auth';
 
 declare global {
+    interface MemoryUploadedFile {
+        buffer: Buffer;
+        originalname: string;
+        mimetype: string;
+        size: number;
+    }
+
     namespace Express {
         interface Request {
             user?: UserJwtPayload;
-            fileName?: string;
-            fileNames?: string[];
+            file?: MemoryUploadedFile;
+            files?: MemoryUploadedFile[];
         }
     }
 }

@@ -131,9 +131,9 @@ export const addGalleryPhotosSchema = z.object({
 
 export const deleteGalleryPhotoSchema = z.object({
     params: z.object({
-        id: uuidSchema,
+        id: z.string(),
     }),
     body: z.object({
-        photoUrl: z.string().url(ERROR_MESSAGES.api.event.photoUrlInvalid),
+        photoUrl: z.string().nonempty(ERROR_MESSAGES.api.event.photoUrlInvalid),
     }),
 });
