@@ -45,7 +45,11 @@ import {
     FindEventSubscribersHandler,
 } from '@application/services/event';
 import { FindCoordinatesByLocationHandler } from '@application/services/geocoder';
-import { NotifyEventSubscribersHandler, FindUserNotificationsHandler } from '@application/services/notification';
+import {
+    NotifyEventSubscribersHandler,
+    NotifyEventRemindersHandler,
+    FindUserNotificationsHandler,
+} from '@application/services/notification';
 import {
     GetUserStatisticsHandler,
     GetEventStatisticsHandler,
@@ -178,6 +182,7 @@ export interface Container {
 
     // Notification Handlers
     notifyEventSubscribersHandler: NotifyEventSubscribersHandler;
+    notifyEventRemindersHandler: NotifyEventRemindersHandler;
     findUserNotificationsHandler: FindUserNotificationsHandler;
 
     // UserType Handlers
@@ -369,6 +374,7 @@ function registerEventHandlers(container: ContainerType): void {
                 eventRepo: container.resolve('eventRepository'),
                 userReader: container.resolve('userReader'),
                 categoryRepo: container.resolve('categoryReader'),
+                notifyEventSubscribersHandler: container.resolve('notifyEventSubscribersHandler'),
             }))
             .singleton(),
         deleteEventHandler: asClass(DeleteEventHandler)
@@ -455,6 +461,14 @@ function registerCommentHandlers(container: ContainerType): void {
 function registerNotificationHandlers(container: ContainerType): void {
     container.register({
         notifyEventSubscribersHandler: asClass(NotifyEventSubscribersHandler)
+            .inject((container) => ({
+                eventReader: container.resolve('eventReader'),
+                notificationRepo: container.resolve('notificationRepository'),
+                unitOfWork: container.resolve('unitOfWork'),
+                botManager: container.resolve('botManager'),
+            }))
+            .singleton(),
+        notifyEventRemindersHandler: asClass(NotifyEventRemindersHandler)
             .inject((container) => ({
                 eventReader: container.resolve('eventReader'),
                 notificationRepo: container.resolve('notificationRepository'),

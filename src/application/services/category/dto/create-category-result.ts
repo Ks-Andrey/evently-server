@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class CreateCategoryResult {
     private constructor(
         readonly categoryId: UUID,
@@ -7,6 +9,6 @@ export class CreateCategoryResult {
     ) {}
 
     static create(categoryId: UUID): CreateCategoryResult {
-        return new CreateCategoryResult(categoryId, 'Category created successfully');
+        return new CreateCategoryResult(categoryId, MESSAGES.result.category.created);
     }
 }

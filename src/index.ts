@@ -12,6 +12,7 @@ import { PORT, ALLOWED_ORIGINS, SHUTDOWN_TIMEOUT, IS_DEV_MODE, NODE_ENV } from '
 import { log } from '@common/utils/logger';
 import { getAppDependencies, createDIContainer } from '@infrastructure/di';
 import { disconnectPrisma, disconnectRedis, checkDatabase, checkRedis } from '@infrastructure/utils';
+import { startEventReminderCron } from '@infrastructure/utils/cron/event-reminder-cron';
 
 function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Express {
     const app = express();
@@ -91,6 +92,10 @@ async function startServer() {
         const container = createDIContainer();
         const controllers = getAppDependencies(container);
         log.info('Dependencies initialized');
+
+        const notifyEventRemindersHandler = container.resolve('notifyEventRemindersHandler');
+        startEventReminderCron(notifyEventRemindersHandler);
+        log.info('Cron jobs initialized');
 
         const app = setupExpressApp(controllers);
         log.info('Express app configured');

@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class EditEventResult {
     private constructor(
         readonly eventId: UUID,
@@ -7,6 +9,6 @@ export class EditEventResult {
     ) {}
 
     static create(eventId: UUID): EditEventResult {
-        return new EditEventResult(eventId, 'Event updated successfully');
+        return new EditEventResult(eventId, MESSAGES.result.event.updated);
     }
 }

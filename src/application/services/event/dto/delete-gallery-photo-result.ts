@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class DeleteGalleryPhotoResult {
     private constructor(
         readonly eventId: UUID,
@@ -7,6 +9,6 @@ export class DeleteGalleryPhotoResult {
     ) {}
 
     static create(eventId: UUID): DeleteGalleryPhotoResult {
-        return new DeleteGalleryPhotoResult(eventId, 'Gallery photo deleted successfully');
+        return new DeleteGalleryPhotoResult(eventId, MESSAGES.result.event.galleryPhotoDeleted);
     }
 }

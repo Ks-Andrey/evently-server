@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class ConfirmEmailResult {
     private constructor(
         readonly userId: UUID,
@@ -7,6 +9,6 @@ export class ConfirmEmailResult {
     ) {}
 
     static create(userId: UUID): ConfirmEmailResult {
-        return new ConfirmEmailResult(userId, 'Email confirmed successfully');
+        return new ConfirmEmailResult(userId, MESSAGES.result.auth.emailConfirmed);
     }
 }

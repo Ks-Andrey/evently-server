@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class AddGalleryPhotosResult {
     private constructor(
         readonly eventId: UUID,
@@ -8,10 +10,6 @@ export class AddGalleryPhotosResult {
     ) {}
 
     static create(eventId: UUID, photosCount: number): AddGalleryPhotosResult {
-        return new AddGalleryPhotosResult(
-            eventId,
-            photosCount,
-            `${photosCount} photo(s) added to gallery successfully`,
-        );
+        return new AddGalleryPhotosResult(eventId, photosCount, MESSAGES.result.event.galleryPhotosAdded(photosCount));
     }
 }

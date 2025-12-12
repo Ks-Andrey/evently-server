@@ -10,8 +10,10 @@ import {
     FindOrganizerEventsHandler,
     AddEventGalleryPhotosHandler,
     DeleteEventGalleryPhotoHandler,
+    FindEventById,
 } from '@application/services/event';
-import { NotifyEventSubscribersHandler } from '@application/services/notification';
+import { NotifyEventSubscribers, NotifyEventSubscribersHandler } from '@application/services/notification';
+import { MESSAGES } from '@common/constants/messages';
 
 import { handleResult } from '../common/utils/error-handler';
 import { EventMapper } from '../mappers';
@@ -63,6 +65,21 @@ export class EventController {
     async editEvent(req: Request, res: Response): Promise<void> {
         const command = EventMapper.toEditEventCommand(req);
         const result = await this.editEventDetailsHandler.execute(command);
+
+        if (result.isOk) {
+            const eventQuery = new FindEventById(command.eventId, undefined);
+            const eventResult = await this.findEventByIdHandler.execute(eventQuery);
+
+            if (eventResult.isOk && eventResult.value) {
+                const event = eventResult.value;
+                const notifyCommand = new NotifyEventSubscribers(
+                    command.eventId,
+                    MESSAGES.notification.eventUpdated(event.title),
+                );
+                await this.notifyEventSubscribersHandler.execute(notifyCommand);
+            }
+        }
+
         handleResult(result, res);
     }
 

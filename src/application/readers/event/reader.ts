@@ -34,4 +34,5 @@ export interface IEventReader {
         pagination: PaginationParams,
         userId?: UUID,
     ): Promise<PaginationResult<EventDTO>>;
+    findEventsStartingBetween(dateFrom: Date, dateTo: Date): Promise<EventDTO[]>;
 }

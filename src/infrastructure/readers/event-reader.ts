@@ -260,6 +260,25 @@ export class EventReader implements IEventReader {
         return createPaginationResult(data, total, page, pageSize);
     }
 
+    async findEventsStartingBetween(dateFrom: Date, dateTo: Date): Promise<EventDTO[]> {
+        const eventsData = await prisma.event.findMany({
+            where: {
+                date: {
+                    gte: dateFrom,
+                    lte: dateTo,
+                },
+            },
+            include: {
+                organizer: true,
+                category: true,
+                images: true,
+            },
+            orderBy: { date: 'asc' },
+        });
+
+        return eventsData.map((eventData) => this.toEventDTO(eventData, false));
+    }
+
     private async getSubscriptionMap(userId: UUID, eventIds: UUID[]): Promise<Map<string, boolean>> {
         if (eventIds.length === 0) {
             return new Map<string, boolean>();

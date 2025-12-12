@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class UnsubscribeFromEventResult {
     private constructor(
         readonly userId: UUID,
@@ -8,6 +10,6 @@ export class UnsubscribeFromEventResult {
     ) {}
 
     static create(userId: UUID, eventId: UUID): UnsubscribeFromEventResult {
-        return new UnsubscribeFromEventResult(userId, eventId, 'Unsubscribed from event successfully');
+        return new UnsubscribeFromEventResult(userId, eventId, MESSAGES.result.subscription.unsubscribed);
     }
 }

@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class DeleteEventResult {
     private constructor(
         readonly eventId: UUID,
@@ -7,6 +9,6 @@ export class DeleteEventResult {
     ) {}
 
     static create(eventId: UUID): DeleteEventResult {
-        return new DeleteEventResult(eventId, 'Event deleted successfully');
+        return new DeleteEventResult(eventId, MESSAGES.result.event.deleted);
     }
 }

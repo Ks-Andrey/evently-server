@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class EditUserTypeResult {
     private constructor(
         readonly userTypeId: UUID,
@@ -7,6 +9,6 @@ export class EditUserTypeResult {
     ) {}
 
     static create(userTypeId: UUID): EditUserTypeResult {
-        return new EditUserTypeResult(userTypeId, 'User type updated successfully');
+        return new EditUserTypeResult(userTypeId, MESSAGES.result.userType.updated);
     }
 }

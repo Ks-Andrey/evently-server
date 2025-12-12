@@ -1,3 +1,5 @@
+import { MESSAGES } from '@common/constants/messages';
+
 export class LogoutResult {
     private constructor(
         readonly success: boolean,
@@ -5,6 +7,6 @@ export class LogoutResult {
     ) {}
 
     static create(): LogoutResult {
-        return new LogoutResult(true, 'Logged out successfully');
+        return new LogoutResult(true, MESSAGES.result.auth.loggedOut);
     }
 }

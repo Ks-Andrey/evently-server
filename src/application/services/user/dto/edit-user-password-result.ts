@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class EditUserPasswordResult {
     private constructor(
         readonly userId: UUID,
@@ -7,6 +9,6 @@ export class EditUserPasswordResult {
     ) {}
 
     static create(userId: UUID): EditUserPasswordResult {
-        return new EditUserPasswordResult(userId, 'Password updated successfully');
+        return new EditUserPasswordResult(userId, MESSAGES.result.user.passwordUpdated);
     }
 }

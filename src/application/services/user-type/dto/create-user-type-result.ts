@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class CreateUserTypeResult {
     private constructor(
         readonly userTypeId: UUID,
@@ -7,6 +9,6 @@ export class CreateUserTypeResult {
     ) {}
 
     static create(userTypeId: UUID): CreateUserTypeResult {
-        return new CreateUserTypeResult(userTypeId, 'User type created successfully');
+        return new CreateUserTypeResult(userTypeId, MESSAGES.result.userType.created);
     }
 }

@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class DeleteUserTypeResult {
     private constructor(
         readonly userTypeId: UUID,
@@ -7,6 +9,6 @@ export class DeleteUserTypeResult {
     ) {}
 
     static create(userTypeId: UUID): DeleteUserTypeResult {
-        return new DeleteUserTypeResult(userTypeId, 'User type deleted successfully');
+        return new DeleteUserTypeResult(userTypeId, MESSAGES.result.userType.deleted);
     }
 }

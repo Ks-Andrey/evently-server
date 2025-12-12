@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class EditUserEmailResult {
     private constructor(
         readonly userId: UUID,
@@ -7,6 +9,6 @@ export class EditUserEmailResult {
     ) {}
 
     static create(userId: UUID): EditUserEmailResult {
-        return new EditUserEmailResult(userId, 'Email change requested. Please check your new email for verification');
+        return new EditUserEmailResult(userId, MESSAGES.result.user.emailUpdated);
     }
 }

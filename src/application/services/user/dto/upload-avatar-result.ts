@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class UploadAvatarResult {
     private constructor(
         readonly userId: UUID,
@@ -7,6 +9,6 @@ export class UploadAvatarResult {
     ) {}
 
     static create(userId: UUID): UploadAvatarResult {
-        return new UploadAvatarResult(userId, 'Avatar uploaded successfully');
+        return new UploadAvatarResult(userId, MESSAGES.result.user.avatarUploaded);
     }
 }

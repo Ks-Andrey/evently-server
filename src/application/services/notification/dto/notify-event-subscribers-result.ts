@@ -1,5 +1,7 @@
 import { UUID } from 'crypto';
 
+import { MESSAGES } from '@common/constants/messages';
+
 export class NotifyEventSubscribersResult {
     private constructor(
         readonly eventId: UUID,
@@ -11,7 +13,7 @@ export class NotifyEventSubscribersResult {
         return new NotifyEventSubscribersResult(
             eventId,
             notifiedCount,
-            `${notifiedCount} subscriber(s) notified successfully`,
+            MESSAGES.result.notification.subscribersNotified(notifiedCount),
         );
     }
 }
