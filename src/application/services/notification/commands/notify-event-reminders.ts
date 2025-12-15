@@ -2,8 +2,8 @@ import { UUID } from 'crypto';
 import { Result } from 'true-myth';
 import { v4 } from 'uuid';
 
-import { ApplicationException, executeInTransaction } from '@application/common';
-import { IEventReader } from '@application/readers/event';
+import { ApplicationException, executeInTransaction, PaginationParams } from '@application/common';
+import { IEventReader, EventFilters } from '@application/readers/event';
 import { MESSAGES } from '@common/constants/messages';
 import { IUnitOfWork } from '@common/types/unit-of-work';
 import { log } from '@common/utils/logger';
@@ -30,10 +30,18 @@ export class NotifyEventRemindersHandler {
             const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
             const oneHourAndFiveMinutesFromNow = new Date(now.getTime() + 65 * 60 * 1000);
 
-            const events = await this.eventReader.findEventsStartingBetween(
-                oneHourFromNow,
-                oneHourAndFiveMinutesFromNow,
-            );
+            const filters: EventFilters = {
+                dateFrom: oneHourFromNow,
+                dateTo: oneHourAndFiveMinutesFromNow,
+            };
+
+            const pagination: PaginationParams = {
+                page: 1,
+                pageSize: 1000, // Большое значение для получения всех событий в диапазоне
+            };
+
+            const eventsResult = await this.eventReader.findAll(filters, pagination);
+            const events = eventsResult.data;
 
             let totalNotified = 0;
             const eventResults: Array<{ eventId: UUID; notifiedCount: number }> = [];

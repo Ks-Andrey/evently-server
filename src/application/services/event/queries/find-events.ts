@@ -27,7 +27,7 @@ export class FindEventsHandler {
                 keyword: query.keyword?.trim(),
             };
 
-            return await this.eventReader.findWithFilters(filters, query.pagination, query.userId);
+            return await this.eventReader.findAll(filters, query.pagination, query.userId);
         });
     }
 }

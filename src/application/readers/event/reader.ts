@@ -19,20 +19,12 @@ export interface IEventReader {
         search?: string,
     ): Promise<PaginationResult<EventUserDTO>>;
     findById(eventId: UUID, userId?: UUID): Promise<EventDTO | null>;
-    findAll(userId?: UUID): Promise<EventDTO[]>;
+    findAll(filters: EventFilters, pagination: PaginationParams, userId?: UUID): Promise<PaginationResult<EventDTO>>;
     findByOrganizer(
+        filters: EventFilters,
+        pagination: PaginationParams,
         organizerId: UUID,
-        pagination?: PaginationParams,
-        dateFrom?: Date,
-        dateTo?: Date,
-        keyword?: string,
         userId?: UUID,
     ): Promise<PaginationResult<EventDTO>>;
     findByCategory(categoryId: UUID, userId?: UUID): Promise<EventDTO[]>;
-    findWithFilters(
-        filters: EventFilters,
-        pagination: PaginationParams,
-        userId?: UUID,
-    ): Promise<PaginationResult<EventDTO>>;
-    findEventsStartingBetween(dateFrom: Date, dateTo: Date): Promise<EventDTO[]>;
 }

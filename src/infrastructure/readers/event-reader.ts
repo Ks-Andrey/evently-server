@@ -85,57 +85,59 @@ export class EventReader implements IEventReader {
         return this.toEventDTO(eventData, isSubscribed);
     }
 
-    async findAll(userId?: UUID): Promise<EventDTO[]> {
-        const eventsData = await prisma.event.findMany({
-            include: {
-                organizer: true,
-                category: true,
-                images: true,
-            },
-        });
-
-        const subscriptionMap = userId
-            ? await this.getSubscriptionMap(
-                  userId,
-                  eventsData.map((e) => e.id as UUID),
-              )
-            : new Map<string, boolean>();
-
-        return eventsData.map((eventData) => this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false));
-    }
-
     async findByOrganizer(
+        filters: EventFilters,
+        pagination: PaginationParams,
         organizerId: UUID,
-        pagination?: PaginationParams,
-        dateFrom?: Date,
-        dateTo?: Date,
-        keyword?: string,
         userId?: UUID,
     ): Promise<PaginationResult<EventDTO>> {
-        const page = pagination?.page ?? 1;
-        const pageSize = pagination?.pageSize ?? 10;
+        const page = pagination.page;
+        const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
 
-        const where: Prisma.EventWhereInput = {
+        const now = new Date();
+
+        interface PrismaWhereClause {
+            organizerId: string;
+            categoryId?: string;
+            date?: {
+                gte?: Date;
+                lte?: Date;
+            };
+            OR?: Array<{
+                title?: { contains: string; mode: 'insensitive' };
+                description?: { contains: string; mode: 'insensitive' };
+                location?: { contains: string; mode: 'insensitive' };
+            }>;
+        }
+
+        const minDate = filters.dateFrom && filters.dateFrom > now ? filters.dateFrom : now;
+
+        const where: PrismaWhereClause = {
             organizerId,
-            ...(dateFrom || dateTo
-                ? {
-                      date: {
-                          ...(dateFrom ? { gte: dateFrom } : {}),
-                          ...(dateTo ? { lte: dateTo } : {}),
-                      },
-                  }
-                : {}),
-            ...(keyword
-                ? {
-                      OR: [
-                          { title: { contains: keyword, mode: 'insensitive' } },
-                          { description: { contains: keyword, mode: 'insensitive' } },
-                          { location: { contains: keyword, mode: 'insensitive' } },
-                      ],
-                  }
-                : {}),
+            date: {
+                gte: minDate,
+            },
         };
+
+        if (filters.categoryId) {
+            where.categoryId = filters.categoryId;
+        }
+
+        if (filters.dateTo) {
+            where.date = {
+                ...where.date,
+                lte: filters.dateTo,
+            };
+        }
+
+        if (filters.keyword) {
+            where.OR = [
+                { title: { contains: filters.keyword, mode: 'insensitive' } },
+                { description: { contains: filters.keyword, mode: 'insensitive' } },
+                { location: { contains: filters.keyword, mode: 'insensitive' } },
+            ];
+        }
 
         const [eventsData, total] = await Promise.all([
             prisma.event.findMany({
@@ -186,7 +188,7 @@ export class EventReader implements IEventReader {
         return eventsData.map((eventData) => this.toEventDTO(eventData, subscriptionMap.get(eventData.id) ?? false));
     }
 
-    async findWithFilters(
+    async findAll(
         filters: EventFilters,
         pagination: PaginationParams,
         userId?: UUID,
@@ -194,6 +196,8 @@ export class EventReader implements IEventReader {
         const page = pagination.page;
         const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
+
+        const now = new Date();
 
         interface PrismaWhereClause {
             categoryId?: string;
@@ -207,20 +211,25 @@ export class EventReader implements IEventReader {
                 location?: { contains: string; mode: 'insensitive' };
             }>;
         }
-        const where: PrismaWhereClause = {};
+
+        // Определяем минимальную дату: максимум между текущей датой и dateFrom
+        const minDate = filters.dateFrom && filters.dateFrom > now ? filters.dateFrom : now;
+
+        const where: PrismaWhereClause = {
+            date: {
+                gte: minDate, // Только предстоящие события
+            },
+        };
 
         if (filters.categoryId) {
             where.categoryId = filters.categoryId;
         }
 
-        if (filters.dateFrom || filters.dateTo) {
-            where.date = {};
-            if (filters.dateFrom) {
-                where.date.gte = filters.dateFrom;
-            }
-            if (filters.dateTo) {
-                where.date.lte = filters.dateTo;
-            }
+        if (filters.dateTo) {
+            where.date = {
+                ...where.date,
+                lte: filters.dateTo,
+            };
         }
 
         if (filters.keyword) {
@@ -258,25 +267,6 @@ export class EventReader implements IEventReader {
         );
 
         return createPaginationResult(data, total, page, pageSize);
-    }
-
-    async findEventsStartingBetween(dateFrom: Date, dateTo: Date): Promise<EventDTO[]> {
-        const eventsData = await prisma.event.findMany({
-            where: {
-                date: {
-                    gte: dateFrom,
-                    lte: dateTo,
-                },
-            },
-            include: {
-                organizer: true,
-                category: true,
-                images: true,
-            },
-            orderBy: { date: 'asc' },
-        });
-
-        return eventsData.map((eventData) => this.toEventDTO(eventData, false));
     }
 
     private async getSubscriptionMap(userId: UUID, eventIds: UUID[]): Promise<Map<string, boolean>> {

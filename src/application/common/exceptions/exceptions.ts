@@ -43,9 +43,7 @@ export class RouteNotFoundException extends ApplicationException {
 
 export class InvalidInputException extends ApplicationException {
     constructor(errorText?: string, context?: Record<string, unknown>) {
-        const message = errorText
-            ? `${ERROR_MESSAGES.application.common.invalidInput}: ${errorText}`
-            : ERROR_MESSAGES.application.common.invalidInput;
+        const message = errorText ?? ERROR_MESSAGES.application.common.invalidInput;
         super(message, ApplicationErrorCodes.INVALID_INPUT, context);
     }
 }

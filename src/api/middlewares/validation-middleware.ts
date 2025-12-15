@@ -44,7 +44,7 @@ export function validate(schema: ValidationSchema) {
                     path: issue.path.join('.'),
                 }));
 
-                const exception = new InvalidInputException(undefined, { validationErrors });
+                const exception = new InvalidInputException(validationErrors[0].message, { validationErrors });
                 const errorResponse = createErrorResponse(exception);
                 res.status(errorResponse.status).json(errorResponse);
             } else {
