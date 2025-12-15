@@ -1,6 +1,6 @@
 import { EmailSendException } from '@application/services/user';
 import { IEmailManager, SendEmailVerificationParams } from '@application/services/user';
-import { FRONTEND_URL } from '@common/config/email';
+import { FRONTEND_URL } from '@common/config/app';
 import { getErrorMessage } from '@common/utils/error';
 import { log } from '@common/utils/logger';
 

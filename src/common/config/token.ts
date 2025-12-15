@@ -1,5 +1,5 @@
 import { parseTtl } from '../utils/parseInt';
-import { requireEnv } from '../utils/requireEnv';
+import { requireEnv } from '../utils/require-env';
 
 export const secret = requireEnv('JWT_SECRET');
 export const accessTokenTtlSeconds = parseTtl(process.env.JWT_ACCESS_TTL, 60 * 15);

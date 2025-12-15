@@ -3,6 +3,8 @@ import express, { Express, Request, Response } from 'express';
 
 import helmet from 'helmet';
 
+import path from 'path';
+
 import { createErrorResponse } from '@api/common';
 import { csrfProtection } from '@api/middlewares/csrf-middleware';
 import { createAppRoutes } from '@api/routes';
@@ -47,6 +49,10 @@ function setupExpressApp(controllers: ReturnType<typeof getAppDependencies>): Ex
         }
         next();
     });
+
+    app.use('/avatars', express.static(path.join(process.cwd(), 'avatars')));
+    app.use('/events', express.static(path.join(process.cwd(), 'events')));
+    app.use('/scripts', express.static(path.join(process.cwd(), 'scripts')));
 
     app.use(csrfProtection);
 

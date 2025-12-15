@@ -1,3 +1,3 @@
-import { getEnv } from '../utils/requireEnv';
+import { getEnv } from '../utils/require-env';
 
 export const redisUrl = getEnv('REDIS_URL', 'redis://127.0.0.1:6379');

@@ -40,7 +40,6 @@ export const optionalAuthMiddleware = (tokenManager: ITokenManager) => {
         const header = req.headers.authorization;
 
         if (!header || !header.startsWith('Bearer ')) {
-            // Если токена нет, просто продолжаем без авторизации
             return next();
         }
 

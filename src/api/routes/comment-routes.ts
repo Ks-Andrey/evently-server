@@ -1,11 +1,9 @@
 import { Router } from 'express';
 
 import { ITokenManager } from '@application/services/auth';
-import { Roles } from '@common/constants/roles';
 
 import { CommentController } from '../controllers/comment-controller';
 import { authMiddleware } from '../middlewares/auth-middleware';
-import { roleMiddleware } from '../middlewares/role-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import {
     getAllCommentsSchema,
@@ -20,7 +18,6 @@ import {
 export function createCommentRoutes(commentController: CommentController, tokenManager: ITokenManager): Router {
     const router = Router();
     const auth = authMiddleware(tokenManager);
-    const adminOrUser = roleMiddleware([Roles.ADMIN, Roles.USER]);
 
     // Публичные маршруты
     router.get('/', validate(getAllCommentsSchema), (req, res) => commentController.getAllComments(req, res));
@@ -34,12 +31,8 @@ export function createCommentRoutes(commentController: CommentController, tokenM
 
     // Защищенные маршруты
     router.post('/', auth, validate(createCommentSchema), (req, res) => commentController.createComment(req, res));
-    router.put('/:id', auth, adminOrUser, validate(editCommentSchema), (req, res) =>
-        commentController.editComment(req, res),
-    );
-    router.delete('/:id', auth, adminOrUser, validate(deleteCommentSchema), (req, res) =>
-        commentController.deleteComment(req, res),
-    );
+    router.put('/:id', auth, validate(editCommentSchema), (req, res) => commentController.editComment(req, res));
+    router.delete('/:id', auth, validate(deleteCommentSchema), (req, res) => commentController.deleteComment(req, res));
 
     return router;
 }
