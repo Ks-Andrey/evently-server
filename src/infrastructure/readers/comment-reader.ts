@@ -18,7 +18,16 @@ export class CommentReader implements ICommentReader {
         const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
 
-        const where: Prisma.CommentWhereInput = {};
+        const now = new Date();
+
+        const where: Prisma.CommentWhereInput = {
+            event: {
+                date: {
+                    gt: now,
+                },
+            },
+        };
+
         if (dateFrom || dateTo) {
             where.createdAt = {};
             if (dateFrom) {
@@ -68,7 +77,17 @@ export class CommentReader implements ICommentReader {
         const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
 
-        const where: Prisma.CommentWhereInput = { eventId };
+        const now = new Date();
+
+        const where: Prisma.CommentWhereInput = {
+            eventId,
+            event: {
+                date: {
+                    gt: now,
+                },
+            },
+        };
+
         if (dateFrom || dateTo) {
             where.createdAt = {};
             if (dateFrom) {
@@ -105,7 +124,17 @@ export class CommentReader implements ICommentReader {
         const pageSize = pagination.pageSize;
         const skip = (page - 1) * pageSize;
 
-        const where: Prisma.CommentWhereInput = { authorId: userId };
+        const now = new Date();
+
+        const where: Prisma.CommentWhereInput = {
+            authorId: userId,
+            event: {
+                date: {
+                    gt: now,
+                },
+            },
+        };
+
         if (dateFrom || dateTo) {
             where.createdAt = {};
             if (dateFrom) {

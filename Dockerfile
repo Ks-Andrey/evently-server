@@ -29,10 +29,8 @@ COPY package*.json ./
 # Устанавливаем production зависимости
 RUN npm ci --only=production
 
-# Копируем необходимые dev зависимости для seed.ts
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/@swc ./node_modules/@swc
-COPY --from=builder /app/node_modules/esbuild ./node_modules/esbuild
+# Устанавливаем tsx для запуска seed.ts (dev зависимость, но нужна в runtime)
+RUN npm install --no-save tsx
 
 # Копируем собранные файлы
 COPY --from=builder /app/dist ./dist
